@@ -1,6 +1,6 @@
 backend:
   name: github
-  repo: fachrur1/portfolio
+  repo: fachrur1/aru-labs
   branch: main
 
 media_folder: "assets/images"

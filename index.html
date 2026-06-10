@@ -631,6 +631,7 @@ tailwind.config = {
         .glass-panel {
             position: relative;
             overflow: hidden;
+            contain: layout style paint;
         }
         .glass-panel::before {
             content: "";
@@ -652,6 +653,10 @@ tailwind.config = {
     
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Rendering Hints */
+        section { content-visibility: auto; }
+        .tilt-element, .magnetic-btn { will-change: transform; }
     </style>
         
 
@@ -1018,10 +1023,10 @@ tailwind.config = {
             const canDrawConnections = (navigator.hardwareConcurrency || 4) >= 4;
             let particleVisible = true;
 
-            canvas.parentElement.addEventListener('mousemove', (e) => {
-                mousePos.x = e.clientX;
-                mousePos.y = e.clientY;
-            });
+            window._updateParticleMouse = (clientX, clientY) => {
+                mousePos.x = clientX;
+                mousePos.y = clientY;
+            };
             canvas.parentElement.addEventListener('mouseleave', () => {
                 mousePos.x = null;
                 mousePos.y = null;
@@ -1400,7 +1405,7 @@ tailwind.config = {
                         <!-- Background Image or Pattern -->
                         <div class="absolute inset-0 z-0 overflow-hidden" style="${bgStyle}">
                             ${imgSrc 
-                                ? `<img src="${imgSrc}" alt="${work.title}" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-[1.02] opacity-70 group-hover:opacity-90">`
+                                ? `<img src="${imgSrc}" alt="${work.title}" loading="lazy" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-[1.02] opacity-70 group-hover:opacity-90">`
                                 : ''
                             }
                         </div>
@@ -1985,19 +1990,23 @@ tailwind.config = {
         });
 
         // UI Pro Glass Panel Hover Glow Tracking (Throttled & Viewport Optimized)
+        // Consolidated Dispatcher
         let ticking = false;
         window.addEventListener('mousemove', e => {
             if (!ticking) {
                 window.requestAnimationFrame(() => {
+                    const clientX = e.clientX;
+                    const clientY = e.clientY;
+                    
+                    if (window._setCursorPos) window._setCursorPos(clientX, clientY);
+                    if (window._updateHeroMouse) window._updateHeroMouse(clientX, clientY);
+                    if (window._updateParticleMouse) window._updateParticleMouse(clientX, clientY);
+
                     document.querySelectorAll('.glass-panel').forEach(card => {
                         const rect = card.getBoundingClientRect();
-                        // Optimization: skip panels that are fully off-screen
                         if (rect.bottom < 0 || rect.top > window.innerHeight) return;
-                        
-                        const x = e.clientX - rect.left;
-                        const y = e.clientY - rect.top;
-                        card.style.setProperty('--mouse-x', `${x}px`);
-                        card.style.setProperty('--mouse-y', `${y}px`);
+                        card.style.setProperty('--mouse-x', `${clientX - rect.left}px`);
+                        card.style.setProperty('--mouse-y', `${clientY - rect.top}px`);
                     });
                     ticking = false;
                 });
@@ -2090,15 +2099,15 @@ tailwind.config = {
             window.addEventListener('resize', resize);
             resize();
 
-            window.addEventListener('mousemove', (e) => {
+            window._updateHeroMouse = (clientX, clientY) => {
                 lastMouse.x = mouse.x;
                 lastMouse.y = mouse.y;
                 const rect = canvas.getBoundingClientRect();
-                mouse.x = e.clientX - rect.left;
-                mouse.y = e.clientY - rect.top;
+                mouse.x = clientX - rect.left;
+                mouse.y = clientY - rect.top;
                 mouse.vx = mouse.x - lastMouse.x;
                 mouse.vy = mouse.y - lastMouse.y;
-            });
+            };
             window.addEventListener('touchmove', (e) => {
                 if (e.touches.length > 0) {
                     const rect = canvas.getBoundingClientRect();
