@@ -1544,13 +1544,45 @@ tailwind.config = {
                             `</div>`;
                     }
 
-                    // Format explicit block headers
-                    let parsedDesc = newLines.join('\n')
-                        .replace(/^Problem:/gm, '### Problem')
-                        .replace(/^Approach \/ Process:/gm, '### Approach / Process')
-                        .replace(/^Action:/gm, '### Action')
-                        .replace(/^Outcome:/gm, '### Outcome')
-                        .replace(/^Key Learnings:/gm, '### Key Learnings');
+                    // Format explicit block headers into structured cards
+                    let parsedDesc = "";
+                    let inCard = false;
+                    
+                    const cardTypes = {
+                        'Problem:': { title: 'Problem', icon: 'report_problem', colorClass: 'text-error', borderClass: 'border-error/50', bgClass: 'bg-error/5' },
+                        'Approach / Process:': { title: 'Approach / Process', icon: 'account_tree', colorClass: 'text-primary', borderClass: 'border-primary/50', bgClass: 'bg-primary/5' },
+                        'Action:': { title: 'Action', icon: 'play_circle', colorClass: 'text-primary', borderClass: 'border-primary/50', bgClass: 'bg-primary/5' },
+                        'Outcome:': { title: 'Outcome', icon: 'verified', colorClass: 'text-emerald-400', borderClass: 'border-emerald-500/50', bgClass: 'bg-emerald-500/5' },
+                        'Key Learnings:': { title: 'Key Learnings', icon: 'lightbulb', colorClass: 'text-amber-400', borderClass: 'border-amber-500/50', bgClass: 'bg-amber-500/5' }
+                    };
+
+                    for (let i = 0; i < newLines.length; i++) {
+                        let line = newLines[i];
+                        let matchedCard = null;
+                        for (let [key, config] of Object.entries(cardTypes)) {
+                            if (line.trim() === key || line.trim() === '**' + key + '**') {
+                                matchedCard = config;
+                                break;
+                            }
+                        }
+
+                        if (matchedCard) {
+                            if (inCard) {
+                                parsedDesc += '\n</div>\n\n'; // close previous card
+                            }
+                            parsedDesc += `\n<div class="my-6 p-5 sm:p-8 rounded-2xl border border-outline-variant/30 ${matchedCard.bgClass} backdrop-blur-md relative overflow-hidden group shadow-lg transition-all duration-300 hover:shadow-xl hover:border-outline-variant/50">
+                                <div class="absolute top-0 left-0 w-1 h-full ${matchedCard.borderClass} border-l-4"></div>
+                                <h3 class="flex items-center gap-3 ${matchedCard.colorClass} font-headline-sm text-xl sm:text-2xl mb-4 mt-0 p-0 font-bold border-none">
+                                    <span class="material-symbols-outlined text-[28px]">${matchedCard.icon}</span> ${matchedCard.title}
+                                </h3>\n\n`;
+                            inCard = true;
+                        } else {
+                            parsedDesc += line + '\n';
+                        }
+                    }
+                    if (inCard) {
+                        parsedDesc += '\n</div>\n';
+                    }
 
                     document.body.insertAdjacentHTML('beforeend', `
                     <div id="${modalId}" class="modal-overlay fixed inset-0 z-[100] hidden items-center justify-center p-4 sm:p-6 opacity-0 transition-opacity duration-300">
