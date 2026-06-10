@@ -1360,7 +1360,7 @@ tailwind.config = {
         const skillsContainer = document.getElementById('cms-skills-container');
         if (skillsContainer && textData.skills) {
             skillsContainer.innerHTML = textData.skills.map(skill => `
-                <div class="glass-panel gradient-border p-6 rounded-xl card-hover flex flex-col gap-6 hover:-translate-y-1 transition-transform duration-1000">
+                <div class="bg-transparent backdrop-blur-sm border border-outline-variant/30 gradient-border p-6 rounded-xl card-hover flex flex-col gap-6 hover:-translate-y-1 transition-transform duration-1000">
                     <div class="flex items-center gap-3">
                         <span class="material-symbols-outlined text-primary text-[32px]">${skill.icon}</span>
                         <h3 class="font-headline-sm text-headline-sm text-inverse-surface">${skill.category}</h3>
