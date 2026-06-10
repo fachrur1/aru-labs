@@ -1,0 +1,134 @@
+backend:
+  name: github
+  repo: fachrur1/portfolio
+  branch: main
+
+media_folder: "assets/images"
+public_folder: "assets/images"
+
+collections:
+  - name: "site_images"
+    label: "Manajemen Gambar Website"
+    files:
+      - label: "Semua Foto & Placeholder"
+        name: "images"
+        file: "content/images.json"
+        fields:
+          - {label: "Foto Profil", name: "profile_image", widget: "image", required: false}
+          - {label: "Foto Proyek 1 (Skripsi)", name: "project1_image", widget: "image", required: false}
+          - {label: "Foto Proyek 2 (Agri-Systems)", name: "project2_image", widget: "image", required: false}
+          - {label: "Foto Proyek 3 (Jasa Kita)", name: "project3_image", widget: "image", required: false}
+          - {label: "Foto Kinerja 1 (EXPO Unila)", name: "exp1_image", widget: "image", required: false}
+          - {label: "Foto Kinerja 2 (KKN-PPM)", name: "exp2_image", widget: "image", required: false}
+          - {label: "Gallery 3D 1 (Ferrumium)", name: "gallery1_image", widget: "image", required: false}
+          - {label: "Gallery 3D 2 (PPSMB)", name: "gallery2_image", widget: "image", required: false}
+          - {label: "Gallery 3D 3", name: "gallery3_image", widget: "image", required: false}
+          - {label: "Gallery 3D 4", name: "gallery4_image", widget: "image", required: false}
+          - {label: "Gallery 3D 5", name: "gallery5_image", widget: "image", required: false}
+          - {label: "Gallery 3D 6", name: "gallery6_image", widget: "image", required: false}
+          - {label: "Gallery 3D 7", name: "gallery7_image", widget: "image", required: false}
+          - {label: "Gallery 3D 8", name: "gallery8_image", widget: "image", required: false}
+          - {label: "Photography 1 (Humanity)", name: "photo1_image", widget: "image", required: false}
+          - {label: "Photography 2 (Technical)", name: "photo2_image", widget: "image", required: false}
+          - {label: "Photography 3 (Architectural)", name: "photo3_image", widget: "image", required: false}
+          - {label: "Photography 4 (Industrial)", name: "photo4_image", widget: "image", required: false}
+          - {label: "Photography 5 (Urban Energy)", name: "photo5_image", widget: "image", required: false}
+          - {label: "Photography 6 (Sustainable)", name: "photo6_image", widget: "image", required: false}
+
+  - name: "site_texts"
+    label: "Manajemen Teks & Konten"
+    files:
+      - label: "Pengaturan Website (Global)"
+        name: "settings"
+        file: "content/settings.json"
+        fields:
+          - name: "text_alignment"
+            label: "Format Teks Paragraf"
+            widget: "select"
+            options:
+              - label: "Kiri (Left)"
+                value: "text-left"
+              - label: "Tengah (Center)"
+                value: "text-center"
+              - label: "Kanan (Right)"
+                value: "text-right"
+              - label: "Rata Kiri Kanan (Justify)"
+                value: "text-justify"
+            default: "text-justify"
+      - label: "Semua Teks Beranda" 
+        name: "texts"
+        file: "content/data.json"
+        fields:
+          - name: "hero"
+            label: "Perkenalan Utama (Hero)"
+            widget: "object"
+            fields:
+              - {name: "title_line1", label: "Baris 1 Nama", widget: "string"}
+              - {name: "title_line2", label: "Baris 2 Nama", widget: "string"}
+              - {name: "subtitle", label: "Sub-judul", widget: "string"}
+              - {name: "description", label: "Deskripsi", widget: "text"}
+          - name: "about"
+            label: "Tentang Saya"
+            widget: "object"
+            fields:
+              - {name: "heading", label: "Judul", widget: "string"}
+              - {name: "body", label: "Isi (Mendukung Bold/Italic)", widget: "markdown"}
+          - name: "education"
+            label: "Riwayat Pendidikan"
+            widget: "list"
+            fields:
+              - {name: "period", label: "Tahun", widget: "string"}
+              - {name: "institution", label: "Institusi", widget: "string"}
+              - {name: "major", label: "Jurusan", widget: "string"}
+          - name: "skills"
+            label: "Keahlian Teknis"
+            widget: "list"
+            fields:
+              - {name: "category", label: "Kategori", widget: "string"}
+              - {name: "icon", label: "Ikon (Google Material)", widget: "string"}
+              - {name: "items", label: "Daftar Keahlian", widget: "list"}
+          - name: "works"
+            label: "Daftar Karya & Pengalaman"
+            widget: "list"
+            fields:
+              - {name: "category", label: "Kategori", widget: "string"}
+              - {name: "title", label: "Judul Proyek", widget: "string"}
+              - {name: "short_desc", label: "Deskripsi Singkat (Tampil di Kartu)", widget: "text", required: false}
+              - {name: "description", label: "Deskripsi Lengkap (Tampil di Modal, Markdown)", widget: "markdown"}
+              - {name: "tags", label: "Tag/Teknologi", widget: "list"}
+              - {name: "image_id", label: "ID Gambar Utama (Sesuai di Manajemen Gambar)", widget: "string"}
+              - {name: "gallery_ids", label: "Galeri Tambahan (Opsional)", widget: "list", field: {name: "image_id", label: "ID Gambar", widget: "string"}, required: false}
+
+
+          - name: "gallery_featured"
+            label: "Daftar 3D Gallery (Unggulan)"
+            widget: "list"
+            fields:
+              - {name: "category", label: "Kategori", widget: "string"}
+              - {name: "title", label: "Judul Karya", widget: "string"}
+              - {name: "short_desc", label: "Deskripsi Singkat (Tampil di Kartu)", widget: "text", required: false}
+              - {name: "description", label: "Deskripsi Lengkap (Tampil di Modal, Markdown)", widget: "markdown"}
+              - {name: "image_id", label: "ID Gambar Utama", widget: "string"}
+              - {name: "gallery_ids", label: "Galeri Tambahan (Opsional)", widget: "list", field: {name: "image_id", label: "ID Gambar", widget: "string"}, required: false}
+
+          - name: "photography"
+            label: "Daftar Fotografi"
+            widget: "list"
+            fields:
+              - {name: "title", label: "Judul Karya", widget: "string"}
+              - {name: "image_id", label: "ID Gambar Utama", widget: "string"}
+          - name: "organizations"
+            label: "Daftar Organisasi"
+            widget: "list"
+            fields:
+              - {name: "name", label: "Nama Organisasi", widget: "string"}
+              - {name: "role", label: "Peran/Divisi", widget: "string"}
+          - name: "contact"
+            label: "Bagian Kontak"
+            widget: "object"
+            fields:
+              - {name: "heading", label: "Judul", widget: "string"}
+              - {name: "body", label: "Isi", widget: "text"}
+              - {name: "email", label: "Email", widget: "string"}
+              - {name: "linkedin", label: "Link LinkedIn", widget: "string"}
+              - {name: "instagram", label: "Link Instagram", widget: "string"}

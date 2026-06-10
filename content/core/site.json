@@ -1,0 +1,19 @@
+{
+  "hero": {
+    "title_line1": "Muhammad",
+    "title_line2": "Fachrurrozy",
+    "subtitle": "Engineering Physics Student at Universitas Gadjah Mada",
+    "description": "Focused on Renewable Energy, 3D Design, Internet of Thing, and GIS Analysis"
+  },
+  "about": {
+    "heading": "About My Focus",
+    "body": "As a Renewable Energy Engineer with a background in Engineering Physics from Universitas Gadjah Mada, my work sits at the intersection of technical rigor and sustainable vision. I specialize in New and Renewable Energy (EBT), Building Physics, and Acoustics, focusing on comprehensive planning, system modeling, and data-driven execution.\n\nMy research is deeply rooted in utilizing advanced modeling tools to forecast energy needs and optimize transitions. I believe that effective sustainability requires not just idealism, but precise, technical recommendations grounded in robust GIS analysis and simulation."
+  },
+  "contact": {
+    "heading": "Let's Discuss Energy Solutions",
+    "body": "Open for collaborations, research opportunities, or technical discussions regarding sustainable energy transition.",
+    "email": "fahrulll2712@gmail.com",
+    "linkedin": "https://www.linkedin.com/in/muhammad-fachrurrozy-5ab2ba1a5/",
+    "instagram": "https://www.instagram.com/fachrur.rz_/"
+  }
+}

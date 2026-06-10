@@ -1,0 +1,54 @@
+# Dependencies
+node_modules/
+node_modules_backup/
+
+# Build output
+dist/
+
+# Wrangler
+.wrangler/
+
+# Screenshots (local only)
+screenshot_*.png
+
+# Scratch/test files
+scratch_*.html
+*.bak
+test*.js
+test*.cjs
+fix*.js
+merge_data.js
+update_index*.js
+extract.js
+scraper.*
+3.4.17
+AB6AXu*
+diff*.txt
+oji-test.html
+old_index.html
+live_index.html
+index_user_changes.html
+downloaded_site/
+script3.js
+
+# Downloaded assets (Google Fonts, CSS)
+css/
+fonts/
+
+# Sub-projects
+video-bot/
+
+# Vite cache
+src/.vite/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Env
+.env
+.env.*

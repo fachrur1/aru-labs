@@ -1,0 +1,44 @@
+[
+  {
+    "category": "Renewable Energy",
+    "icon": "energy_savings_leaf",
+    "items": [
+      "LEAP",
+      "WEAP",
+      "SAM"
+    ]
+  },
+  {
+    "category": "Graphic Design",
+    "icon": "brush",
+    "items": [
+      "Blender",
+      "Unreal Engine 5",
+      "Figma",
+      "After Effects"
+    ]
+  },
+  {
+    "category": "CAD Design",
+    "icon": "architecture",
+    "items": [
+      "AutoCAD",
+      "Inventor"
+    ]
+  },
+  {
+    "category": "Instrumentation & Control",
+    "icon": "settings_input_component",
+    "items": [
+      "Machine Expert - Schneider",
+      "PlatformIO"
+    ]
+  },
+  {
+    "category": "GIS Analysis",
+    "icon": "map",
+    "items": [
+      "QGIS"
+    ]
+  }
+]

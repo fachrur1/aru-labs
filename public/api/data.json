@@ -1,0 +1,293 @@
+{
+  "hero": {
+    "title_line1": "Muhammad",
+    "title_line2": "Fachrurrozy",
+    "subtitle": "Engineering Physics Student at Universitas Gadjah Mada",
+    "description": "Focused on Renewable Energy, 3D Design, Internet of Thing, and GIS Analysis"
+  },
+  "about": {
+    "heading": "About My Focus",
+    "body": "As a Renewable Energy Engineer with a background in Engineering Physics from Universitas Gadjah Mada, my work sits at the intersection of technical rigor and sustainable vision. I specialize in New and Renewable Energy (EBT), Building Physics, and Acoustics, focusing on comprehensive planning, system modeling, and data-driven execution.\n\nMy research is deeply rooted in utilizing advanced modeling tools to forecast energy needs and optimize transitions. I believe that effective sustainability requires not just idealism, but precise, technical recommendations grounded in robust GIS analysis and simulation."
+  },
+  "contact": {
+    "heading": "Let's Discuss Energy Solutions",
+    "body": "Open for collaborations, research opportunities, or technical discussions regarding sustainable energy transition.",
+    "email": "fahrulll2712@gmail.com",
+    "linkedin": "https://www.linkedin.com/in/muhammad-fachrurrozy-5ab2ba1a5/",
+    "instagram": "https://www.instagram.com/fachrur.rz_/"
+  },
+  "education": [
+    {
+      "period": "2022 - Present",
+      "institution": "Universitas Gadjah Mada",
+      "major": "Engineering Physics"
+    },
+    {
+      "period": "2019 - 2022",
+      "institution": "SMKN 1 Karawang",
+      "major": "Mechanical Engineering"
+    }
+  ],
+  "skills": [
+    {
+      "category": "Renewable Energy",
+      "icon": "energy_savings_leaf",
+      "items": [
+        "LEAP",
+        "WEAP",
+        "SAM"
+      ]
+    },
+    {
+      "category": "Graphic Design",
+      "icon": "brush",
+      "items": [
+        "Blender",
+        "Unreal Engine 5",
+        "Figma",
+        "After Effects"
+      ]
+    },
+    {
+      "category": "CAD Design",
+      "icon": "architecture",
+      "items": [
+        "AutoCAD",
+        "Inventor"
+      ]
+    },
+    {
+      "category": "Instrumentation & Control",
+      "icon": "settings_input_component",
+      "items": [
+        "Machine Expert - Schneider",
+        "PlatformIO"
+      ]
+    },
+    {
+      "category": "GIS Analysis",
+      "icon": "map",
+      "items": [
+        "QGIS"
+      ]
+    }
+  ],
+  "organizations": [
+    {
+      "name": "SRE UGM",
+      "role": "Research & Innovation Division"
+    },
+    {
+      "name": "UPII UGM",
+      "role": "Creative Economy Division"
+    }
+  ],
+  "photography": [
+    {
+      "title": "Humanity in Motion",
+      "image_id": "photo1_image"
+    },
+    {
+      "title": "Technical Documentation",
+      "image_id": "photo2_image"
+    },
+    {
+      "title": "Architectural Minimalism",
+      "image_id": "photo3_image"
+    },
+    {
+      "title": "Industrial Geometry",
+      "image_id": "photo4_image"
+    },
+    {
+      "title": "Urban Energy",
+      "image_id": "photo5_image"
+    },
+    {
+      "title": "Sustainable Landscapes",
+      "image_id": "photo6_image"
+    }
+  ],
+  "works": [
+    {
+      "category": "Community",
+      "title": "KKN-PPM UGM Period II 2025 — Engineering & Community Development",
+      "short_desc": "Led and implemented multiple community-based engineering projects in Cigugur, Kuningan, including energy-efficient lighting systems, IoT-powered smart irrigation, biopore infiltration systems, landslide early warning mechanisms, and educational space revitalization. Combined engineering solutions with community training to promote sustainable technology adoption and long-term local impact.",
+      "description": "Role: Village level student coordinator\n\nOrganization: Universitas Gadjah Mada\n\nLocation: Cigugur District\n\nDuration: 2025\n\nFocus: IoT, Renewable Energy, Appropriate Technology, Disaster Mitigation, Community Empowerment\n\nTools: ESP8266, IoT, Environmental Monitoring, Sustainable Energy, Disaster Mitigation, Community Development, Electrical Systems\n\n## Problem\r\nRural communities often face challenges related to energy efficiency, agricultural productivity, environmental sustainability, disaster preparedness, and access to educational facilities. Many existing solutions remain manual, resource-intensive, and difficult to maintain over the long term.\r\n\r\n## Approach\r\nDesigned and implemented a series of community-based engineering projects that combined appropriate technology, environmental awareness, and local capacity building. The programs emphasized practical implementation, technology transfer, and sustainability through community participation and hands-on training.\r\n\r\n## Outcome\r\nSuccessfully delivered multiple technology and community development initiatives that promoted energy efficiency, environmental sustainability, smart agriculture, disaster preparedness, and educational accessibility. The projects were accompanied by training and knowledge transfer activities to support long-term adoption by local residents.\r\n\r\n## Key Learnings\r\n- Community-centered engineering design.\r\n- IoT implementation in rural environments.\r\n- Sustainable technology deployment.\r\n- Project management and stakeholder engagement.\r\n- Translating technical solutions into real-world impact.\r\n\r\n---\r\n\r\n### Featured Projects\r\n\r\n**1. Automatic Light Control System Based on Light Sensors**\r\n\r\n*Focus: Energy Efficiency & Sustainable Energy*\r\n\r\nDesigned and installed an automatic lighting system utilizing LDR-based light sensors and energy-efficient LED lamps. The system automatically adjusts lighting operation according to ambient light conditions, reducing unnecessary electricity consumption while promoting awareness of sustainable energy practices.\r\n\r\n*Technologies: LDR Sensor, LED Lighting, Electrical Installation*\r\n\r\n**2. Biopore Infiltration Holes for Organic Waste Management and Flood Mitigation**\r\n\r\n*Focus: Environmental Sustainability*\r\n\r\nImplemented biopore infiltration systems to improve rainwater absorption, reduce surface runoff, and support organic waste decomposition. Conducted community training sessions to ensure residents could independently construct and maintain the installations.\r\n\r\n*Technologies: Biopore System, Environmental Engineering, Waste Management*\r\n\r\n**3. Smart Irrigation and Environmental Monitoring System**\r\n\r\n*Focus: IoT & Smart Agriculture*\r\n\r\nDeveloped an automated irrigation system equipped with soil moisture, temperature, and humidity monitoring capabilities. The system utilized ESP8266 microcontrollers, sensors, and automated water pumps to optimize irrigation practices for local farmers and livestock owners.\r\n\r\n*Technologies: ESP8266, IoT, Soil Moisture Sensors, Environmental Monitoring, Automation*\r\n\r\n**4. Community Reading Corner Revitalization**\r\n\r\n*Focus: Education & Community Development*\r\n\r\nDesigned and improved a community reading corner through spatial organization, educational visual materials, and environmental enhancements to create a more engaging learning environment for local residents and children.\r\n\r\n*Technologies: Visual Design, Educational Media, Community Engagement*\r\n\r\n**5. Landslide Early Warning and Ground Movement Monitoring System**\r\n\r\n*Focus: Disaster Risk Reduction*\r\n\r\nDeveloped a simple community-based early warning system for detecting potential ground movement and landslide risks. The project aimed to improve disaster preparedness and raise awareness regarding environmental hazards in vulnerable areas.\r\n\r\n*Technologies: Early Warning Systems, Disaster Mitigation, Community Safety*",
+      "tags": [
+        "ESP8266",
+        "IoT",
+        "Environmental Monitoring",
+        "Sustainable Energy",
+        "Disaster Mitigation",
+        "Community Development",
+        "Electrical Systems"
+      ],
+      "image_id": "exp2_image",
+      "gallery_ids": []
+    },
+    {
+      "category": "Research",
+      "title": "Undergraduate Thesis Research",
+      "short_desc": "Spatial Analysis of Renewable Energy Mix Potential in Kulon Progo Regency with the 2060 Energy Transition Scenario",
+      "description": "Role: Undergraduate Thesis Researcher\n\nDuration: 2026 – Present\n\nFocus: Renewable Energy Assessment, GIS, Energy System Modeling, Sustainability Planning\n\nTools: QGIS, NREL System Advisor Model (SAM), LEAP, Analytic Network Process (ANP), Remote Sensing & Spatial Analysis, Data Processing & Visualization\n\n## Problem\r\nAchieving Indonesia's 2060 energy transition target requires region-specific renewable energy planning based on accurate resource assessments and long-term energy demand projections. However, the renewable energy potential of Kulon Progo Regency has not been comprehensively evaluated through an integrated framework that combines spatial suitability analysis, energy generation modeling, and energy transition scenarios.\r\n\r\n## Approach\r\nConducting a comprehensive assessment of renewable energy resources in Kulon Progo Regency through the integration of GIS-based spatial analysis, renewable energy simulation, and energy system modeling. The study evaluates the technical potential of solar, wind, hydropower, and biomass resources while considering geographical, environmental, infrastructure, and land-use constraints.\r\n\r\nRenewable energy generation potential is simulated using the NREL System Advisor Model (SAM), while future energy transition pathways are analyzed using the Long-range Energy Alternatives Planning System (LEAP). The Analytic Network Process (ANP) is applied to prioritize renewable energy technologies and determine the most suitable energy mix under the 2060 transition scenario.\r\n\r\n## Outcome\r\nDeveloping a data-driven renewable energy transition roadmap that identifies suitable development zones, estimates renewable energy generation potential, and provides strategic recommendations for achieving a sustainable and resilient regional energy mix in Kulon Progo Regency.\r\n\r\n## Key Learnings\r\n- Renewable Energy Resource Assessment\r\n- GIS-Based Spatial Suitability Analysis\r\n- Energy Generation Simulation\r\n- Long-Term Energy System Modeling\r\n- Multi-Criteria Decision Analysis (ANP)\r\n- Sustainable Energy Planning\r\n- Environmental and Land-Use Assessment",
+      "tags": [
+        "QGIS",
+        "NREL System Advisor Model (SAM)",
+        "LEAP",
+        "Analytic Network Process (ANP)",
+        "Remote Sensing & Spatial Analysis",
+        "Data Processing & Visualization"
+      ],
+      "image_id": "project1_image",
+      "gallery_ids": [
+        "photo2_image",
+        "photo3_image"
+      ]
+    },
+    {
+      "category": "Design",
+      "title": "3D Mascot Designer — PPSMB Kesatria 2023",
+      "short_desc": "Designed and developed the 3D mascot 'Nala' for PPSMB Kesatria 2023.",
+      "description": "Role: 3D Mascot Designer\n\nDuration: 2023\n\nTools: 3D Modeling, Character Design, Visual Branding, Asset Development\n\nProblem:\r\n\r\nPPSMB Kesatria required a distinctive visual identity that could engage incoming students and strengthen the event's branding. The mascot \"Nala\" needed to be transformed from a conceptual character into a high-quality 3D asset suitable for various promotional and digital media.\r\n\r\nApproach / Process:\r\n\r\nDeveloped the 3D model of \"Nala\" by translating design concepts into a detailed digital asset. Collaborated with the creative team throughout the modeling and refinement process to ensure visual consistency with the event's branding guidelines. Iteratively improved the model based on feedback and requirements for different media applications.\r\n\r\nOutcome:\r\n\r\nDelivered a production-ready 3D mascot asset that was utilized across promotional materials, digital content, and event branding. The mascot contributed to a stronger and more recognizable visual identity for PPSMB Kesatria 2023.\r\n\r\nKey Learnings:\r\n\r\n- Translating 2D concepts into production-ready 3D assets.\r\n\r\n- Maintaining visual consistency across multiple media formats.\r\n\r\n- Collaborating within a multidisciplinary creative team under tight deadlines.",
+      "tags": [
+        "3D Modeling",
+        "Character Design",
+        "Visual Branding",
+        "Asset Development"
+      ],
+      "image_id": "gallery2_image",
+      "gallery_ids": []
+    },
+    {
+      "category": "Design",
+      "title": "3D Mascot Designer — Pionir Kesatria 2024",
+      "short_desc": "Contributed to the development and refinement of the 3D mascot 'Nala' for Pionir Kesatria 2024.",
+      "description": "Role: 3D Mascot Designer\n\nDuration: 2024\n\nTools: 3D Modeling, Character Design, Visual Branding, Asset Development\n\nProblem:\r\n\r\nFollowing the rebranding of PPSMB Kesatria into Pionir Kesatria, the organization required updated visual assets that reflected its renewed identity while preserving the familiarity and recognition of the mascot \"Nala.\"\r\n\r\nApproach / Process:\r\n\r\nRefined and enhanced the existing 3D mascot design to align with the new branding direction. Worked closely with the design team to improve visual presentation, optimize assets for different use cases, and ensure consistency across promotional and communication materials.\r\n\r\nOutcome:\r\n\r\nSuccessfully adapted the mascot for the new event identity, contributing to a cohesive branding experience across digital and promotional platforms. The updated asset supported the organization's transition while maintaining strong visual recognition among participants.\r\n\r\nKey Learnings:\r\n\r\n- Adapting existing design assets to evolving branding requirements.\r\n\r\n- Balancing consistency and innovation during a rebranding process.\r\n\r\n- Optimizing 3D assets for broader usability across multiple platforms.",
+      "tags": [
+        "3D Modeling",
+        "Character Design",
+        "Visual Branding",
+        "Asset Development"
+      ],
+      "image_id": "gallery2_image",
+      "gallery_ids": []
+    },
+    {
+      "category": "Entrepreneurship",
+      "title": "Ferrumium — PKM-K Funded Project (2023)",
+      "short_desc": "Contributed to the design and development of Ferrumium, an upcycled product from used lighter components.",
+      "description": "Role: Product Design Staff\n\nDuration: 2023\n\nTools: Blender 3D, AutoCAD 3D, Autodesk 3ds Max, Figma\n\nProblem:\r\n\r\nThousands of used cigarette lighters are discarded every day despite containing reusable components and distinctive mechanical forms. The challenge was to transform this waste into a product that was both environmentally meaningful and commercially attractive.\r\n\r\nApproach / Process:\r\n\r\nContributed to the design and development of Ferrumium, a collection of miniature robot figures created from recycled lighter components. Developed product concepts, explored design variations, and assisted in transforming raw materials into visually appealing collectibles. Worked closely with the team to balance aesthetics, manufacturability, and material constraints while maintaining the project's sustainability objectives.\r\n\r\nOutcome:\r\n\r\nContributed to the successful development of an innovative upcycling product that secured funding through the PKM-K entrepreneurship program. The project demonstrated how discarded materials could be transformed into value-added products with creative and commercial potential.\r\n\r\nKey Learnings:\r\n\r\n- Sustainable product design and upcycling principles.\r\n\r\n- Designing under material and manufacturing constraints.\r\n\r\n- Converting conceptual ideas into tangible products.\r\n\r\n- Cross-functional collaboration in an entrepreneurship project.",
+      "tags": [
+        "Blender 3D",
+        "AutoCAD 3D",
+        "Autodesk 3ds Max",
+        "Figma"
+      ],
+      "image_id": "gallery1_image",
+      "gallery_ids": []
+    },
+    {
+      "category": "Startup",
+      "title": "Ferrumium — P2MW Funded Startup Program (2024)",
+      "short_desc": "Led the technical and product development aspects of Ferrumium as Chief Technology Officer.",
+      "description": "Role: Chief Technology Officer (CTO)\n\nDuration: 2024\n\nTools: Blender 3D, AutoCAD 3D, Autodesk 3ds Max, Figma\n\nProblem:\r\n\r\nAs Ferrumium evolved from a student entrepreneurship project into a startup-oriented venture, the team faced challenges in standardizing product development, improving production workflows, and sustaining innovation while preparing for broader market opportunities.\r\n\r\nApproach / Process:\r\n\r\nLed the technical and product development aspects of the project as Chief Technology Officer. Oversaw design improvements, evaluated production methods, coordinated technical decision-making, and explored new product concepts derived from recycled lighter components. Collaborated with multidisciplinary team members to ensure product quality, consistency, and scalability.\r\n\r\nOutcome:\r\n\r\nSupported Ferrumium's progression into the P2MW entrepreneurship program, helping establish a more structured product development process and strengthening the project's foundation for future growth. Contributed to the technical strategy behind transforming recycled materials into a distinctive and marketable product line.\r\n\r\nKey Learnings:\r\n\r\n- Technical leadership within an early-stage venture.\r\n\r\n- Product development strategy and innovation management.\r\n\r\n- Balancing creativity, production feasibility, and business objectives.\r\n\r\n- Building scalable workflows for product-based startups.",
+      "tags": [
+        "Blender 3D",
+        "AutoCAD 3D",
+        "Autodesk 3ds Max",
+        "Figma"
+      ],
+      "image_id": "gallery1_image",
+      "gallery_ids": []
+    },
+    {
+      "category": "Community",
+      "title": "National Energy Festival (NEF) UGM 2023",
+      "short_desc": "Contributed to both the creative and media production aspects of the event, including 3D mascot design and livestreaming.",
+      "description": "Role: Creative Design & Media Staff\n\nDuration: 2023\n\nTools: Blender 3D, AutoCAD 3D, Autodesk 3ds Max, Figma, Adobe Illustrator, Sony HXR-NX2500\n\nProblem:\r\n\r\nAs one of UGM's major energy-themed events, the National Energy Festival required a cohesive visual identity and engaging event atmosphere to effectively communicate its themes and enhance participant experience. The organizing committee also needed reliable media coverage to support event documentation and livestreaming activities.\r\n\r\nApproach / Process:\r\n\r\nContributed to both the creative and media production aspects of the event. Designed and developed a 3D mascot to strengthen the festival's visual identity, created graphic assets for event decorations and supporting materials, and collaborated with the creative team to ensure visual consistency throughout the venue. Additionally, operated the Sony HXR-NX2500 camera during livestream sessions, capturing event activities and supporting real-time broadcasting.\r\n\r\nOutcome:\r\n\r\nDelivered visual assets that contributed to a cohesive event branding experience and enhanced the overall atmosphere of the festival. Supported successful livestream operations and event documentation, helping extend audience engagement beyond on-site participants.\r\n\r\nKey Learnings:\r\n\r\n- Event branding and visual communication.\r\n\r\n- 3D mascot development for large-scale events.\r\n\r\n- Graphic design for environmental and decorative applications.\r\n\r\n- Live event production and camera operation.\r\n\r\n- Working across creative and technical roles within a multidisciplinary team.",
+      "tags": [
+        "Blender 3D",
+        "AutoCAD 3D",
+        "Autodesk 3ds Max",
+        "Figma",
+        "Adobe Illustrator",
+        "Sony HXR-NX2500"
+      ],
+      "image_id": "",
+      "gallery_ids": []
+    },
+    {
+      "category": "Organization",
+      "title": "Society of Renewable Energy (SRE) UGM — Research & Innovation Division",
+      "short_desc": "Contributed to renewable energy and sustainability initiatives through interdisciplinary research and engineering projects.",
+      "description": "Role: Research & Innovation Member\n\nOrganization: Society of Renewable Energy (SRE) UGM\n\nDuration: 2024\n\nTools: Solar PV, ESP32, IoT Systems, Photobioreactor Design, Blender, Figma, Technical Documentation\n\nContributed to renewable energy and sustainability initiatives through interdisciplinary research and engineering projects focused on bioenergy, solar energy integration, IoT-based agriculture systems, and community-centered technology implementation.\r\n\r\nProblem:\r\n\r\nMany renewable energy and sustainable agriculture solutions remain difficult to implement due to technical complexity, limited accessibility, and the lack of integrated systems that connect research concepts with real-world applications.\r\n\r\nApproach / Process:\r\n\r\nCollaborated within the Research & Innovation Division to develop renewable energy and smart agriculture projects. Contributed to the design of a photobioreactor prototype for microalgae-based biodiesel research, while also participating in the engineering design of a photovoltaic-powered smart drip irrigation system integrating solar energy, IoT monitoring, and automated irrigation control for sustainable farming applications.\r\n\r\nOutcome:\r\n\r\nProduced technical designs, system architectures, and engineering concepts that supported both research and community-oriented sustainability initiatives. The photobioreactor project was further developed and presented in a national scientific paper competition, while the smart irrigation project provided a practical framework for renewable-energy-powered agricultural technology deployment.\r\n\r\nKey Learnings:\r\n\r\n- Renewable Energy Systems\r\n- Bioenergy Technologies\r\n- Solar PV Applications\r\n- Smart Agriculture\r\n- IoT System Design\r\n- Engineering Prototyping\r\n- Technical Documentation\r\n- Interdisciplinary Research\r\n\r\nImpact Statement:\r\n\r\nDesigned and developed renewable energy and smart agriculture solutions by combining bioenergy research, solar PV integration, and IoT-based automation to support sustainable technology adoption.",
+      "tags": [
+        "Solar PV",
+        "ESP32",
+        "IoT Systems",
+        "Photobioreactor Design",
+        "Blender",
+        "Figma",
+        "Technical Documentation"
+      ],
+      "image_id": "",
+      "gallery_ids": []
+    },
+    {
+      "category": "Achievement",
+      "title": "Scientific Paper Competition EXPO 2024",
+      "short_desc": "3rd Place Winner - Designed a photobioreactor prototype for microalgae cultivation.",
+      "description": "Role: Photobioreactor Prototype Designer\n\nDuration: 2024\n\nTools: Blender 3D, AutoCAD 3D, Autodesk 3ds Max, Figma\n\nAward: 3rd Place Winner\r\n\r\nOrganizer: Universitas Lampung\r\n\r\nProblem:\r\n\r\nDespite the growing interest in microalgae-based biodiesel as a sustainable energy source, achieving economically viable production remains a significant challenge. Improvements in both biological engineering and cultivation systems are required to enhance biomass and lipid productivity.\r\n\r\nApproach / Process:\r\n\r\nCollaborated in the development of the research project \"Bioengineering of Microalgae: Genome Editing of Chlamydomonas reinhardtii for Enhanced Biodiesel Productivity Through CRISPRi.\" Contributed by designing a photobioreactor prototype intended to support controlled microalgae cultivation and future implementation of genome-editing strategies. Developed conceptual designs, system visualizations, and engineering representations to communicate the integration of biotechnology and renewable energy applications.\r\n\r\nOutcome:\r\n\r\nThe project was awarded 3rd Place at the Scientific Paper Competition EXPO 2024, recognizing its innovative approach to combining synthetic biology and sustainable energy technologies for future biodiesel production.\r\n\r\nKey Learnings:\r\n\r\n- Biofuel and renewable energy technologies.\r\n\r\n- Photobioreactor engineering concepts.\r\n\r\n- Scientific research communication.\r\n\r\n- Translating research concepts into engineering prototypes.\r\n\r\n- Interdisciplinary collaboration between biotechnology and engineering fields.",
+      "tags": [
+        "Blender 3D",
+        "AutoCAD 3D",
+        "Autodesk 3ds Max",
+        "Figma"
+      ],
+      "image_id": "exp1_image",
+      "gallery_ids": []
+    },
+    {
+      "category": "Research",
+      "title": "Photovoltaic-Powered Smart Drip Irrigation System for Bhumee Organic",
+      "short_desc": "Designed a solar-powered smart drip irrigation system integrating IoT and automated control.",
+      "description": "Role: Research & Innovation Member\n\nOrganization: Society of Renewable Energy (SRE) UGM\n\nDuration: 2024\n\nFocus: Solar Energy Integration, IoT Systems, Smart Agriculture\n\nTools: Solar Energy Integration, IoT Systems, Smart Agriculture\n\nProblem:\r\n\r\nBhumee Organic, an organic farming cooperative in Yogyakarta, relied on conventional irrigation methods that resulted in excessive water consumption, inefficient labor utilization, and difficulties in maintaining optimal soil moisture levels for dragon fruit cultivation.\r\n\r\nApproach / Process:\r\n\r\nCollaborated with a multidisciplinary team to design a photovoltaic-powered smart drip irrigation system for a 500 m² agricultural area. Contributed to the electrical system design and IoT architecture, including soil moisture monitoring, automated irrigation control, water level management, and remote system monitoring. The system integrated solar panels, energy storage, ESP32-based controllers, soil moisture sensors, pumps, and cloud-based monitoring to support precision agriculture practices.\r\n\r\nOutcome:\r\n\r\nDeveloped a sustainable irrigation solution capable of optimizing water usage, reducing manual labor requirements, and supporting data-driven irrigation management. The project demonstrated how renewable energy and IoT technologies can be integrated to improve agricultural efficiency and sustainability in small-scale farming operations.\r\n\r\nKey Learnings:\r\n\r\n- Solar-powered system design and integration.\r\n\r\n- IoT architecture for agricultural automation.\r\n\r\n- Sensor-based monitoring and control systems.\r\n\r\n- Sustainable engineering for real-world community applications.\r\n\r\n- Cross-disciplinary collaboration between engineering and agriculture.",
+      "tags": [
+        "Solar Energy Integration",
+        "IoT Systems",
+        "Smart Agriculture"
+      ],
+      "image_id": "",
+      "gallery_ids": []
+    },
+    {
+      "category": "Organization",
+      "title": "Unit Interdisipliner Ilmu Pengetahuan Indonesia (UPII) UGM",
+      "short_desc": "Supported interdisciplinary initiatives related to entrepreneurship, innovation, and community engagement.",
+      "description": "Role: Creative Economy Division Member\n\nOrganization: UPII UGM\n\nDuration: 2024\n\nTools: Creative Economy, Innovation, Community Development\n\nProblem:\r\n\r\nInterdisciplinary organizations often face challenges in transforming innovative ideas into sustainable initiatives that create social and economic value. Effective collaboration between members from diverse academic backgrounds is essential to bridge creativity, innovation, and implementation.\r\n\r\nApproach / Process:\r\n\r\nContributed as a member of the Creative Economy Division by supporting programs and initiatives related to entrepreneurship, innovation, and community engagement. Collaborated with multidisciplinary teams to develop ideas, organize activities, and explore opportunities that could generate both educational and economic impact.\r\n\r\nOutcome:\r\n\r\nSupported the implementation of interdisciplinary initiatives that encouraged collaboration, creativity, and innovation among students from various fields. Contributed to strengthening the organization's efforts in promoting creative and sustainable solutions to societal challenges.\r\n\r\nKey Learnings:\r\n\r\n- Interdisciplinary collaboration.\r\n\r\n- Creative economy and innovation management.\r\n\r\n- Project coordination and teamwork.\r\n\r\n- Community-oriented problem solving.\r\n\r\n- Entrepreneurship and value creation.",
+      "tags": [
+        "Creative Economy",
+        "Innovation",
+        "Community Development"
+      ],
+      "image_id": "",
+      "gallery_ids": []
+    },
+    {
+      "category": "Research",
+      "title": "Agrovoltaic Smart Farming System",
+      "short_desc": "Supported the field implementation of an agrovoltaic system combining solar PV technology with agriculture.",
+      "description": "Role: Research Staff\n\nOrganization: Renewable Energy Systems, Applications, and Planning (RESP)\n\nDuration: 2026 – Present\n\nFocus: Solar PV Installation, Agrovoltaics, Sustainable Agriculture\n\nTools: Solar PV Systems, Electrical Wiring & Installation, Power Tools, Structural Installation, Field Engineering Practices\n\nProblem:\r\n\r\nAgricultural operations in rural communities often face increasing energy costs and limited access to sustainable energy solutions. At the same time, farmers need to maintain productivity while adapting to climate change and improving resource efficiency. Integrating solar energy generation with agricultural activities presents an opportunity to address both challenges simultaneously.\r\n\r\nAction:\r\n\r\nSupported the field implementation of an agrovoltaic system that combines solar photovoltaic (PV) technology with agricultural land use. Assisted in the installation of PV support structures, cable routing, equipment assembly, and site preparation activities. Collaborated with researchers, engineers, and local stakeholders during the deployment of renewable energy infrastructure for smart farming applications.\r\n\r\nOutcome:\r\n\r\nSuccessfully contributed to the construction and deployment phase of the agrovoltaic system by supporting on-site installation activities and infrastructure preparation. The project established the foundation for integrating renewable energy technologies into community-based agricultural operations.\r\n\r\nKey Learnings:\r\n\r\n- Solar photovoltaic (PV) installation practices.\r\n\r\n- Renewable energy system deployment.\r\n\r\n- Field engineering and construction workflows.\r\n\r\n- Electrical installation and equipment assembly.\r\n\r\n- Collaboration within multidisciplinary research teams.\r\n\r\n- Community-based renewable energy implementation.",
+      "tags": [
+        "Solar PV Systems",
+        "Electrical Wiring & Installation",
+        "Power Tools",
+        "Structural Installation",
+        "Field Engineering Practices"
+      ],
+      "image_id": "",
+      "gallery_ids": []
+    }
+  ]
+}
