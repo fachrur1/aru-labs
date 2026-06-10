@@ -675,8 +675,8 @@ tailwind.config = {
 
         <!-- Quote Container -->
         <div class="relative z-10 max-w-2xl px-6 mb-16 h-32 flex flex-col items-center justify-center">
-            <p id="quote-text" class="font-montserrat font-light tracking-wide text-[var(--color-on-surface)] text-lg md:text-xl italic text-center transition-opacity duration-1000 opacity-0"></p>
-            <p id="quote-author" class="font-typewriter text-primary text-sm transition-opacity duration-1000 opacity-0 mt-4"></p>
+            <p id="quote-text" class="font-montserrat font-light tracking-wide text-[var(--color-on-surface)] text-lg md:text-xl italic text-center transition-opacity duration-500 opacity-0"></p>
+            <p id="quote-author" class="font-typewriter text-primary text-sm transition-opacity duration-500 opacity-0 mt-4"></p>
         </div>
         
         <div class="absolute bottom-8 text-[var(--color-on-surface)] opacity-40 text-xs font-mono-technical tracking-widest animate-pulse z-50">CLICK TO CONTINUE</div>
@@ -1011,9 +1011,12 @@ tailwind.config = {
             const ctx = canvas.getContext('2d');
             let particles = [];
             let mousePos = { x: null, y: null };
-            const connectDistance = 120;
+            const connectDistance = 80;
+            const connectDistanceSq = connectDistance * connectDistance;
             const mouseRadius = 100;
+            const mouseRadiusSq = mouseRadius * mouseRadius;
             const canDrawConnections = (navigator.hardwareConcurrency || 4) >= 4;
+            let particleVisible = true;
 
             canvas.parentElement.addEventListener('mousemove', (e) => {
                 mousePos.x = e.clientX;
@@ -1031,7 +1034,7 @@ tailwind.config = {
             
             function initParticles() {
                 particles = [];
-                const numParticles = Math.min(window.innerWidth / 20, 80);
+                const numParticles = Math.min(window.innerWidth / 25, 50);
                 for(let i=0; i<numParticles; i++) {
                     particles.push({
                         x: Math.random() * canvas.width,
@@ -1045,6 +1048,7 @@ tailwind.config = {
             }
 
             function drawParticles() {
+                if (!particleVisible) { requestAnimationFrame(drawParticles); return; }
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 const rgb = window.particlePrimaryRgb || '78, 222, 163';
 
@@ -1055,8 +1059,9 @@ tailwind.config = {
                     if(mousePos.x !== null && mousePos.y !== null) {
                         const dx = p.x - mousePos.x;
                         const dy = p.y - mousePos.y;
-                        const dist = Math.sqrt(dx * dx + dy * dy);
-                        if(dist < mouseRadius && dist > 0) {
+                        const distSq = dx * dx + dy * dy;
+                        if(distSq < mouseRadiusSq && distSq > 0) {
+                            const dist = Math.sqrt(distSq);
                             const force = (mouseRadius - dist) / mouseRadius * 0.8;
                             p.vx += (dx / dist) * force;
                             p.vy += (dy / dist) * force;
@@ -1083,14 +1088,15 @@ tailwind.config = {
                     ctx.fillStyle = `rgba(${rgb}, ${p.alpha})`;
                     ctx.fill();
 
-                    // Draw connections
+                    // Draw connections (squared-distance check)
                     if(canDrawConnections) {
                         for(let j = i + 1; j < particles.length; j++) {
                             const p2 = particles[j];
                             const dx = p.x - p2.x;
                             const dy = p.y - p2.y;
-                            const dist = Math.sqrt(dx * dx + dy * dy);
-                            if(dist < connectDistance) {
+                            const distSq = dx * dx + dy * dy;
+                            if(distSq < connectDistanceSq) {
+                                const dist = Math.sqrt(distSq);
                                 const lineAlpha = (1 - dist / connectDistance) * 0.3;
                                 ctx.beginPath();
                                 ctx.moveTo(p.x, p.y);
@@ -1104,6 +1110,12 @@ tailwind.config = {
                 }
                 requestAnimationFrame(drawParticles);
             }
+
+            // Pause particle canvas when off-screen
+            const particleObserver = new IntersectionObserver((entries) => {
+                particleVisible = entries[0].isIntersecting;
+            }, { threshold: 0 });
+            particleObserver.observe(canvas);
 
             window.addEventListener('resize', () => {
                 resize();
@@ -1134,7 +1146,7 @@ tailwind.config = {
                 if (isSkipped) return;
                 isSkipped = true;
                 clearTimeout(autoNextTimeout);
-                loader.style.transition = 'opacity 0.8s ease-in-out';
+                loader.style.transition = 'opacity 0.5s ease-in-out';
                 loader.style.opacity = '0';
                 setTimeout(() => {
                     loader.style.display = 'none';
@@ -1144,7 +1156,7 @@ tailwind.config = {
                         appContent.classList.add('opacity-100', 'pointer-events-auto');
                     }
                     if (window.startHeroTypewriter) window.startHeroTypewriter();
-                }, 800);
+                }, 500);
             };
 
             const showQuote = (index) => {
@@ -1158,12 +1170,12 @@ tailwind.config = {
                 
                 quoteEl.style.opacity = '1';
                 if (quotes[index].author) {
-                    setTimeout(() => { if (!isSkipped && currentQuote === index) authorEl.style.opacity = '1'; }, 1000);
+                    setTimeout(() => { if (!isSkipped && currentQuote === index) authorEl.style.opacity = '1'; }, 500);
                 }
 
                 autoNextTimeout = setTimeout(() => {
                     goToNextQuote();
-                }, 4500);
+                }, 1500);
             };
 
             const goToNextQuote = () => {
@@ -1178,7 +1190,7 @@ tailwind.config = {
                     currentQuote++;
                     isFading = false;
                     showQuote(currentQuote);
-                }, 1500);
+                }, 800);
             };
 
             loader.addEventListener('mousedown', (e) => {
@@ -1773,11 +1785,15 @@ tailwind.config = {
             dot.style.transform = `translate(${mouseX}px, ${mouseY}px) translate(-50%, -50%)`;
             outline.style.transform = `translate(${outlineX}px, ${outlineY}px) translate(-50%, -50%)`;
 
-            window.addEventListener('mousemove', (e) => {
-                mouseX = e.clientX;
-                mouseY = e.clientY;
-                dot.style.transform = `translate(${mouseX}px, ${mouseY}px) translate(-50%, -50%)`;
-            });
+            // Store refs for consolidated mousemove handler
+            window._cursorDot = dot;
+            window._cursorMouseX = mouseX;
+            window._cursorMouseY = mouseY;
+            window._setCursorPos = (x, y) => {
+                window._cursorMouseX = x;
+                window._cursorMouseY = y;
+                dot.style.transform = `translate(${x}px, ${y}px) translate(-50%, -50%)`;
+            };
 
             
             // Ripple Effect on Click
@@ -2054,11 +2070,12 @@ tailwind.config = {
             
             let width, height;
             let particles = [];
-            const particleCount = window.innerWidth < 768 ? 20 : 80;
-            const connectionDistance = 140;
+            const particleCount = window.innerWidth < 768 ? 15 : 50;
+            const connectionDistance = 100;
             const connectionDistanceSq = connectionDistance * connectionDistance;
             const mouseInteractionRadius = 220;
             const mouseInteractionRadiusSq = mouseInteractionRadius * mouseInteractionRadius;
+            let heroVisible = true;
 
             let mouse = { x: -1000, y: -1000, vx: 0, vy: 0 };
             let lastMouse = { x: -1000, y: -1000 };
@@ -2089,6 +2106,12 @@ tailwind.config = {
                     mouse.y = e.touches[0].clientY - rect.top;
                 }
             });
+
+            // Pause hero canvas when off-screen
+            const heroObserver = new IntersectionObserver((entries) => {
+                heroVisible = entries[0].isIntersecting;
+            }, { threshold: 0 });
+            heroObserver.observe(canvas.closest('section') || canvas.parentElement);
 
             const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--color-primary').trim() || '#10b981';
             
@@ -2158,16 +2181,7 @@ tailwind.config = {
                     ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
                     const alpha = 0.2 + this.glow * 0.8;
                     ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
-                    
-                    if (this.glow > 0.1) {
-                        ctx.shadowBlur = 15 * this.glow;
-                        ctx.shadowColor = `rgba(${r}, ${g}, ${b}, 1)`;
-                    } else {
-                        ctx.shadowBlur = 0;
-                    }
-                    
                     ctx.fill();
-                    ctx.shadowBlur = 0;
                 }
             }
 
@@ -2177,6 +2191,7 @@ tailwind.config = {
 
             function animate() {
                 requestAnimationFrame(animate);
+                if (!heroVisible) return;
                 ctx.clearRect(0, 0, width, height);
 
                 for (let i = 0; i < particles.length; i++) {
@@ -2195,7 +2210,6 @@ tailwind.config = {
                             const dist = Math.sqrt(distSq);
                             const baseAlpha = 1 - (dist / connectionDistance);
                             const glowAlpha = Math.max(p1.glow, p2.glow);
-                            // Boost opacity when glowing
                             const finalAlpha = baseAlpha * 0.25 + glowAlpha * 0.75;
 
                             ctx.beginPath();
@@ -2203,16 +2217,7 @@ tailwind.config = {
                             ctx.lineTo(p2.x, p2.y);
                             ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${finalAlpha})`;
                             ctx.lineWidth = 1 + glowAlpha * 1.5;
-                            
-                            if (glowAlpha > 0.1) {
-                                ctx.shadowBlur = 10 * glowAlpha;
-                                ctx.shadowColor = `rgba(${r}, ${g}, ${b}, 0.8)`;
-                            } else {
-                                ctx.shadowBlur = 0;
-                            }
-                            
                             ctx.stroke();
-                            ctx.shadowBlur = 0;
                         }
                     }
                 }
