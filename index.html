@@ -1295,8 +1295,18 @@ tailwind.config = {
             </div>
             `;
         }
-
         const resolveImg = (id) => imgData[id] ? imgData[id] : '';
+
+        // Dynamically update any element with data-cms-id from images.json
+        document.querySelectorAll('[data-cms-id]').forEach(el => {
+            const cmsId = el.getAttribute('data-cms-id');
+            const newSrc = resolveImg(cmsId);
+            if (newSrc && el.tagName === 'IMG') {
+                el.src = newSrc;
+            } else if (newSrc && el.tagName === 'SOURCE') {
+                el.srcset = newSrc;
+            }
+        });
 
         if (textData.hero) {
             document.getElementById('cms-hero-title').innerHTML = `${textData.hero.title_line1}<br><span class="text-primary">${textData.hero.title_line2}</span>`;
