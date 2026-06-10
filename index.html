@@ -1818,8 +1818,8 @@ tailwind.config = {
             });
 
             const animate = () => {
-                let distX = mouseX - outlineX;
-                let distY = mouseY - outlineY;
+                let distX = window._cursorMouseX - outlineX;
+                let distY = window._cursorMouseY - outlineY;
                 
                 outlineX += distX * 0.15;
                 outlineY += distY * 0.15;
