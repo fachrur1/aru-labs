@@ -30,6 +30,17 @@ export default defineConfig({
                 
                 res.writeHead(200, { 'Content-Type': 'application/json' });
                 res.end(JSON.stringify({ success: true }));
+
+                // Auto deploy to GitHub and Cloudflare in the background
+                const { exec } = require('child_process');
+                console.log('Save successful. Triggering auto-deploy to GitHub and Cloudflare...');
+                exec('npm run build && git add . && git commit -m "Auto-save from Editor" && git push && npx wrangler pages deploy dist --project-name aru-labs', (error, stdout, stderr) => {
+                    if (error) {
+                        console.error(`Auto-deploy error: ${error.message}`);
+                        return;
+                    }
+                    console.log(`Auto-deploy success!`);
+                });
               } catch (e) {
                 res.writeHead(500);
                 res.end(JSON.stringify({ error: e.message }));
