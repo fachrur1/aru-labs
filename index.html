@@ -1545,8 +1545,8 @@ tailwind.config = {
                     }
 
                     // Format explicit block headers into structured cards
-                    let parsedDesc = "";
-                    let inCard = false;
+                    let parsedBlocks = [];
+                    let currentBlock = { type: 'text', content: '', config: null };
                     
                     const cardTypes = {
                         'Problem:': { title: 'Problem', icon: 'report_problem', colorClass: 'text-error', borderClass: 'border-error/50', bgClass: 'bg-error/5' },
@@ -1567,21 +1567,33 @@ tailwind.config = {
                         }
 
                         if (matchedCard) {
-                            if (inCard) {
-                                parsedDesc += '\n</div>\n\n'; // close previous card
-                            }
-                            parsedDesc += `\n<div class="my-6 p-5 sm:p-8 rounded-2xl border border-outline-variant/30 ${matchedCard.bgClass} backdrop-blur-md relative overflow-hidden group shadow-lg transition-all duration-300 hover:shadow-xl hover:border-outline-variant/50">
-                                <div class="absolute top-0 left-0 w-1 h-full ${matchedCard.borderClass} border-l-4"></div>
-                                <h3 class="flex items-center gap-3 ${matchedCard.colorClass} font-headline-sm text-xl sm:text-2xl mb-4 mt-0 p-0 font-bold border-none">
-                                    <span class="material-symbols-outlined text-[28px]">${matchedCard.icon}</span> ${matchedCard.title}
-                                </h3>\n\n`;
-                            inCard = true;
+                            parsedBlocks.push(currentBlock);
+                            currentBlock = { type: 'card', content: '', config: matchedCard };
                         } else {
-                            parsedDesc += line + '\n';
+                            // Auto-format non-empty lines as bullets in Key Learnings
+                            if (currentBlock.type === 'card' && currentBlock.config.title === 'Key Learnings') {
+                                if (line.trim() !== '' && !line.trim().startsWith('-') && !line.trim().startsWith('*')) {
+                                    line = '- ' + line.trim();
+                                }
+                            }
+                            currentBlock.content += line + '\n';
                         }
                     }
-                    if (inCard) {
-                        parsedDesc += '\n</div>\n';
+                    parsedBlocks.push(currentBlock);
+
+                    let finalDescHTML = '';
+                    for (let block of parsedBlocks) {
+                        if (block.type === 'text' && block.content.trim()) {
+                            finalDescHTML += marked.parse(block.content);
+                        } else if (block.type === 'card') {
+                            finalDescHTML += `\n<div class="my-6 p-5 sm:p-8 rounded-2xl border border-outline-variant/30 ${block.config.bgClass} backdrop-blur-md relative overflow-hidden group shadow-lg transition-all duration-300 hover:shadow-xl hover:border-outline-variant/50">
+                                <div class="absolute top-0 left-0 w-1 h-full ${block.config.borderClass} border-l-4"></div>
+                                <h3 class="flex items-center gap-3 ${block.config.colorClass} font-headline-sm text-xl sm:text-2xl mb-4 mt-0 p-0 font-bold border-none">
+                                    <span class="material-symbols-outlined text-[28px]">${block.config.icon}</span> ${block.config.title}
+                                </h3>\n\n`;
+                            finalDescHTML += marked.parse(block.content);
+                            finalDescHTML += '\n</div>\n';
+                        }
                     }
 
                     document.body.insertAdjacentHTML('beforeend', `
@@ -1610,7 +1622,7 @@ tailwind.config = {
                                 ${metaHTML}
                                 
                                 <div class="font-body-md text-on-surface-variant prose dark:prose-invert prose-headings:text-on-surface prose-headings:font-headline-md prose-h2:text-2xl prose-h2:border-b prose-h2:border-outline-variant/30 prose-h2:pb-2 prose-h3:text-xl prose-p:my-4 prose-p:leading-relaxed prose-a:text-primary prose-strong:text-on-surface prose-ul:list-disc prose-ul:pl-6 max-w-none ${alignClass}">
-                                    ${marked.parse(parsedDesc)}
+                                    ${finalDescHTML}
                                 </div>
                             </div>
                         </div>
