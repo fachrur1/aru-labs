@@ -166,7 +166,7 @@
                 </div>
 
                 <!-- DETAILED DATA EXPLORER PANEL -->
-                <div id="details-container" class="hidden p-5 flex flex-col gap-5 h-full">
+                <div id="details-container" class="hidden p-5 flex flex-col gap-5">
                     <!-- Detail Header -->
                     <div class="flex items-start justify-between">
                         <div class="flex flex-col gap-1">
@@ -228,18 +228,23 @@
                         </div>
                     </div>
 
-                    <!-- SVG Radar Chart / Criteria Scores -->
-                    <div class="flex flex-col gap-3">
-                        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 font-display">AHP Weight Criteria</h3>
-                        <div class="flex items-center justify-center p-2 rounded-xl bg-slate-950/20 border border-white/5">
-                            <!-- SVG Radar Chart -->
-                            <svg id="radar-chart" width="160" height="160" viewBox="0 0 160 160" class="overflow-visible">
-                                <!-- Background polygons, grid axes, and path injected by JS -->
-                            </svg>
-                            <!-- Legend details -->
-                            <div id="radar-legend" class="flex-1 flex flex-col gap-1.5 pl-4 text-[10px] text-slate-400">
-                                <!-- Criteria rows dynamically generated -->
-                            </div>
+                    <!-- 360° Street View Preview -->
+                    <div class="flex flex-col gap-2.5">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 font-display flex items-center gap-1.5">
+                                <i data-lucide="eye" class="w-3.5 h-3.5 text-indigo-400"></i> 360° Interactive Live View
+                            </h3>
+                            <a id="street-view-link" href="#" target="_blank" class="text-[10px] text-indigo-400 hover:text-indigo-300 font-semibold flex items-center gap-1 transition-colors cursor-pointer">
+                                Open in Maps <i data-lucide="external-link" class="w-2.5 h-2.5"></i>
+                            </a>
+                        </div>
+                        <div class="relative w-full h-44 rounded-xl border border-white/5 bg-slate-950/40 overflow-hidden group">
+                            <!-- Street View Iframe -->
+                            <iframe id="street-view-iframe" class="w-full h-full border-none transition-all duration-300 group-hover:scale-[1.01]" 
+                                    src="" 
+                                    allowfullscreen 
+                                    loading="lazy" 
+                                    referrerpolicy="no-referrer"></iframe>
                         </div>
                     </div>
 
@@ -961,6 +966,9 @@
             
             listContainer.classList.remove('hidden');
             detailsContainer.classList.add('hidden');
+            
+            // Clear street view iframe src to stop background loading
+            document.getElementById('street-view-iframe').src = '';
         }
 
         function showDetailsPanel(p) {
@@ -1045,113 +1053,9 @@
             }
             document.getElementById('detail-context-text').textContent = context;
 
-            // Draw custom SVG radar chart
-            drawRadarChart(p);
-        }
-
-        // Custom SVG Radar Chart Drawing
-        function drawRadarChart(p) {
-            const svg = document.getElementById('radar-chart');
-            const legend = document.getElementById('radar-legend');
-            svg.innerHTML = '';
-            legend.innerHTML = '';
-
-            const criteria = p.criteria;
-            const keys = Object.keys(criteria);
-            const numAxis = keys.length;
-            const cx = 80, cy = 80, r = 50; // Center & max radius
-
-            // Translate criteria key to localized labels
-            const labelsMap = {
-                'slope': 'Slope Angle',
-                'road': 'Road Access',
-                'water': 'Water Source',
-                'solar': 'Solar GHI',
-                'wind': 'Wind Speed',
-                'biomass': 'Biomass Vol',
-                'settlement': 'Settlement Buffer',
-                'grid': 'Grid Station',
-                'airport': 'Airport Buffer'
-            };
-
-            const colors = {
-                'PLTMH': '#0ea5e9',
-                'PLTS': '#eab308',
-                'PLTB': '#a855f7',
-                'PLTBm': '#22c55e'
-            };
-            const themeColor = colors[p.technology] || '#00c3ff';
-
-            // 1. Draw web grid circles (5 levels)
-            for (let j = 1; j <= 5; j++) {
-                const circleR = (r / 5) * j;
-                const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-                circle.setAttribute('cx', cx);
-                circle.setAttribute('cy', cy);
-                circle.setAttribute('r', circleR);
-                circle.setAttribute('fill', 'none');
-                circle.setAttribute('stroke', 'rgba(255, 255, 255, 0.05)');
-                circle.setAttribute('stroke-width', '1');
-                svg.appendChild(circle);
-            }
-
-            // 2. Draw axis lines & compute radar polygon points
-            const points = [];
-            keys.forEach((key, i) => {
-                const angle = (Math.PI * 2 / numAxis) * i - Math.PI / 2; // offset to top vertical
-                
-                // Axis Line
-                const ax = cx + Math.cos(angle) * r;
-                const ay = cy + Math.sin(angle) * r;
-                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-                line.setAttribute('x1', cx);
-                line.setAttribute('y1', cy);
-                line.setAttribute('x2', ax);
-                line.setAttribute('y2', ay);
-                line.setAttribute('stroke', 'rgba(255, 255, 255, 0.08)');
-                line.setAttribute('stroke-width', '1');
-                svg.appendChild(line);
-
-                // Value point coordinate
-                const val = criteria[key];
-                const valR = (r / 5) * val;
-                const px = cx + Math.cos(angle) * valR;
-                const py = cy + Math.sin(angle) * valR;
-                points.push(`${px},${py}`);
-
-                // Axis label marker dot
-                const labelDot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-                labelDot.setAttribute('cx', px);
-                labelDot.setAttribute('cy', py);
-                labelDot.setAttribute('r', '2.5');
-                labelDot.setAttribute('fill', themeColor);
-                svg.appendChild(labelDot);
-
-                // Inject Legend Item in panel
-                const scorePercentStr = Math.round((val / 5.0) * 100);
-                const legendRow = document.createElement('div');
-                legendRow.className = "flex items-center justify-between py-0.5 border-b border-white/5";
-                legendRow.innerHTML = `
-                    <span class="flex items-center gap-1.5">
-                        <span class="w-1.5 h-1.5 rounded-full" style="background-color: ${themeColor};"></span>
-                        ${labelsMap[key] || key}
-                    </span>
-                    <span class="font-mono text-white font-medium">${val.toFixed(1)} <span class="text-slate-500">/ 5</span></span>
-                `;
-                legend.appendChild(legendRow);
-            });
-
-            // 3. Draw polygon path
-            const polygon = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
-            polygon.setAttribute('points', points.join(' '));
-            polygon.setAttribute('fill', themeColor);
-            polygon.setAttribute('fill-opacity', '0.2');
-            polygon.setAttribute('stroke', themeColor);
-            polygon.setAttribute('stroke-width', '1.5');
-            polygon.setAttribute('class', 'transition-all duration-500');
-            
-            // Insert polygon behind the label dots but above grids
-            svg.insertBefore(polygon, svg.querySelector('circle:last-of-type').nextSibling);
+            // Populate Street View Iframe & Link
+            document.getElementById('street-view-iframe').src = `https://maps.google.com/maps?layer=c&cbll=${p.lat},${p.lon}&output=svembed`;
+            document.getElementById('street-view-link').href = `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${p.lat},${p.lon}`;
         }
 
         // Camera smoothly moves to candidate spot
