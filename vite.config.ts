@@ -9,6 +9,18 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     emptyOutDir: true,
+    rollupOptions: {
+      external: [
+        'three',
+        'three/addons/loaders/OBJLoader.js',
+        'three/addons/loaders/MTLLoader.js',
+        'three/addons/controls/OrbitControls.js'
+      ],
+      input: {
+        main: path.resolve(__dirname, 'index.html'),
+        suitability: path.resolve(__dirname, 'suitability-land-for-RE/index.html')
+      }
+    }
   },
   plugins: [
     {

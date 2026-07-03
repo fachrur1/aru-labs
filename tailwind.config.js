@@ -6,6 +6,8 @@ export default {
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
+    "./suitability-land-for-RE/**/*.html",
+    "./suitability-land-for-RE/**/*.{js,ts}",
   ],
   theme: {
     extend: {
