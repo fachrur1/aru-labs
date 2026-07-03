@@ -228,24 +228,38 @@
                         </div>
                     </div>
 
-                    <!-- 360° Street View Preview -->
+                    <!-- Interactive Map & Street View Card -->
                     <div class="flex flex-col gap-2.5">
                         <div class="flex items-center justify-between">
                             <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 font-display flex items-center gap-1.5">
-                                <i data-lucide="eye" class="w-3.5 h-3.5 text-indigo-400"></i> 360° Interactive Live View
+                                <i data-lucide="map" class="w-3.5 h-3.5 text-indigo-400"></i> Interactive Live View
                             </h3>
                             <a id="street-view-link" href="#" target="_blank" class="text-[10px] text-indigo-400 hover:text-indigo-300 font-semibold flex items-center gap-1 transition-colors cursor-pointer">
                                 Open in Maps <i data-lucide="external-link" class="w-2.5 h-2.5"></i>
                             </a>
                         </div>
+                        
+                        <!-- Tabs Header -->
+                        <div class="flex border-b border-white/5 text-[10px] font-semibold">
+                            <button id="tab-satellite" class="flex-1 py-1.5 text-center text-indigo-400 border-b-2 border-indigo-500 cursor-pointer focus:outline-none transition-all">
+                                Satellite HD Map
+                            </button>
+                            <button id="tab-streetview" class="flex-1 py-1.5 text-center text-slate-400 border-b-2 border-transparent hover:text-slate-200 cursor-pointer focus:outline-none transition-all">
+                                360° Street View
+                            </button>
+                        </div>
+                        
                         <div class="relative w-full h-44 rounded-xl border border-white/5 bg-slate-950/40 overflow-hidden group">
-                            <!-- Street View Iframe -->
+                            <!-- Map/StreetView Iframe -->
                             <iframe id="street-view-iframe" class="w-full h-full border-none transition-all duration-300 group-hover:scale-[1.01]" 
                                     src="" 
                                     allowfullscreen 
                                     loading="lazy" 
                                     referrerpolicy="no-referrer"></iframe>
                         </div>
+                        <span id="streetview-note" class="text-[9px] text-slate-500 hidden italic">
+                            *Note: Street View relies on Google car coverage. If unavailable, a world map or blank screen may show.
+                        </span>
                     </div>
 
                     <!-- Details Description -->
@@ -382,6 +396,8 @@
         let particlesSystem;
         let candidatesData = [];
         let activePoint = null;
+        let liveMapMode = 'satellite'; // satellite, streetview
+        let selectedLat = null, selectedLon = null;
         
         // Active visual state configurations
         let activeTechFilters = {
@@ -967,7 +983,9 @@
             listContainer.classList.remove('hidden');
             detailsContainer.classList.add('hidden');
             
-            // Clear street view iframe src to stop background loading
+            // Clear street view iframe src and stored coordinates
+            selectedLat = null;
+            selectedLon = null;
             document.getElementById('street-view-iframe').src = '';
         }
 
@@ -1053,9 +1071,46 @@
             }
             document.getElementById('detail-context-text').textContent = context;
 
-            // Populate Street View Iframe & Link
-            document.getElementById('street-view-iframe').src = `https://maps.google.com/maps?layer=c&cbll=${p.lat},${p.lon}&output=svembed`;
-            document.getElementById('street-view-link').href = `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${p.lat},${p.lon}`;
+            // Store selected coordinates & update live map iframe
+            selectedLat = p.lat;
+            selectedLon = p.lon;
+            document.getElementById('street-view-link').href = `https://www.google.com/maps/search/?api=1&query=${p.lat},${p.lon}`;
+            updateLiveMapIframe();
+        }
+
+        // Update live map iframe source based on current mode
+        function updateLiveMapIframe() {
+            const iframe = document.getElementById('street-view-iframe');
+            if (!selectedLat || !selectedLon) {
+                iframe.src = '';
+                return;
+            }
+            if (liveMapMode === 'satellite') {
+                // High-resolution satellite view with labels
+                iframe.src = `https://maps.google.com/maps?q=${selectedLat},${selectedLon}&t=h&z=17&output=embed`;
+            } else {
+                // 360° Street view
+                iframe.src = `https://maps.google.com/maps?layer=c&cbll=${selectedLat},${selectedLon}&output=svembed`;
+            }
+        }
+
+        // Toggle map display mode
+        function setLiveMapMode(mode) {
+            liveMapMode = mode;
+            const tabSat = document.getElementById('tab-satellite');
+            const tabSV = document.getElementById('tab-streetview');
+            const note = document.getElementById('streetview-note');
+            
+            if (mode === 'satellite') {
+                tabSat.className = "flex-1 py-1.5 text-center text-indigo-400 border-b-2 border-indigo-500 cursor-pointer focus:outline-none transition-all";
+                tabSV.className = "flex-1 py-1.5 text-center text-slate-400 border-b-2 border-transparent hover:text-slate-200 cursor-pointer focus:outline-none transition-all";
+                note.classList.add('hidden');
+            } else {
+                tabSat.className = "flex-1 py-1.5 text-center text-slate-400 border-b-2 border-transparent hover:text-slate-200 cursor-pointer focus:outline-none transition-all";
+                tabSV.className = "flex-1 py-1.5 text-center text-indigo-400 border-b-2 border-indigo-500 cursor-pointer focus:outline-none transition-all";
+                note.classList.remove('hidden');
+            }
+            updateLiveMapIframe();
         }
 
         // Camera smoothly moves to candidate spot
@@ -1122,6 +1177,14 @@
 
             // Close detail view
             document.getElementById('close-details-btn').addEventListener('click', closeDetails);
+
+            // Live View Tabs Triggers
+            document.getElementById('tab-satellite').addEventListener('click', () => {
+                setLiveMapMode('satellite');
+            });
+            document.getElementById('tab-streetview').addEventListener('click', () => {
+                setLiveMapMode('streetview');
+            });
 
             // Focus button
             document.getElementById('focus-cam-btn').addEventListener('click', () => {
