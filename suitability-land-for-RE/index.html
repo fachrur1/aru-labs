@@ -1027,7 +1027,7 @@
             }
 
             document.getElementById('detail-elev').textContent = `${p.elevation} mdpl`;
-            document.getElementById('detail-slope').textContent = `${p.slope}°`;
+            document.getElementById('detail-slope').textContent = `${p.slope}° (${p.slope_percent}%)`;
             document.getElementById('detail-road').textContent = `${p.road_dist.toLocaleString()} m`;
 
             const riverCard = document.getElementById('detail-river-card');
@@ -1037,20 +1037,20 @@
             // Tailor details depending on technology
             if (p.technology === 'PLTMH') {
                 riverCard.classList.remove('hidden');
-                riverLabel.textContent = "River Proximity";
+                riverLabel.textContent = "River Distance";
                 riverVal.textContent = `${p.river_dist.toLocaleString()} m`;
             } else if (p.technology === 'PLTS') {
                 riverCard.classList.remove('hidden');
-                riverLabel.textContent = "Solar Radiance (AHP)";
-                riverVal.textContent = `${p.criteria.solar} / 5.0`;
+                riverLabel.textContent = "Solar GHI";
+                riverVal.textContent = `${p.radiation.toFixed(2)} kWh/m²/day`;
             } else if (p.technology === 'PLTB') {
                 riverCard.classList.remove('hidden');
-                riverLabel.textContent = "Wind Speed (AHP)";
-                riverVal.textContent = `${p.criteria.wind} / 5.0`;
+                riverLabel.textContent = "Wind Speed";
+                riverVal.textContent = `${p.wind_speed.toFixed(2)} m/s`;
             } else if (p.technology === 'PLTBm') {
                 riverCard.classList.remove('hidden');
                 riverLabel.textContent = "Biomass Distance";
-                riverVal.textContent = `${p.river_dist.toLocaleString()} m`; // using distance
+                riverVal.textContent = `${p.biomass_dist.toLocaleString()} m`;
             } else {
                 riverCard.classList.add('hidden');
             }
@@ -1061,13 +1061,13 @@
             // Generate contextual summary based on criteria
             let context = '';
             if (p.technology === 'PLTMH') {
-                context = `Candidate is located along the Menoreh river network. The average slope of ${p.slope}° provides stable structural head pressure, and is situated within ${p.river_dist} meters from flow stream, yielding a high GIS score of ${p.raw_score.toFixed(2)}.`;
+                context = `Candidate is located along the Menoreh river network. The average slope of ${p.slope}° (${p.slope_percent}%) provides stable structural head pressure, and is situated within ${p.river_dist} meters from flow stream, yielding a high GIS score of ${p.raw_score.toFixed(2)}.`;
             } else if (p.technology === 'PLTS') {
-                context = `This flat-sloped zone (${p.slope}°) provides max GHI exposure (Radiation score: ${p.criteria.solar}/5). Close proximity to major road access (${p.road_dist}m) optimizes logistics. High land utilization suitability.`;
+                context = `This flat-sloped zone (${p.slope}° / ${p.slope_percent}%) provides GHI exposure of ${p.radiation.toFixed(2)} kWh/m²/day. Close proximity to major road access (${p.road_dist}m) optimizes logistics. High land utilization suitability.`;
             } else if (p.technology === 'PLTB') {
-                context = `Located on higher ridge elevations (${p.elevation} mdpl) capturing clean Menoreh wind currents. The site respects safety buffer guidelines and has solid grid interconnectivity.`;
+                context = `Located on higher ridge elevations (${p.elevation} mdpl) capturing clean Menoreh wind currents (average wind speed: ${p.wind_speed.toFixed(2)} m/s). The site respects safety buffer guidelines and has solid grid interconnectivity.`;
             } else {
-                context = `Candidate matches agricultural biomass resource accessibility. Slope and logistics parameters lie within optimal operational thresholds, ensuring solid biomass fuel supply chain safety.`;
+                context = `Candidate matches agricultural biomass resource accessibility (situated ${p.biomass_dist}m from resource centers). Slope and logistics parameters lie within optimal operational thresholds, ensuring solid biomass fuel supply chain safety.`;
             }
             document.getElementById('detail-context-text').textContent = context;
 
