@@ -363,13 +363,6 @@
                         </button>
                     </div>
 
-                    <div class="w-px h-6 bg-white/10"></div>
-
-                    <!-- Auto rotation toggle -->
-                    <button id="rotation-btn" class="p-2.5 rounded-xl border border-white/5 bg-slate-950/40 hover:bg-white/5 transition-all text-slate-400 hover:text-white cursor-pointer flex items-center gap-1.5">
-                        <i data-lucide="rotate-3d" class="w-4 h-4"></i>
-                        <span class="text-xs font-semibold">Auto Rotate</span>
-                    </button>
                 </div>
             </div>
         </main>
@@ -477,6 +470,11 @@
             controls.maxPolarAngle = Math.PI / 2 - 0.05; // Prevent camera going below ground
             controls.minDistance = 10;
             controls.maxDistance = 300;
+            
+            // Cancel camera smooth animation on user drag interaction to prevent jerky snapping back
+            controls.addEventListener('start', () => {
+                isAnimateCamera = false;
+            });
 
             // Setup Lights
             ambientLight = new THREE.AmbientLight('#ffffff', 0.7);
@@ -704,9 +702,7 @@
                         // Hide loading bar
                         loadingOverlay.classList.add('hidden');
                         
-                        // Start auto-rotate at beginning
-                        isAutoRotating = true;
-                        document.getElementById('rotation-btn').classList.add('bg-white/10', 'text-white');
+
                         
                         // Render initially
                         updateVisibleCount();
@@ -1236,16 +1232,7 @@
                 setRenderMode('xray');
             });
 
-            // Rotation trigger
-            const rotBtn = document.getElementById('rotation-btn');
-            rotBtn.addEventListener('click', () => {
-                isAutoRotating = !isAutoRotating;
-                if (isAutoRotating) {
-                    rotBtn.classList.add('bg-white/10', 'text-white');
-                } else {
-                    rotBtn.classList.remove('bg-white/10', 'text-white');
-                }
-            });
+
         }
 
         // Active layout styling helpers
@@ -1438,12 +1425,7 @@
             // Run camera smooth move animations
             updateCameraSmoothMove();
 
-            // Auto rotation of terrain
-            if (isAutoRotating && !isAnimateCamera) {
-                scene.rotation.y += 0.0018;
-            } else {
-                scene.rotation.y = 0; // lock normal
-            }
+
 
             // Bobbing animation for candidate markers
             const time = Date.now() * 0.0025;
