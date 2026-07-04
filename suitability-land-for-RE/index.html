@@ -244,26 +244,25 @@
                         </div>
                         
                         <!-- Tabs Header -->
-                        <div class="flex border-b border-white/5 text-[10px] font-semibold">
-                            <button id="tab-satellite" class="flex-1 py-1.5 text-center text-indigo-400 border-b-2 border-indigo-500 cursor-pointer focus:outline-none transition-all">
-                                Satellite HD Map
-                            </button>
-                            <button id="tab-streetview" class="flex-1 py-1.5 text-center text-slate-400 border-b-2 border-transparent hover:text-slate-200 cursor-pointer focus:outline-none transition-all">
-                                360° Street View
-                            </button>
+                        <div class="flex justify-between items-center mb-2 px-1">
+                            <span class="text-[11px] font-semibold text-indigo-400 flex items-center gap-1.5">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                                Satellite Map
+                            </span>
+                            <a id="btn-streetview-link" href="#" target="_blank" rel="noopener noreferrer" class="text-[10px] font-semibold flex items-center gap-1 text-white bg-indigo-600 hover:bg-indigo-500 px-2.5 py-1 rounded-md transition-all shadow-lg shadow-indigo-500/20">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                                Buka 360° View ↗
+                            </a>
                         </div>
                         
-                        <div class="relative w-full h-44 rounded-xl border border-white/5 bg-slate-950/40 overflow-hidden group">
-                            <!-- Map/StreetView Iframe -->
+                        <div class="relative w-full h-48 rounded-xl border border-white/5 bg-slate-950/40 overflow-hidden group">
+                            <!-- Map Iframe -->
                             <iframe id="street-view-iframe" class="w-full h-full border-none transition-all duration-300 group-hover:scale-[1.01]" 
                                     src="" 
                                     allowfullscreen 
                                     loading="lazy" 
                                     referrerpolicy="no-referrer"></iframe>
                         </div>
-                        <span id="streetview-note" class="text-[9px] text-slate-500 hidden italic">
-                            *Note: Street View relies on Google car coverage. If unavailable, a world map or blank screen may show.
-                        </span>
                     </div>
 
                     <!-- Details Description -->
@@ -478,10 +477,11 @@
             // Setup controls
             controls = new OrbitControls(camera, renderer.domElement);
             controls.enableDamping = true;
-            controls.dampingFactor = 0.05;
+            controls.dampingFactor = 0.1; // Increased damping for less "slippery" control
             controls.maxPolarAngle = Math.PI / 2 - 0.05; // Prevent camera going below ground
-            controls.minDistance = 10;
-            controls.maxDistance = 300;
+            controls.minDistance = 5;
+            controls.maxDistance = 250;
+            controls.enablePan = false; // Disable panning so the user doesn't easily lose the terrain view
             
             // Cancel camera smooth animation on user drag interaction to prevent jerky snapping back
             controls.addEventListener('start', () => {
@@ -1092,37 +1092,19 @@
 
         // Update live map iframe source based on current mode
         function updateLiveMapIframe() {
+            if (!activePoint) return;
             const iframe = document.getElementById('street-view-iframe');
-            if (!selectedLat || !selectedLon) {
-                iframe.src = '';
-                return;
-            }
-            if (liveMapMode === 'satellite') {
-                // High-resolution satellite view with labels
-                iframe.src = `https://maps.google.com/maps?q=${selectedLat},${selectedLon}&t=h&z=17&output=embed`;
-            } else {
-                // 360° Street view
-                iframe.src = `https://maps.google.com/maps?layer=c&cbll=${selectedLat},${selectedLon}&output=svembed`;
-            }
-        }
+            const svLink = document.getElementById('btn-streetview-link');
+            const selectedLat = activePoint.lat;
+            const selectedLon = activePoint.lon;
 
-        // Toggle map display mode
-        function setLiveMapMode(mode) {
-            liveMapMode = mode;
-            const tabSat = document.getElementById('tab-satellite');
-            const tabSV = document.getElementById('tab-streetview');
-            const note = document.getElementById('streetview-note');
+            // Always use Satellite Map for iframe
+            iframe.src = `https://maps.google.com/maps?q=${selectedLat},${selectedLon}&t=h&z=17&output=embed`;
             
-            if (mode === 'satellite') {
-                tabSat.className = "flex-1 py-1.5 text-center text-indigo-400 border-b-2 border-indigo-500 cursor-pointer focus:outline-none transition-all";
-                tabSV.className = "flex-1 py-1.5 text-center text-slate-400 border-b-2 border-transparent hover:text-slate-200 cursor-pointer focus:outline-none transition-all";
-                note.classList.add('hidden');
-            } else {
-                tabSat.className = "flex-1 py-1.5 text-center text-slate-400 border-b-2 border-transparent hover:text-slate-200 cursor-pointer focus:outline-none transition-all";
-                tabSV.className = "flex-1 py-1.5 text-center text-indigo-400 border-b-2 border-indigo-500 cursor-pointer focus:outline-none transition-all";
-                note.classList.remove('hidden');
+            // Set 360 View link to open in new tab
+            if (svLink) {
+                svLink.href = `https://www.google.com/maps?q=${selectedLat},${selectedLon}&layer=c&cbll=${selectedLat},${selectedLon}`;
             }
-            updateLiveMapIframe();
         }
 
         // Navigate to prev or next candidate (within currently visible & filtered list)
@@ -1159,15 +1141,20 @@
 
         // Camera smoothing ticks
         function updateCameraSmoothMove() {
-            if (!isAnimateCamera) return;
-            
-            cameraAnimProgress += 0.04;
-            camera.position.lerp(targetCameraPos, 0.05);
-            controls.target.lerp(targetControlsTarget, 0.05);
-            controls.update();
+            if (isAnimateCamera) {
+                // Disable damping temporarily during programmatic move to prevent fighting
+                const prevDamping = controls.enableDamping;
+                controls.enableDamping = false;
+                
+                cameraAnimProgress += 0.04;
+                camera.position.lerp(targetCameraPos, 0.06);
+                controls.target.lerp(targetControlsTarget, 0.06);
+                controls.update();
 
-            if (camera.position.distanceTo(targetCameraPos) < 0.1 && controls.target.distanceTo(targetControlsTarget) < 0.1) {
-                isAnimateCamera = false;
+                if (camera.position.distanceTo(targetCameraPos) < 0.2 && controls.target.distanceTo(targetControlsTarget) < 0.2) {
+                    isAnimateCamera = false;
+                    controls.enableDamping = prevDamping; // Restore damping
+                }
             }
         }
 
@@ -1210,13 +1197,7 @@
             // Close detail view
             document.getElementById('close-details-btn').addEventListener('click', closeDetails);
 
-            // Live View Tabs Triggers
-            document.getElementById('tab-satellite').addEventListener('click', () => {
-                setLiveMapMode('satellite');
-            });
-            document.getElementById('tab-streetview').addEventListener('click', () => {
-                setLiveMapMode('streetview');
-            });
+            // Navigation tabs removed as 360 view is now a direct link
 
             // Focus button
             document.getElementById('focus-cam-btn').addEventListener('click', () => {
