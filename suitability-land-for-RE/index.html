@@ -481,7 +481,7 @@
             controls.maxPolarAngle = Math.PI / 2 - 0.05; // Prevent camera going below ground
             controls.minDistance = 5;
             controls.maxDistance = 250;
-            controls.enablePan = false; // Disable panning so the user doesn't easily lose the terrain view
+            controls.enablePan = true; // Re-enabled panning as requested
             
             // Cancel camera smooth animation on user drag interaction to prevent jerky snapping back
             controls.addEventListener('start', () => {
