@@ -6,10 +6,10 @@
     <title>RE Suitability Map | Muhammad Fachrurrozy</title>
     <meta name="description" content="Interactive 3D GIS web application displaying Renewable Energy Suitability Land Analysis in Kulon Progo, featuring PLTMH, PLTS, PLTB, and PLTBm candidates.">
     
-    <!-- Fonts -->
+    <!-- Google Fonts: Cormorant Garamond (Serif), Cinzel (Display), Plus Jakarta Sans (Body) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800;900&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com/3.4.17"></script>
@@ -19,17 +19,21 @@
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['Outfit', 'sans-serif'],
-                        display: ['Space Grotesk', 'sans-serif'],
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        serif: ['"Cormorant Garamond"', 'Georgia', 'serif'],
+                        display: ['Cinzel', '"Cormorant Garamond"', 'serif'],
                     },
                     colors: {
-                        darkBg: '#080b11',
-                        panelBg: 'rgba(13, 18, 30, 0.75)',
-                        borderColor: 'rgba(255, 255, 255, 0.08)',
-                        pltmh: '#0ea5e9',   // Blue
-                        pltbm: '#22c55e',   // Green
-                        plts: '#eab308',    // Yellow
-                        pltb: '#a855f7',    // Violet/Purple
+                        darkBg: '#0b0d14',
+                        panelBg: 'rgba(15, 18, 27, 0.88)',
+                        amberGold: '#d4af37',
+                        amberLight: '#f3e5ab',
+                        warmCream: '#f7f4ee',
+                        mutedCream: '#c4bfae',
+                        pltmh: '#38bdf8',   // Vintage Prussian Blue
+                        plts: '#f59e0b',    // Burnished Amber Gold
+                        pltb: '#f43f5e',    // Terracotta Rust
+                        pltbm: '#10b981',   // Vintage Sage Forest
                     }
                 }
             }
@@ -51,33 +55,37 @@
     
     <style>
         body {
-            font-family: 'Outfit', sans-serif;
-            background-color: #080b11;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #0b0d14;
             overflow: hidden;
         }
+        .font-serif {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+        }
         .font-display {
-            font-family: 'Space Grotesk', sans-serif;
+            font-family: 'Cinzel', 'Cormorant Garamond', serif;
         }
         /* Custom scrollbar for sidebar */
         .custom-scrollbar::-webkit-scrollbar {
             width: 4px;
         }
         .custom-scrollbar::-webkit-scrollbar-track {
-            background: rgba(0, 0, 0, 0.2);
+            background: rgba(15, 18, 27, 0.4);
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(212, 175, 55, 0.25);
             border-radius: 2px;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(212, 175, 55, 0.45);
         }
-        /* Glassmorphism utility */
+        /* Glassmorphism utility with classic warm brass border */
         .glass-panel {
-            background: rgba(10, 15, 26, 0.75);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(14, 17, 26, 0.88);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(212, 175, 55, 0.18);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.08);
         }
         /* Pulse Animation for selected marker */
         @keyframes glowing-ring {
@@ -88,9 +96,33 @@
         .pulse-ring {
             animation: glowing-ring 2s infinite ease-out;
         }
+        /* Ornate corner accents */
+        .ornate-corner {
+            position: relative;
+        }
+        .ornate-corner::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 8px;
+            height: 8px;
+            border-top: 1px solid rgba(212, 175, 55, 0.4);
+            border-right: 1px solid rgba(212, 175, 55, 0.4);
+        }
+        .ornate-corner::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 8px;
+            height: 8px;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.4);
+            border-left: 1px solid rgba(212, 175, 55, 0.4);
+        }
     </style>
 </head>
-<body class="h-full w-full select-none text-slate-100 antialiased">
+<body class="h-full w-full select-none text-stone-200 antialiased">
 
     <!-- 3D Canvas Containment -->
     <div id="canvas-container" class="absolute inset-0 z-0 h-full w-full"></div>
@@ -99,53 +131,56 @@
     <div class="relative z-10 flex h-full w-full pointer-events-none">
         
         <!-- SIDEBAR PANEL (LEFT) - Interactive controls, search, lists, details -->
-        <aside class="w-96 h-full flex flex-col glass-panel border-r pointer-events-auto shadow-2xl transition-transform duration-300">
+        <aside class="w-[410px] h-full flex flex-col glass-panel border-r border-amber-500/20 pointer-events-auto shadow-2xl transition-transform duration-300">
             <!-- Header -->
-            <div class="p-6 border-b border-white/5 flex flex-col gap-2">
+            <div class="p-6 border-b border-amber-500/15 flex flex-col gap-2 relative bg-gradient-to-b from-amber-500/5 to-transparent">
                 <div class="flex items-center justify-between">
-                    <a href="/" class="flex items-center gap-1.5 text-xs font-semibold text-slate-400 hover:text-white transition-colors">
-                        <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i> Back to Portfolio
+                    <a href="/" class="flex items-center gap-1.5 text-xs font-medium text-stone-400 hover:text-amber-300 transition-colors group">
+                        <i data-lucide="arrow-left" class="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform"></i> Back to Portfolio
                     </a>
-                    <span class="text-[10px] font-bold tracking-widest uppercase bg-cyan-500/10 text-cyan-400 px-2 py-0.5 rounded-full border border-cyan-500/20">
-                        GIS analysis
+                    <span class="text-[9px] font-bold tracking-widest uppercase bg-amber-500/10 text-amber-300 px-2.5 py-0.5 rounded-full border border-amber-500/30 font-display">
+                        GIS Cartography
                     </span>
                 </div>
-                <h1 class="text-xl font-bold tracking-tight font-display bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">
-                    RE Land Suitability
-                </h1>
-                <p class="text-xs text-slate-400 font-light">
-                    Exploration of suitability criteria candidates for Renewable Energy development in Kulon Progo.
+                <div class="mt-1">
+                    <span class="text-[10px] uppercase font-bold tracking-widest text-amber-400/80 font-display block">Kulon Progo Regency</span>
+                    <h1 class="text-2xl font-serif font-semibold tracking-wide text-amber-100/95 leading-tight">
+                        Renewable Energy Suitability
+                    </h1>
+                </div>
+                <p class="text-xs text-stone-400 font-light leading-relaxed">
+                    Interactive multi-criteria spatial analysis for sustainable energy placement candidates in Central Java terrain.
                 </p>
             </div>
 
             <!-- Search and Filter Section -->
-            <div class="p-4 border-b border-white/5 flex flex-col gap-3">
+            <div class="p-4 border-b border-amber-500/15 flex flex-col gap-3 bg-black/20">
                 <!-- Search bar -->
                 <div class="relative">
-                    <i data-lucide="search" class="absolute left-3 top-2.5 w-4 h-4 text-slate-400"></i>
+                    <i data-lucide="search" class="absolute left-3 top-2.5 w-4 h-4 text-stone-500"></i>
                     <input type="text" id="search-input" placeholder="Search candidate (e.g. PLTMH-01)..." 
-                           class="w-full bg-slate-950/60 border border-white/10 rounded-lg pl-9 pr-4 py-2 text-sm focus:outline-none focus:border-cyan-500/50 transition-colors placeholder:text-slate-500 text-slate-200">
-                    <button id="search-clear-btn" class="absolute right-3 top-2.5 hidden hover:text-white text-slate-400">
+                           class="w-full bg-stone-950/80 border border-amber-500/20 rounded-lg pl-9 pr-8 py-2 text-xs focus:outline-none focus:border-amber-400/60 transition-colors placeholder:text-stone-500 text-stone-200">
+                    <button id="search-clear-btn" class="absolute right-3 top-2.5 hidden hover:text-amber-300 text-stone-500 transition-colors">
                         <i data-lucide="x" class="w-4 h-4"></i>
                     </button>
                 </div>
                 
                 <!-- Category Pills (Toggles) -->
-                <div class="grid grid-cols-4 gap-1.5 text-[10px] font-semibold text-center">
-                    <button id="toggle-PLTMH" class="px-2 py-1.5 rounded bg-pltmh/15 border border-pltmh/40 text-pltmh hover:bg-pltmh/25 transition-colors cursor-pointer flex flex-col items-center gap-1">
-                        <span class="w-2 h-2 rounded-full bg-pltmh inline-block shadow-[0_0_8px_#0ea5e9]"></span>
+                <div class="grid grid-cols-4 gap-1.5 text-[10px] font-bold text-center">
+                    <button id="toggle-PLTMH" class="px-2 py-2 rounded-lg bg-sky-500/15 border border-sky-400/40 text-sky-300 hover:bg-sky-500/25 transition-all cursor-pointer flex flex-col items-center gap-1 shadow-sm">
+                        <span class="w-2 h-2 rounded-full bg-sky-400 inline-block shadow-[0_0_8px_#38bdf8]"></span>
                         PLTMH
                     </button>
-                    <button id="toggle-PLTS" class="px-2 py-1.5 rounded bg-plts/15 border border-plts/40 text-plts hover:bg-plts/25 transition-colors cursor-pointer flex flex-col items-center gap-1">
-                        <span class="w-2 h-2 rounded-full bg-plts inline-block shadow-[0_0_8px_#eab308]"></span>
+                    <button id="toggle-PLTS" class="px-2 py-2 rounded-lg bg-amber-500/15 border border-amber-400/40 text-amber-300 hover:bg-amber-500/25 transition-all cursor-pointer flex flex-col items-center gap-1 shadow-sm">
+                        <span class="w-2 h-2 rounded-full bg-amber-400 inline-block shadow-[0_0_8px_#f59e0b]"></span>
                         PLTS
                     </button>
-                    <button id="toggle-PLTB" class="px-2 py-1.5 rounded bg-pltb/15 border border-pltb/40 text-pltb hover:bg-pltb/25 transition-colors cursor-pointer flex flex-col items-center gap-1">
-                        <span class="w-2 h-2 rounded-full bg-pltb inline-block shadow-[0_0_8px_#a855f7]"></span>
+                    <button id="toggle-PLTB" class="px-2 py-2 rounded-lg bg-rose-500/15 border border-rose-400/40 text-rose-300 hover:bg-rose-500/25 transition-all cursor-pointer flex flex-col items-center gap-1 shadow-sm">
+                        <span class="w-2 h-2 rounded-full bg-rose-400 inline-block shadow-[0_0_8px_#f43f5e]"></span>
                         PLTB
                     </button>
-                    <button id="toggle-PLTBm" class="px-2 py-1.5 rounded bg-pltbm/15 border border-pltbm/40 text-pltbm hover:bg-pltbm/25 transition-colors cursor-pointer flex flex-col items-center gap-1">
-                        <span class="w-2 h-2 rounded-full bg-pltbm inline-block shadow-[0_0_8px_#22c55e]"></span>
+                    <button id="toggle-PLTBm" class="px-2 py-2 rounded-lg bg-emerald-500/15 border border-emerald-400/40 text-emerald-300 hover:bg-emerald-500/25 transition-all cursor-pointer flex flex-col items-center gap-1 shadow-sm">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 inline-block shadow-[0_0_8px_#10b981]"></span>
                         PLTBm
                     </button>
                 </div>
@@ -156,11 +191,11 @@
                 
                 <!-- DEFAULT LIST VIEW -->
                 <div id="list-container" class="p-4 flex flex-col gap-2">
-                    <div class="flex items-center justify-between text-xs text-slate-400 font-semibold mb-1">
-                        <span>Candidate Sites (<span id="visible-count">0</span>/65)</span>
-                        <span>Sort by Score</span>
+                    <div class="flex items-center justify-between text-xs text-stone-400 font-semibold mb-1 px-1">
+                        <span class="font-display text-[11px] tracking-wider text-amber-200/80">Candidate Locations (<span id="visible-count">0</span>/65)</span>
+                        <span class="text-[10px] text-stone-500 uppercase tracking-widest">Sorted by Score</span>
                     </div>
-                    <div id="candidates-list" class="flex flex-col gap-1.5">
+                    <div id="candidates-list" class="flex flex-col gap-2">
                         <!-- Points list item will be injected dynamically -->
                     </div>
                 </div>
@@ -168,66 +203,68 @@
                 <!-- DETAILED DATA EXPLORER PANEL -->
                 <div id="details-container" class="hidden p-5 flex flex-col gap-5">
                     <!-- Detail Header -->
-                    <div class="flex items-start justify-between">
+                    <div class="flex items-start justify-between border-b border-amber-500/15 pb-4">
                         <div class="flex flex-col gap-1">
-                            <span id="detail-badge" class="text-[10px] font-bold uppercase px-2.5 py-0.5 rounded-full border w-fit">
+                            <span id="detail-badge" class="text-[10px] font-bold uppercase px-2.5 py-0.5 rounded-full border w-fit font-display">
                                 Technology
                             </span>
-                            <h2 id="detail-name" class="text-2xl font-bold font-display tracking-tight text-white">
+                            <h2 id="detail-name" class="text-2xl font-serif font-semibold tracking-wide text-amber-100">
                                 PLTS-01
                             </h2>
-                            <p class="text-xs text-slate-400 font-light flex items-center gap-1">
-                                <i data-lucide="map-pin" class="w-3.5 h-3.5"></i>
-                                <span id="detail-coords">0.00000, 0.00000</span>
+                            <p class="text-xs text-stone-400 font-light flex items-center gap-1.5">
+                                <i data-lucide="map-pin" class="w-3.5 h-3.5 text-amber-400"></i>
+                                <span id="detail-coords" class="font-mono text-[11px]">0.00000, 0.00000</span>
                             </p>
                         </div>
-                        <button id="close-details-btn" class="p-1.5 rounded-lg border border-white/5 hover:bg-white/5 text-slate-400 hover:text-white transition-colors cursor-pointer">
+                        <button id="close-details-btn" title="Back to Candidate List" class="p-2 rounded-lg border border-amber-500/20 bg-stone-900/60 hover:bg-amber-500/15 text-stone-300 hover:text-amber-200 transition-all cursor-pointer">
                             <i data-lucide="arrow-left" class="w-4 h-4"></i>
                         </button>
                     </div>
 
                     <!-- Score indicator Card -->
-                    <div class="p-4 rounded-xl border border-white/8 bg-slate-950/50 flex flex-col gap-3 relative overflow-hidden">
+                    <div class="p-4 rounded-xl border border-amber-500/25 bg-stone-950/70 flex flex-col gap-3 relative overflow-hidden ornate-corner shadow-lg">
                         <div class="flex items-center justify-between z-10">
                             <div class="flex flex-col gap-0.5">
-                                <span class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Suitability Score</span>
-                                <span id="detail-rank-text" class="text-[10px] text-slate-500 font-medium">Rank #0 overall</span>
+                                <span class="text-[10px] font-bold uppercase tracking-widest text-amber-400/90 font-display">Suitability Index</span>
+                                <span id="detail-rank-text" class="text-[11px] text-stone-400 font-medium">Rank #0 overall</span>
                             </div>
                             <div class="flex flex-col items-end">
-                                <span id="detail-score-val" class="text-4xl font-black tracking-tight font-display text-white leading-none" style="text-shadow: 0 0 24px currentColor">0%</span>
-                                <span id="detail-top-badge" class="text-[9px] text-emerald-400 hidden flex items-center gap-0.5 mt-0.5">
-                                    <i data-lucide="award" class="w-3 h-3"></i> Top Candidate
+                                <span id="detail-score-val" class="text-3xl font-serif font-bold tracking-tight text-amber-200 leading-none" style="text-shadow: 0 0 20px currentColor">0%</span>
+                                <span id="detail-top-badge" class="text-[9px] text-amber-300 bg-amber-500/20 border border-amber-500/30 px-1.5 py-0.5 rounded-full hidden flex items-center gap-1 mt-1 font-display">
+                                    <i data-lucide="award" class="w-3 h-3 text-amber-400"></i> Prime Site
                                 </span>
                             </div>
                         </div>
-                        <div class="w-full bg-slate-800/80 rounded-full h-3.5 overflow-hidden z-10 border border-white/5">
+                        <div class="w-full bg-stone-900/90 rounded-full h-3 overflow-hidden z-10 border border-amber-500/20 p-0.5">
                             <div id="detail-score-bar" class="h-full rounded-full transition-all duration-700 relative" style="width: 0%">
-                                <div class="absolute inset-0 rounded-full opacity-40" style="background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.4) 100%)"></div>
+                                <div class="absolute inset-0 rounded-full opacity-50" style="background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.4) 100%)"></div>
                             </div>
                         </div>
                         <!-- Background glow -->
-                        <div id="detail-glow" class="absolute -right-6 -top-6 w-32 h-32 rounded-full blur-2xl opacity-25"></div>
+                        <div id="detail-glow" class="absolute -right-6 -top-6 w-32 h-32 rounded-full blur-3xl opacity-20"></div>
                     </div>
 
                     <!-- Geographical Info -->
-                    <div class="flex flex-col gap-2">
-                        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 font-display">Geographic Parameters</h3>
+                    <div class="flex flex-col gap-2.5">
+                        <h3 class="text-[11px] font-bold uppercase tracking-wider text-amber-400/90 font-display flex items-center gap-1.5">
+                            <i data-lucide="compass" class="w-3.5 h-3.5 text-amber-400"></i> Terrain Metrics
+                        </h3>
                         <div class="grid grid-cols-2 gap-2 text-xs">
-                            <div class="p-2.5 rounded-lg bg-slate-950/20 border border-white/5 flex flex-col gap-0.5">
-                                <span class="text-slate-500">Elevation</span>
-                                <span id="detail-elev" class="font-semibold text-slate-200">-</span>
+                            <div class="p-2.5 rounded-lg bg-stone-950/40 border border-amber-500/15 flex flex-col gap-0.5">
+                                <span class="text-[10px] text-stone-400 font-medium uppercase tracking-wide">Elevation</span>
+                                <span id="detail-elev" class="font-semibold text-stone-100 font-mono text-xs">-</span>
                             </div>
-                            <div class="p-2.5 rounded-lg bg-slate-950/20 border border-white/5 flex flex-col gap-0.5">
-                                <span class="text-slate-500">Slope Angle</span>
-                                <span id="detail-slope" class="font-semibold text-slate-200">-</span>
+                            <div class="p-2.5 rounded-lg bg-stone-950/40 border border-amber-500/15 flex flex-col gap-0.5">
+                                <span class="text-[10px] text-stone-400 font-medium uppercase tracking-wide">Slope Gradient</span>
+                                <span id="detail-slope" class="font-semibold text-stone-100 font-mono text-xs">-</span>
                             </div>
-                            <div class="p-2.5 rounded-lg bg-slate-950/20 border border-white/5 flex flex-col gap-0.5">
-                                <span class="text-slate-500">Road Distance</span>
-                                <span id="detail-road" class="font-semibold text-slate-200">-</span>
+                            <div class="p-2.5 rounded-lg bg-stone-950/40 border border-amber-500/15 flex flex-col gap-0.5">
+                                <span class="text-[10px] text-stone-400 font-medium uppercase tracking-wide">Road Access</span>
+                                <span id="detail-road" class="font-semibold text-stone-100 font-mono text-xs">-</span>
                             </div>
-                            <div id="detail-river-card" class="p-2.5 rounded-lg bg-slate-950/20 border border-white/5 flex flex-col gap-0.5">
-                                <span id="detail-river-label" class="text-slate-500">River Distance</span>
-                                <span id="detail-river" class="font-semibold text-slate-200">-</span>
+                            <div id="detail-river-card" class="p-2.5 rounded-lg bg-stone-950/40 border border-amber-500/15 flex flex-col gap-0.5">
+                                <span id="detail-river-label" class="text-[10px] text-stone-400 font-medium uppercase tracking-wide">River Buffer</span>
+                                <span id="detail-river" class="font-semibold text-stone-100 font-mono text-xs">-</span>
                             </div>
                         </div>
                     </div>
@@ -235,52 +272,52 @@
                     <!-- Interactive Map & Street View Card -->
                     <div class="flex flex-col gap-2.5">
                         <div class="flex items-center justify-between">
-                            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 font-display flex items-center gap-1.5">
-                                <i data-lucide="map" class="w-3.5 h-3.5 text-indigo-400"></i> Interactive Live View
+                            <h3 class="text-[11px] font-bold uppercase tracking-wider text-amber-400/90 font-display flex items-center gap-1.5">
+                                <i data-lucide="map" class="w-3.5 h-3.5 text-amber-400"></i> Cartographic Live View
                             </h3>
-                            <a id="street-view-link" href="#" target="_blank" class="text-[10px] text-indigo-400 hover:text-indigo-300 font-semibold flex items-center gap-1 transition-colors cursor-pointer">
+                            <a id="street-view-link" href="#" target="_blank" class="text-[10px] text-amber-300 hover:text-amber-200 font-semibold flex items-center gap-1 transition-colors cursor-pointer">
                                 Open in Maps <i data-lucide="external-link" class="w-2.5 h-2.5"></i>
                             </a>
                         </div>
                         
-                        <!-- Tabs Header -->
-                        <div class="flex justify-between items-center mb-2 px-1">
-                            <span class="text-[11px] font-semibold text-indigo-400 flex items-center gap-1.5">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-                                Satellite Map
+                        <!-- Header button -->
+                        <div class="flex justify-between items-center px-0.5">
+                            <span class="text-[11px] font-semibold text-amber-300/90 flex items-center gap-1.5">
+                                <i data-lucide="globe" class="w-3.5 h-3.5 text-amber-400"></i>
+                                High-Res Satellite View
                             </span>
-                            <a id="btn-streetview-link" href="#" target="_blank" rel="noopener noreferrer" class="text-[10px] font-semibold flex items-center gap-1 text-white bg-indigo-600 hover:bg-indigo-500 px-2.5 py-1 rounded-md transition-all shadow-lg shadow-indigo-500/20">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-                                Buka 360° View ↗
+                            <a id="btn-streetview-link" href="#" target="_blank" rel="noopener noreferrer" class="text-[10px] font-semibold flex items-center gap-1 text-stone-950 bg-amber-400 hover:bg-amber-300 px-2.5 py-1 rounded-md transition-all shadow-md shadow-amber-500/20 font-display">
+                                <i data-lucide="navigation-2" class="w-3 h-3"></i>
+                                Open 360° Panorama ↗
                             </a>
                         </div>
                         
-                        <div class="relative w-full h-48 rounded-xl border border-white/5 bg-slate-950/40 overflow-hidden group">
+                        <div class="relative w-full h-44 rounded-xl border border-amber-500/20 bg-stone-950/60 overflow-hidden group shadow-inner">
                             <!-- Map Iframe -->
                             <iframe id="street-view-iframe" class="w-full h-full border-none transition-all duration-300 group-hover:scale-[1.01]" 
-                                    src="" 
-                                    allowfullscreen 
-                                    loading="lazy" 
-                                    referrerpolicy="no-referrer"></iframe>
+                                     src="" 
+                                     allowfullscreen 
+                                     loading="lazy" 
+                                     referrerpolicy="no-referrer"></iframe>
                         </div>
                     </div>
 
                     <!-- Details Description -->
-                    <div class="p-3 rounded-lg bg-slate-950/30 border border-white/5 text-xs leading-relaxed text-slate-400">
-                        <span class="font-semibold text-slate-200 block mb-1">GIS Analysis Context:</span>
-                        <span id="detail-context-text">-</span>
+                    <div class="p-3.5 rounded-lg bg-stone-950/50 border border-amber-500/15 text-xs leading-relaxed text-stone-300">
+                        <span class="font-serif font-semibold text-amber-200 text-sm block mb-1">GIS Analysis Summary:</span>
+                        <span id="detail-context-text" class="text-stone-300 font-light text-[11px] leading-relaxed block">-</span>
                     </div>
 
                     <!-- Navigation between points -->
-                    <div class="flex items-center gap-2">
-                        <button id="prev-candidate-btn" class="flex-1 bg-slate-900 hover:bg-slate-800 border border-white/10 hover:border-white/20 text-slate-300 hover:text-white py-2 rounded-lg font-bold text-xs tracking-tight flex items-center justify-center gap-1.5 transition-all cursor-pointer">
-                            <i data-lucide="chevron-left" class="w-4 h-4"></i> Prev
+                    <div class="flex items-center gap-2 pt-1">
+                        <button id="prev-candidate-btn" class="flex-1 bg-stone-900/80 hover:bg-amber-500/15 border border-amber-500/20 text-stone-300 hover:text-amber-200 py-2.5 rounded-lg font-bold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer">
+                            <i data-lucide="chevron-left" class="w-4 h-4"></i> Prev Site
                         </button>
-                        <button id="focus-cam-btn" class="flex-1 bg-slate-100 hover:bg-white text-slate-950 hover:shadow-[0_0_15px_rgba(255,255,255,0.15)] py-2 rounded-lg font-bold text-xs tracking-tight flex items-center justify-center gap-1.5 transition-all cursor-pointer font-sans">
-                            <i data-lucide="navigation" class="w-4 h-4 fill-current"></i> Focus
+                        <button id="focus-cam-btn" class="flex-1 bg-amber-400 hover:bg-amber-300 text-stone-950 shadow-lg shadow-amber-500/20 py-2.5 rounded-lg font-bold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer font-display">
+                            <i data-lucide="locate-fixed" class="w-4 h-4"></i> Focus 3D
                         </button>
-                        <button id="next-candidate-btn" class="flex-1 bg-slate-900 hover:bg-slate-800 border border-white/10 hover:border-white/20 text-slate-300 hover:text-white py-2 rounded-lg font-bold text-xs tracking-tight flex items-center justify-center gap-1.5 transition-all cursor-pointer">
-                            Next <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                        <button id="next-candidate-btn" class="flex-1 bg-stone-900/80 hover:bg-amber-500/15 border border-amber-500/20 text-stone-300 hover:text-amber-200 py-2.5 rounded-lg font-bold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer">
+                            Next Site <i data-lucide="chevron-right" class="w-4 h-4"></i>
                         </button>
                     </div>
                 </div>
@@ -292,33 +329,33 @@
             <!-- Top stats / Breadcrumb -->
             <div class="flex items-start justify-between w-full">
                 <!-- Project info tag -->
-                <div class="glass-panel px-4 py-2.5 rounded-xl shadow-lg flex items-center gap-3 pointer-events-auto">
-                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                <div class="glass-panel px-4 py-2.5 rounded-xl shadow-xl flex items-center gap-3 pointer-events-auto border border-amber-500/25">
+                    <span class="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse shadow-[0_0_10px_#f59e0b]"></span>
                     <div class="flex flex-col">
-                        <span class="text-xs font-bold text-slate-200 leading-none">PLTMH Kulon Progo Site Model</span>
-                        <span class="text-[9px] text-slate-400 font-light mt-0.5">QGIS DEM Terrain Export (WGS84 UTM 49S Grid)</span>
+                        <span class="text-xs font-serif font-semibold text-amber-100 leading-none">Kulon Progo Digital Elevation Model</span>
+                        <span class="text-[9px] text-stone-400 font-mono mt-0.5">WGS84 UTM 49S Grid • Multi-Criteria Overlay</span>
                     </div>
                 </div>
 
                 <!-- Right Viewport Tools -->
                 <div class="flex items-center gap-2 pointer-events-auto">
                     <!-- Preset Camera dropdown/buttons -->
-                    <div class="glass-panel flex items-center p-1 rounded-xl shadow-lg">
-                        <button id="cam-iso" title="Isometric View" class="p-2 rounded-lg bg-white/10 text-white hover:bg-white/10 transition-colors cursor-pointer">
-                            <span class="text-xs font-bold uppercase tracking-wider font-display px-0.5">ISO</span>
+                    <div class="glass-panel flex items-center p-1 rounded-xl shadow-lg border border-amber-500/25">
+                        <button id="cam-iso" title="Isometric View" class="px-3 py-1.5 rounded-lg bg-amber-500/20 border border-amber-500/40 text-amber-200 transition-all cursor-pointer">
+                            <span class="text-xs font-bold uppercase tracking-wider font-display">ISO</span>
                         </button>
-                        <button id="cam-top" title="Top-Down View" class="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition-colors cursor-pointer ml-1">
-                            <span class="text-xs font-bold uppercase tracking-wider font-display px-0.5">TOP</span>
+                        <button id="cam-top" title="Top-Down View" class="px-3 py-1.5 rounded-lg text-stone-400 hover:text-amber-200 hover:bg-amber-500/10 transition-all cursor-pointer ml-1">
+                            <span class="text-xs font-bold uppercase tracking-wider font-display">TOP</span>
                         </button>
-                        <button id="cam-close" title="Close Up Profile" class="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition-colors cursor-pointer ml-1">
-                            <span class="text-xs font-bold uppercase tracking-wider font-display px-0.5">PROFILE</span>
+                        <button id="cam-close" title="Close Up Profile" class="px-3 py-1.5 rounded-lg text-stone-400 hover:text-amber-200 hover:bg-amber-500/10 transition-all cursor-pointer ml-1">
+                            <span class="text-xs font-bold uppercase tracking-wider font-display">PROFILE</span>
                         </button>
                     </div>
 
                     <!-- Capture Button -->
-                    <button id="capture-btn" title="Save PNG Screenshot" class="glass-panel p-2.5 rounded-xl shadow-lg text-slate-400 hover:text-white hover:bg-white/5 transition-all flex items-center justify-center gap-1.5 cursor-pointer">
-                        <i data-lucide="camera" class="w-4 h-4"></i>
-                        <span class="text-xs font-semibold">Save PNG</span>
+                    <button id="capture-btn" title="Save PNG Screenshot" class="glass-panel px-3.5 py-2 rounded-xl shadow-lg text-stone-300 hover:text-amber-200 hover:bg-amber-500/15 border border-amber-500/25 transition-all flex items-center justify-center gap-2 cursor-pointer font-display text-xs">
+                        <i data-lucide="camera" class="w-4 h-4 text-amber-400"></i>
+                        <span>Save Image</span>
                     </button>
                 </div>
             </div>
@@ -326,51 +363,51 @@
             <!-- Bottom Camera Controls Overlay & Progress Bar -->
             <div class="flex flex-col items-center w-full gap-4">
                 <!-- THREE.JS LOADING OVERLAY -->
-                <div id="loading-overlay" class="glass-panel p-6 rounded-2xl shadow-2xl flex flex-col gap-3 w-80 items-center justify-center pointer-events-auto">
+                <div id="loading-overlay" class="glass-panel p-6 rounded-2xl shadow-2xl flex flex-col gap-3 w-84 items-center justify-center pointer-events-auto border border-amber-500/30">
                     <div class="flex items-center gap-2.5">
-                        <i data-lucide="loader" class="w-5 h-5 animate-spin text-cyan-400"></i>
-                        <span class="text-sm font-bold tracking-tight text-white font-display">Loading GIS assets...</span>
+                        <i data-lucide="loader" class="w-5 h-5 animate-spin text-amber-400"></i>
+                        <span class="text-sm font-serif font-bold tracking-wide text-amber-100">Loading Cartographic Terrain Model...</span>
                     </div>
-                    <div class="w-full bg-slate-900 rounded-full h-1.5 overflow-hidden border border-white/5">
-                        <div id="loading-bar" class="h-full rounded-full bg-gradient-to-r from-cyan-500 to-indigo-500 transition-all duration-300" style="width: 0%"></div>
+                    <div class="w-full bg-stone-950/80 rounded-full h-2 overflow-hidden border border-amber-500/20 p-0.5">
+                        <div id="loading-bar" class="h-full rounded-full bg-gradient-to-r from-amber-500 via-amber-400 to-amber-200 transition-all duration-300" style="width: 0%"></div>
                     </div>
-                    <span id="loading-progress-text" class="text-[10px] text-slate-500 font-medium">0% (0.0 MB / 7.6 MB)</span>
+                    <span id="loading-progress-text" class="text-[10px] text-stone-400 font-mono">0% (0.0 MB / 7.6 MB)</span>
                 </div>
 
                 <!-- Navigation Guide -->
-                <div class="glass-panel px-4 py-2 rounded-lg shadow-lg text-[10px] text-slate-400 flex gap-4 pointer-events-auto items-center">
-                    <span class="flex items-center gap-1"><i data-lucide="mouse-pointer" class="w-3.5 h-3.5 text-cyan-400"></i> Left Click + Drag: Rotate</span>
-                    <span class="flex items-center gap-1"><i data-lucide="move" class="w-3.5 h-3.5 text-cyan-400"></i> Right Click + Drag: Pan</span>
-                    <span class="flex items-center gap-1"><i data-lucide="zoom-in" class="w-3.5 h-3.5 text-cyan-400"></i> Scroll: Zoom</span>
+                <div class="glass-panel px-4 py-2 rounded-xl shadow-lg text-[10px] text-stone-300 flex gap-5 pointer-events-auto items-center border border-amber-500/20">
+                    <span class="flex items-center gap-1.5"><i data-lucide="mouse-pointer" class="w-3.5 h-3.5 text-amber-400"></i> Left Click + Drag: Orbit</span>
+                    <span class="flex items-center gap-1.5"><i data-lucide="move" class="w-3.5 h-3.5 text-amber-400"></i> Right Click + Drag: Pan</span>
+                    <span class="flex items-center gap-1.5"><i data-lucide="zoom-in" class="w-3.5 h-3.5 text-amber-400"></i> Scroll: Zoom</span>
                 </div>
 
                 <!-- Environmental control panels -->
-                <div class="glass-panel p-1.5 rounded-2xl shadow-2xl flex items-center gap-4 pointer-events-auto">
+                <div class="glass-panel p-1.5 rounded-2xl shadow-2xl flex items-center gap-4 pointer-events-auto border border-amber-500/25">
                     <!-- Lighting Schemes -->
-                    <div class="flex items-center p-1 rounded-xl bg-slate-950/40 border border-white/5">
-                        <button id="light-day" title="Day light" class="px-3 py-1.5 rounded-lg bg-white/10 text-white font-bold text-xs tracking-tight transition-all cursor-pointer flex items-center gap-1.5">
-                            <i data-lucide="sun" class="w-3.5 h-3.5 text-yellow-400"></i> Day
+                    <div class="flex items-center p-1 rounded-xl bg-stone-950/60 border border-amber-500/15">
+                        <button id="light-day" title="Classic Daylight" class="px-3 py-1.5 rounded-lg bg-amber-500/20 border border-amber-500/40 text-amber-200 font-bold text-xs tracking-tight transition-all cursor-pointer flex items-center gap-1.5 font-display">
+                            <i data-lucide="sun" class="w-3.5 h-3.5 text-amber-400"></i> Daylight
                         </button>
-                        <button id="light-sunset" title="Sunset light" class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white font-bold text-xs tracking-tight transition-all cursor-pointer flex items-center gap-1.5 ml-1">
+                        <button id="light-sunset" title="Warm Sunset" class="px-3 py-1.5 rounded-lg text-stone-400 hover:text-amber-200 font-bold text-xs tracking-tight transition-all cursor-pointer flex items-center gap-1.5 ml-1 font-display">
                             <i data-lucide="sunrise" class="w-3.5 h-3.5 text-orange-400"></i> Sunset
                         </button>
-                        <button id="light-night" title="Night light" class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white font-bold text-xs tracking-tight transition-all cursor-pointer flex items-center gap-1.5 ml-1">
-                            <i data-lucide="moon" class="w-3.5 h-3.5 text-indigo-400"></i> Night
+                        <button id="light-night" title="Midnight Indigo" class="px-3 py-1.5 rounded-lg text-stone-400 hover:text-amber-200 font-bold text-xs tracking-tight transition-all cursor-pointer flex items-center gap-1.5 ml-1 font-display">
+                            <i data-lucide="moon" class="w-3.5 h-3.5 text-sky-400"></i> Night
                         </button>
                     </div>
 
-                    <div class="w-px h-6 bg-white/10"></div>
+                    <div class="w-px h-6 bg-amber-500/20"></div>
 
                     <!-- Material Render modes -->
-                    <div class="flex items-center p-1 rounded-xl bg-slate-950/40 border border-white/5">
-                        <button id="render-textured" title="Realistic texture" class="px-3 py-1.5 rounded-lg bg-white/10 text-white font-bold text-xs tracking-tight transition-all cursor-pointer flex items-center gap-1.5">
-                            <i data-lucide="image" class="w-3.5 h-3.5"></i> Texture
+                    <div class="flex items-center p-1 rounded-xl bg-stone-950/60 border border-amber-500/15">
+                        <button id="render-textured" title="Realistic DEM Texture" class="px-3 py-1.5 rounded-lg bg-amber-500/20 border border-amber-500/40 text-amber-200 font-bold text-xs tracking-tight transition-all cursor-pointer flex items-center gap-1.5 font-display">
+                            <i data-lucide="image" class="w-3.5 h-3.5 text-amber-400"></i> Texture
                         </button>
-                        <button id="render-wireframe" title="Mesh Wireframe" class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white font-bold text-xs tracking-tight transition-all cursor-pointer flex items-center gap-1.5 ml-1">
-                            <i data-lucide="grid" class="w-3.5 h-3.5"></i> Grid
+                        <button id="render-wireframe" title="Cartographic Mesh Grid" class="px-3 py-1.5 rounded-lg text-stone-400 hover:text-amber-200 font-bold text-xs tracking-tight transition-all cursor-pointer flex items-center gap-1.5 ml-1 font-display">
+                            <i data-lucide="grid" class="w-3.5 h-3.5 text-amber-400"></i> Grid
                         </button>
-                        <button id="render-xray" title="Cyber Hologram" class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white font-bold text-xs tracking-tight transition-all cursor-pointer flex items-center gap-1.5 ml-1">
-                            <i data-lucide="layers" class="w-3.5 h-3.5 text-cyan-400"></i> X-Ray
+                        <button id="render-xray" title="Translucent Topography" class="px-3 py-1.5 rounded-lg text-stone-400 hover:text-amber-200 font-bold text-xs tracking-tight transition-all cursor-pointer flex items-center gap-1.5 ml-1 font-display">
+                            <i data-lucide="layers" class="w-3.5 h-3.5 text-sky-400"></i> Translucent
                         </button>
                     </div>
 
@@ -380,10 +417,10 @@
     </div>
 
     <!-- HOVER TOOLTIP OVERLAY (DYNAMIC) -->
-    <div id="hover-tooltip" class="absolute pointer-events-none hidden glass-panel px-3 py-1.5 rounded-lg text-xs shadow-xl flex items-center gap-2 border border-white/10 z-50 transition-all duration-75">
+    <div id="hover-tooltip" class="absolute pointer-events-none hidden glass-panel px-3.5 py-2 rounded-xl text-xs shadow-2xl flex items-center gap-2.5 border border-amber-500/30 z-50 transition-all duration-75">
         <span id="tooltip-dot" class="w-2.5 h-2.5 rounded-full inline-block"></span>
-        <span id="tooltip-text" class="font-bold text-slate-200">Point Title</span>
-        <span id="tooltip-score" class="text-[10px] bg-white/10 px-1.5 py-0.5 rounded font-mono text-slate-300">0%</span>
+        <span id="tooltip-text" class="font-serif font-bold text-amber-100 text-sm">Point Title</span>
+        <span id="tooltip-score" class="text-[10px] bg-amber-500/20 border border-amber-500/30 px-1.5 py-0.5 rounded font-mono text-amber-300 font-semibold">0%</span>
     </div>
 
     <!-- CODE SCRIPT IMPLEMENTATION (THREE.JS AND CONTROL LOGIC) -->
@@ -455,10 +492,10 @@
         init();
 
         function init() {
-            // Setup scene
+            // Setup scene with rich classic cartographic background tone
             scene = new THREE.Scene();
-            scene.background = new THREE.Color('#0a0d14');
-            scene.fog = new THREE.FogExp2('#0a0d14', 0.0035);
+            scene.background = new THREE.Color('#0c0e15');
+            scene.fog = new THREE.FogExp2('#0c0e15', 0.0035);
 
             // Setup camera
             camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
@@ -471,28 +508,28 @@
             renderer.shadowMap.enabled = true;
             renderer.shadowMap.type = THREE.PCFSoftShadowMap;
             renderer.toneMapping = THREE.ACESFilmicToneMapping;
-            renderer.toneMappingExposure = 1.0;
+            renderer.toneMappingExposure = 1.05;
             container.appendChild(renderer.domElement);
 
             // Setup controls
             controls = new OrbitControls(camera, renderer.domElement);
             controls.enableDamping = true;
-            controls.dampingFactor = 0.1; // Increased damping for less "slippery" control
-            controls.maxPolarAngle = Math.PI / 2 - 0.05; // Prevent camera going below ground
+            controls.dampingFactor = 0.08;
+            controls.maxPolarAngle = Math.PI / 2 - 0.05;
             controls.minDistance = 5;
             controls.maxDistance = 250;
-            controls.enablePan = true; // Re-enabled panning as requested
+            controls.enablePan = true;
             
-            // Cancel camera smooth animation on user drag interaction to prevent jerky snapping back
+            // Cancel camera smooth animation on user drag interaction
             controls.addEventListener('start', () => {
                 isAnimateCamera = false;
             });
 
-            // Setup Lights
-            ambientLight = new THREE.AmbientLight('#ffffff', 0.7);
+            // Setup Lights: Classic Daylight
+            ambientLight = new THREE.AmbientLight('#fff8e7', 0.75);
             scene.add(ambientLight);
 
-            sunLight = new THREE.DirectionalLight('#ffffff', 0.8);
+            sunLight = new THREE.DirectionalLight('#fff0d0', 0.9);
             sunLight.position.set(50, 100, 50);
             sunLight.castShadow = true;
             sunLight.shadow.mapSize.width = 2048;
@@ -505,14 +542,14 @@
             scene.add(moonLight);
 
             // Spotlight for selected marker
-            activePointLight = new THREE.SpotLight('#0ea5e9', 0, 80, Math.PI / 6, 0.5, 1);
+            activePointLight = new THREE.SpotLight('#d4af37', 0, 80, Math.PI / 6, 0.5, 1);
             activePointLight.castShadow = true;
             scene.add(activePointLight);
 
-            // Particles starfield / ambient dust
+            // Particles starfield / ambient dust (gold motes)
             createParticles();
 
-            // Create terrain group (handles scaling and initial rotation)
+            // Create terrain group
             terrainGroup = new THREE.Group();
             scene.add(terrainGroup);
 
@@ -531,7 +568,7 @@
             animate();
         }
 
-        // Starfield background
+        // Ambient golden dust motes
         function createParticles() {
             const particleCount = 1000;
             const geometry = new THREE.BufferGeometry();
@@ -539,24 +576,22 @@
             const velocities = [];
 
             for (let i = 0; i < particleCount; i++) {
-                // Circular distribute around scene
                 const theta = Math.random() * Math.PI * 2;
-                const radius = 50 + Math.random() * 200;
+                const radius = 40 + Math.random() * 210;
                 positions[i * 3] = Math.cos(theta) * radius;
-                positions[i * 3 + 1] = Math.random() * 80 - 20; // height range
+                positions[i * 3 + 1] = Math.random() * 90 - 25;
                 positions[i * 3 + 2] = Math.sin(theta) * radius;
                 
-                velocities.push((Math.random() - 0.5) * 0.03); // slow rotate velocity
+                velocities.push((Math.random() - 0.5) * 0.03);
             }
 
             geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
 
-            // Load tiny glow point material
             const material = new THREE.PointsMaterial({
-                color: '#38bdf8',
-                size: 0.8,
+                color: '#e2d5b6',
+                size: 0.85,
                 transparent: true,
-                opacity: 0.6,
+                opacity: 0.55,
                 blending: THREE.AdditiveBlending,
                 sizeAttenuation: true
             });
@@ -575,7 +610,6 @@
             for (let i = 0; i < velocities.length; i++) {
                 const x = positions[i * 3];
                 const z = positions[i * 3 + 2];
-                // Rotate around center Y-axis
                 const theta = 0.0003;
                 positions[i * 3] = x * Math.cos(theta) - z * Math.sin(theta);
                 positions[i * 3 + 2] = x * Math.sin(theta) + z * Math.cos(theta);
@@ -591,17 +625,16 @@
 
         // Preset views
         function resetCameraPreset(preset) {
-            isAnimateCamera = false; // cancel active animation
+            isAnimateCamera = false;
             
             let targetPos, targetTarget;
             if (preset === 'iso') {
                 targetPos = new THREE.Vector3(70, 60, 70);
                 targetTarget = new THREE.Vector3(0, 0, 0);
             } else if (preset === 'top') {
-                targetPos = new THREE.Vector3(0, 110, 0.01); // offset slightly to avoid Euler Gimbal Lock
+                targetPos = new THREE.Vector3(0, 110, 0.01);
                 targetTarget = new THREE.Vector3(0, 0, 0);
             } else if (preset === 'close') {
-                // Profile view
                 targetPos = new THREE.Vector3(0, 20, 80);
                 targetTarget = new THREE.Vector3(0, -5, 0);
             }
@@ -618,13 +651,10 @@
 
         // Load 3D model and coords JSON
         function loadDataAndModel() {
-            // First fetch the parsed points JSON
             fetch('/assets/data/points.json')
                 .then(res => res.json())
                 .then(data => {
                     candidatesData = data;
-                    
-                    // Once points details are ready, load the terrain mesh
                     loadTerrainMesh();
                 })
                 .catch(err => {
@@ -633,7 +663,7 @@
                         <div class="text-center text-red-400 p-4">
                             <i data-lucide="alert-triangle" class="w-8 h-8 mx-auto mb-2 text-red-500"></i>
                             <p class="font-bold">Error loading dataset</p>
-                            <p class="text-xs text-slate-500 mt-1">${err.message}</p>
+                            <p class="text-xs text-stone-500 mt-1">${err.message}</p>
                         </div>
                     `;
                 });
@@ -643,7 +673,7 @@
             const mtlLoader = new MTLLoader();
             mtlLoader.setPath('/assets/models/');
             
-            loadingText.textContent = "Loading terrain material...";
+            loadingText.textContent = "Loading cartographic materials...";
             loadingBar.style.width = "15%";
             loadingText.textContent = "15% Loaded";
             
@@ -655,73 +685,58 @@
                 objLoader.setPath('/assets/models/');
                 
                 objLoader.load('pltmh_kulon_progo.obj', (object) => {
-                    // Cache the mesh references
                     object.traverse((child) => {
                         if (child.isMesh) {
                             terrainMesh = child;
                             child.castShadow = true;
                             child.receiveShadow = true;
                             
-                            // Setup responsive material properties
                             if (child.material) {
-                                child.material.roughness = 0.85;
-                                child.material.metalness = 0.15;
+                                child.material.roughness = 0.82;
+                                child.material.metalness = 0.12;
                                 child.material.flatShading = false;
                                 
-                                // Enable wireframe overlay option
                                 child.userData.originalMaterial = child.material;
                                 child.userData.wireframeMaterial = new THREE.MeshBasicMaterial({
-                                    color: '#0ea5e9',
+                                    color: '#d4af37',
                                     wireframe: true,
                                     transparent: true,
-                                    opacity: 0.15
+                                    opacity: 0.22
                                 });
                                 child.userData.xrayMaterial = new THREE.MeshPhysicalMaterial({
-                                    color: '#00c3ff',
+                                    color: '#38bdf8',
                                     transparent: true,
                                     opacity: 0.35,
                                     wireframe: false,
                                     roughness: 0.1,
                                     transmission: 0.6,
                                     thickness: 1.0,
-                                    emissive: '#042236',
+                                    emissive: '#1a1608',
                                     side: THREE.DoubleSide
                                 });
                             }
                         }
                     });
 
-                    // Match layout: rotate 90 degrees around X to map vertical to Three.js Y axis
                     terrainGroup.add(object);
                     terrainGroup.rotation.x = -Math.PI / 2;
                     terrainGroup.scale.set(terrainScale, terrainScale, terrainScale);
-                    
-                    // Reposition centered
                     terrainGroup.position.set(0, 0, 0);
                     
-                    // Force matrices updates to run accurate raycasting
                     scene.updateMatrixWorld(true);
 
-                    // Place markers and update loading
                     loadingText.textContent = "Computing GIS markers...";
                     loadingBar.style.width = "85%";
                     
-                    // Short timeout to let frame refresh
                     setTimeout(() => {
                         placeMarkersOnTerrain();
                         buildCandidatesList();
                         
-                        // Hide loading bar
                         loadingOverlay.classList.add('hidden');
-                        
-
-                        
-                        // Render initially
                         updateVisibleCount();
                     }, 100);
 
                 }, (xhr) => {
-                    // Update progress bar
                     if (xhr.lengthComputable) {
                         const percent = Math.round((xhr.loaded / xhr.total) * 100);
                         const loadedMb = (xhr.loaded / (1024 * 1024)).toFixed(1);
@@ -737,7 +752,7 @@
                         <div class="text-center text-red-400 p-4">
                             <i data-lucide="alert-triangle" class="w-8 h-8 mx-auto mb-2 text-red-500"></i>
                             <p class="font-bold">Error loading 3D terrain</p>
-                            <p class="text-xs text-slate-500 mt-1">${err.message}</p>
+                            <p class="text-xs text-stone-500 mt-1">${err.message}</p>
                         </div>
                     `;
                 });
@@ -754,32 +769,28 @@
             }
 
             candidatesData.forEach(point => {
-                // Calculate world X and Z from OBJ local values
                 const worldX = point.mesh.x * terrainScale;
-                const worldZ = -point.mesh.y * terrainScale; // OBJ Y is mapped to world -Z
+                const worldZ = -point.mesh.y * terrainScale;
                 
-                // Raycast downwards from above
                 const rayStart = new THREE.Vector3(worldX, 50, worldZ);
                 const rayDirection = new THREE.Vector3(0, -1, 0);
                 
                 raycaster.set(rayStart, rayDirection);
-                // Raycast target must be the terrain mesh
                 const intersects = raycaster.intersectObject(terrainMesh);
                 
                 let worldY = 0;
                 if (intersects.length > 0) {
                     worldY = intersects[0].point.y;
                 } else {
-                    // fallback if ray misses
                     worldY = 0.5; 
                 }
 
-                // Create custom elegant 3D marker: A cylinder + point glow
+                // Artistic vintage technology palette
                 const techColors = {
-                    'PLTMH': '#0ea5e9', // Blue
-                    'PLTS': '#eab308',  // Yellow
-                    'PLTB': '#a855f7',  // Violet/Purple
-                    'PLTBm': '#22c55e'  // Green
+                    'PLTMH': '#38bdf8', // Prussian Blue
+                    'PLTS': '#f59e0b',  // Burnished Amber Gold
+                    'PLTB': '#f43f5e',  // Terracotta Rust
+                    'PLTBm': '#10b981'  // Vintage Sage Forest
                 };
                 const colorHex = techColors[point.technology] || '#ffffff';
 
@@ -789,14 +800,13 @@
                 
                 // 1. Point stem (cylinder)
                 const cylinderGeo = new THREE.CylinderGeometry(0.12, 0.12, 3.5, 8);
-                // Translate pivot to bottom
                 cylinderGeo.translate(0, 1.75, 0);
                 const cylinderMat = new THREE.MeshPhongMaterial({
                     color: colorHex,
                     emissive: colorHex,
-                    emissiveIntensity: 0.15,
+                    emissiveIntensity: 0.2,
                     transparent: true,
-                    opacity: 0.8
+                    opacity: 0.85
                 });
                 const stem = new THREE.Mesh(cylinderGeo, cylinderMat);
                 markerGroup.add(stem);
@@ -807,13 +817,12 @@
                 const sphereMat = new THREE.MeshPhongMaterial({
                     color: colorHex,
                     emissive: colorHex,
-                    emissiveIntensity: 0.6,
+                    emissiveIntensity: 0.65,
                     shininess: 100
                 });
                 const tip = new THREE.Mesh(sphereGeo, sphereMat);
                 markerGroup.add(tip);
 
-                // Cache metadata
                 markerGroup.userData = {
                     pointData: point,
                     stem: stem,
@@ -826,7 +835,6 @@
                 scene.add(markerGroup);
                 markers.push(markerGroup);
                 
-                // Reference back in JSON object
                 point.worldPos = { x: worldX, y: worldY, z: worldZ };
             });
         }
@@ -835,37 +843,36 @@
         function buildCandidatesList() {
             candidatesList.innerHTML = '';
             
-            // Sort by raw score descending
             const sortedCandidates = [...candidatesData].sort((a, b) => b.raw_score - a.raw_score);
             
             sortedCandidates.forEach(point => {
                 const techColors = {
-                    'PLTMH': 'border-l-pltmh text-pltmh bg-pltmh/5 hover:bg-pltmh/10',
-                    'PLTS': 'border-l-plts text-plts bg-plts/5 hover:bg-plts/10',
-                    'PLTB': 'border-l-pltb text-pltb bg-pltb/5 hover:bg-pltb/10',
-                    'PLTBm': 'border-l-pltbm text-pltbm bg-pltbm/5 hover:bg-pltbm/10'
+                    'PLTMH': 'border-l-sky-400 text-sky-300 bg-sky-500/5 hover:bg-sky-500/10 hover:border-sky-300',
+                    'PLTS': 'border-l-amber-400 text-amber-300 bg-amber-500/5 hover:bg-amber-500/10 hover:border-amber-300',
+                    'PLTB': 'border-l-rose-400 text-rose-300 bg-rose-500/5 hover:bg-rose-500/10 hover:border-rose-300',
+                    'PLTBm': 'border-l-emerald-400 text-emerald-300 bg-emerald-500/5 hover:bg-emerald-500/10 hover:border-emerald-300'
                 };
                 
-                const classes = techColors[point.technology] || 'border-l-slate-400';
-                const rankText = point.is_top3 ? `🏆 Top ${point.rank}` : `Rank #${point.rank}`;
+                const classes = techColors[point.technology] || 'border-l-stone-400';
+                const rankText = point.is_top3 ? `🏆 Rank #${point.rank}` : `Rank #${point.rank}`;
                 
                 const item = document.createElement('button');
-                item.className = `w-full text-left p-3 rounded-lg border border-white/5 border-l-4 ${classes} cursor-pointer transition-all flex justify-between items-center group pointer-events-auto`;
+                item.className = `w-full text-left p-3 rounded-xl border border-amber-500/15 border-l-4 ${classes} cursor-pointer transition-all flex justify-between items-center group pointer-events-auto shadow-sm`;
                 item.dataset.id = point.id;
                 
                 item.innerHTML = `
                     <div class="flex flex-col gap-0.5">
-                        <span class="font-bold text-sm tracking-tight text-white group-hover:translate-x-0.5 transition-transform flex items-center gap-1.5">
+                        <span class="font-serif font-semibold text-base tracking-wide text-stone-100 group-hover:translate-x-0.5 transition-transform flex items-center gap-1.5">
                             ${point.name}
-                            ${point.is_top3 ? '<span class="text-[9px] font-bold text-amber-400 bg-amber-500/10 border border-amber-500/20 px-1 py-0.2 rounded">TOP</span>' : ''}
+                            ${point.is_top3 ? '<span class="text-[9px] font-bold text-amber-300 bg-amber-500/20 border border-amber-500/40 px-1.5 py-0.2 rounded font-display">PRIME</span>' : ''}
                         </span>
-                        <span class="text-[10px] text-slate-400 flex items-center gap-1">
-                            <i data-lucide="compass" class="w-3 h-3 text-slate-500"></i> ${point.elevation} mdpl | ${point.slope}° Lereng
+                        <span class="text-[10px] text-stone-400 flex items-center gap-1 font-sans">
+                            <i data-lucide="compass" class="w-3 h-3 text-amber-400/80"></i> ${point.elevation} mdpl | ${point.slope}° Slope
                         </span>
                     </div>
-                    <div class="flex flex-col items-end gap-1">
-                        <span class="text-xs font-bold font-display text-white">${point.score_percent}%</span>
-                        <span class="text-[9px] text-slate-500 font-semibold">${rankText}</span>
+                    <div class="flex flex-col items-end gap-0.5">
+                        <span class="text-xs font-serif font-bold text-amber-200 text-sm">${point.score_percent}%</span>
+                        <span class="text-[9px] text-stone-400 font-mono">${rankText}</span>
                     </div>
                 `;
                 
@@ -876,7 +883,6 @@
                 candidatesList.appendChild(item);
             });
             
-            // Re-render lucide icons inside dynamically added components
             lucide.createIcons();
         }
 
@@ -889,7 +895,6 @@
                 const id = parseInt(item.dataset.id);
                 const p = candidatesData.find(candidate => candidate.id === id);
                 
-                // Match tech filter & search query
                 const matchesTech = activeTechFilters[p.technology];
                 const matchesSearch = p.name.toLowerCase().includes(searchInput.value.toLowerCase());
                 
@@ -905,7 +910,6 @@
             
             visibleCountText.textContent = count;
 
-            // Apply tech filter in 3D viewport markers
             markers.forEach(marker => {
                 const data = marker.userData.pointData;
                 const matchesTech = activeTechFilters[data.technology];
@@ -915,7 +919,6 @@
                     marker.visible = true;
                 } else {
                     marker.visible = false;
-                    // if hidden candidate is active, close details
                     if (activePoint && activePoint.id === data.id) {
                         closeDetails();
                     }
@@ -930,37 +933,32 @@
             
             activePoint = p;
             
-            // Highlight list item
             const listItems = candidatesList.querySelectorAll('button');
             listItems.forEach(item => {
                 if (parseInt(item.dataset.id) === id) {
-                    item.classList.add('ring-1', 'ring-white/20', 'bg-white/5');
+                    item.classList.add('ring-1', 'ring-amber-400/50', 'bg-amber-500/10');
                 } else {
-                    item.classList.remove('ring-1', 'ring-white/20', 'bg-white/5');
+                    item.classList.remove('ring-1', 'ring-amber-400/50', 'bg-amber-500/10');
                 }
             });
             
-            // Animate camera to focus on this marker
             animateCameraToTarget(p.worldPos);
 
-            // Trigger marker visual scale up
             markers.forEach(marker => {
                 const data = marker.userData.pointData;
                 if (data.id === id) {
                     marker.userData.isSelected = true;
                     marker.scale.set(1.6, 1.6, 1.6);
-                    // make materials glow brighter
                     marker.userData.tip.material.emissiveIntensity = 1.0;
-                    marker.userData.stem.material.emissiveIntensity = 0.5;
+                    marker.userData.stem.material.emissiveIntensity = 0.55;
                 } else {
                     marker.userData.isSelected = false;
                     marker.scale.set(1, 1, 1);
-                    marker.userData.tip.material.emissiveIntensity = 0.6;
-                    marker.userData.stem.material.emissiveIntensity = 0.15;
+                    marker.userData.tip.material.emissiveIntensity = 0.65;
+                    marker.userData.stem.material.emissiveIntensity = 0.2;
                 }
             });
 
-            // Reposition spotlight on night mode
             activePointLight.position.set(p.worldPos.x, p.worldPos.y + 15, p.worldPos.z);
             activePointLight.target.position.set(p.worldPos.x, p.worldPos.y, p.worldPos.z);
             activePointLight.target.updateMatrixWorld();
@@ -968,7 +966,6 @@
                 activePointLight.intensity = 5;
             }
 
-            // Populate side panel details
             showDetailsPanel(p);
         }
 
@@ -976,22 +973,19 @@
             activePoint = null;
             activePointLight.intensity = 0;
             
-            // Reset marker highlights
             markers.forEach(marker => {
                 marker.userData.isSelected = false;
                 marker.scale.set(1, 1, 1);
-                marker.userData.tip.material.emissiveIntensity = 0.6;
-                marker.userData.stem.material.emissiveIntensity = 0.15;
+                marker.userData.tip.material.emissiveIntensity = 0.65;
+                marker.userData.stem.material.emissiveIntensity = 0.2;
             });
             
-            // Reset list highlights
             const listItems = candidatesList.querySelectorAll('button');
-            listItems.forEach(item => item.classList.remove('ring-1', 'ring-white/20', 'bg-white/5'));
+            listItems.forEach(item => item.classList.remove('ring-1', 'ring-amber-400/50', 'bg-amber-500/10'));
             
             listContainer.classList.remove('hidden');
             detailsContainer.classList.add('hidden');
             
-            // Clear street view iframe src and stored coordinates
             selectedLat = null;
             selectedLon = null;
             document.getElementById('street-view-iframe').src = '';
@@ -1002,16 +996,15 @@
             detailsContainer.classList.remove('hidden');
 
             const techColors = {
-                'PLTMH': { border: 'border-pltmh text-pltmh bg-pltmh/10', color: '#0ea5e9' },
-                'PLTS': { border: 'border-plts text-plts bg-plts/10', color: '#eab308' },
-                'PLTB': { border: 'border-pltb text-pltb bg-pltb/10', color: '#a855f7' },
-                'PLTBm': { border: 'border-pltbm text-pltbm bg-pltbm/10', color: '#22c55e' }
+                'PLTMH': { border: 'border-sky-400 text-sky-300 bg-sky-500/15', color: '#38bdf8' },
+                'PLTS': { border: 'border-amber-400 text-amber-300 bg-amber-500/15', color: '#f59e0b' },
+                'PLTB': { border: 'border-rose-400 text-rose-300 bg-rose-500/15', color: '#f43f5e' },
+                'PLTBm': { border: 'border-emerald-400 text-emerald-300 bg-emerald-500/15', color: '#10b981' }
             };
             const c = techColors[p.technology];
             
-            // Set basic details
             const badge = document.getElementById('detail-badge');
-            badge.className = `text-[10px] font-bold uppercase px-2.5 py-0.5 rounded-full border w-fit ${c.border}`;
+            badge.className = `text-[10px] font-bold uppercase px-2.5 py-0.5 rounded-full border w-fit font-display ${c.border}`;
             badge.textContent = p.technology;
             
             document.getElementById('detail-name').textContent = p.name;
@@ -1019,7 +1012,6 @@
             
             const scoreBar = document.getElementById('detail-score-bar');
             scoreBar.style.backgroundColor = c.color;
-            // Reset then trigger animation width
             scoreBar.style.width = '0%';
             setTimeout(() => {
                 scoreBar.style.width = `${p.score_percent}%`;
@@ -1046,7 +1038,6 @@
             const riverLabel = document.getElementById('detail-river-label');
             const riverVal = document.getElementById('detail-river');
             
-            // Tailor details depending on technology
             if (p.technology === 'PLTMH') {
                 riverCard.classList.remove('hidden');
                 riverLabel.textContent = "River Distance";
@@ -1067,10 +1058,8 @@
                 riverCard.classList.add('hidden');
             }
 
-            // Glow color card
             document.getElementById('detail-glow').style.backgroundColor = c.color;
 
-            // Generate contextual summary based on criteria
             let context = '';
             if (p.technology === 'PLTMH') {
                 context = `Candidate is located along the Menoreh river network. The average slope of ${p.slope}° (${p.slope_percent}%) provides stable structural head pressure, and is situated within ${p.river_dist} meters from flow stream, yielding a high GIS score of ${p.raw_score.toFixed(2)}.`;
@@ -1083,7 +1072,6 @@
             }
             document.getElementById('detail-context-text').textContent = context;
 
-            // Store selected coordinates & update live map iframe
             selectedLat = p.lat;
             selectedLon = p.lon;
             document.getElementById('street-view-link').href = `https://www.google.com/maps/search/?api=1&query=${p.lat},${p.lon}`;
@@ -1098,20 +1086,17 @@
             const selectedLat = activePoint.lat;
             const selectedLon = activePoint.lon;
 
-            // Always use Satellite Map for iframe
             iframe.src = `https://maps.google.com/maps?q=${selectedLat},${selectedLon}&t=h&z=17&output=embed`;
             
-            // Set 360 View link to open in new tab
             if (svLink) {
                 svLink.href = `https://www.google.com/maps?q=${selectedLat},${selectedLon}&layer=c&cbll=${selectedLat},${selectedLon}`;
             }
         }
 
-        // Navigate to prev or next candidate (within currently visible & filtered list)
+        // Navigate to prev or next candidate
         function navigateCandidate(direction) {
             if (!activePoint) return;
 
-            // Build the same sorted list the sidebar uses, filtered by active tech toggles & search
             const sortedVisible = [...candidatesData]
                 .sort((a, b) => b.raw_score - a.raw_score)
                 .filter(p => {
@@ -1131,7 +1116,6 @@
         function animateCameraToTarget(targetPos) {
             isAnimateCamera = false;
             
-            // Offset the camera so it looks at the marker from the side
             targetCameraPos.set(targetPos.x + 25, targetPos.y + 18, targetPos.z + 25);
             targetControlsTarget.set(targetPos.x, targetPos.y + 1.5, targetPos.z);
             
@@ -1142,7 +1126,6 @@
         // Camera smoothing ticks
         function updateCameraSmoothMove() {
             if (isAnimateCamera) {
-                // Disable damping temporarily during programmatic move to prevent fighting
                 const prevDamping = controls.enableDamping;
                 controls.enableDamping = false;
                 
@@ -1153,32 +1136,30 @@
 
                 if (camera.position.distanceTo(targetCameraPos) < 0.2 && controls.target.distanceTo(targetControlsTarget) < 0.2) {
                     isAnimateCamera = false;
-                    controls.enableDamping = prevDamping; // Restore damping
+                    controls.enableDamping = prevDamping;
                 }
             }
         }
 
         // Setup UI handlers and filters
         function setupUIHandlers() {
-            // Technology Filter toggles
             ['PLTMH', 'PLTS', 'PLTB', 'PLTBm'].forEach(tech => {
                 const btn = document.getElementById(`toggle-${tech}`);
                 btn.addEventListener('click', () => {
                     activeTechFilters[tech] = !activeTechFilters[tech];
                     
                     if (activeTechFilters[tech]) {
-                        btn.classList.add('bg-white/10', 'text-white');
-                        btn.classList.remove('text-slate-400');
+                        btn.classList.add('bg-amber-500/20', 'text-amber-200');
+                        btn.classList.remove('opacity-40');
                     } else {
-                        btn.classList.remove('bg-white/10', 'text-white');
-                        btn.classList.add('text-slate-400');
+                        btn.classList.remove('bg-amber-500/20', 'text-amber-200');
+                        btn.classList.add('opacity-40');
                     }
                     
                     updateVisibleCount();
                 });
             });
 
-            // Search inputs
             searchInput.addEventListener('input', () => {
                 if (searchInput.value.length > 0) {
                     searchClearBtn.classList.remove('hidden');
@@ -1194,17 +1175,12 @@
                 updateVisibleCount();
             });
 
-            // Close detail view
             document.getElementById('close-details-btn').addEventListener('click', closeDetails);
 
-            // Navigation tabs removed as 360 view is now a direct link
-
-            // Focus button
             document.getElementById('focus-cam-btn').addEventListener('click', () => {
                 if (activePoint) selectCandidate(activePoint.id);
             });
 
-            // Prev / Next navigation in detail panel
             document.getElementById('prev-candidate-btn').addEventListener('click', () => {
                 navigateCandidate(-1);
             });
@@ -1212,7 +1188,6 @@
                 navigateCandidate(+1);
             });
 
-            // Preset camera triggers
             document.getElementById('cam-iso').addEventListener('click', (e) => {
                 setActiveCamTab(e.currentTarget);
                 resetCameraPreset('iso');
@@ -1226,10 +1201,8 @@
                 resetCameraPreset('close');
             });
 
-            // Screenshot trigger
             document.getElementById('capture-btn').addEventListener('click', takeScreenshot);
 
-            // Lighting schemes
             document.getElementById('light-day').addEventListener('click', (e) => {
                 setActiveLightTab(e.currentTarget);
                 setLightMode('day');
@@ -1243,7 +1216,6 @@
                 setLightMode('night');
             });
 
-            // Render modes
             document.getElementById('render-textured').addEventListener('click', (e) => {
                 setActiveRenderTab(e.currentTarget);
                 setRenderMode('textured');
@@ -1256,20 +1228,17 @@
                 setActiveRenderTab(e.currentTarget);
                 setRenderMode('xray');
             });
-
-
         }
 
-        // Active layout styling helpers
         function setActiveCamTab(activeBtn) {
             ['cam-iso', 'cam-top', 'cam-close'].forEach(id => {
                 const btn = document.getElementById(id);
                 if (btn === activeBtn) {
-                    btn.classList.add('bg-white/10', 'text-white');
-                    btn.classList.remove('text-slate-400');
+                    btn.classList.add('bg-amber-500/20', 'text-amber-200', 'border-amber-500/40');
+                    btn.classList.remove('text-stone-400');
                 } else {
-                    btn.classList.remove('bg-white/10', 'text-white');
-                    btn.classList.add('text-slate-400');
+                    btn.classList.remove('bg-amber-500/20', 'text-amber-200', 'border-amber-500/40');
+                    btn.classList.add('text-stone-400');
                 }
             });
         }
@@ -1278,11 +1247,11 @@
             ['light-day', 'light-sunset', 'light-night'].forEach(id => {
                 const btn = document.getElementById(id);
                 if (btn === activeBtn) {
-                    btn.classList.add('bg-white/10', 'text-white');
-                    btn.classList.remove('text-slate-400');
+                    btn.classList.add('bg-amber-500/20', 'text-amber-200', 'border-amber-500/40');
+                    btn.classList.remove('text-stone-400');
                 } else {
-                    btn.classList.remove('bg-white/10', 'text-white');
-                    btn.classList.add('text-slate-400');
+                    btn.classList.remove('bg-amber-500/20', 'text-amber-200', 'border-amber-500/40');
+                    btn.classList.add('text-stone-400');
                 }
             });
         }
@@ -1291,11 +1260,11 @@
             ['render-textured', 'render-wireframe', 'render-xray'].forEach(id => {
                 const btn = document.getElementById(id);
                 if (btn === activeBtn) {
-                    btn.classList.add('bg-white/10', 'text-white');
-                    btn.classList.remove('text-slate-400');
+                    btn.classList.add('bg-amber-500/20', 'text-amber-200', 'border-amber-500/40');
+                    btn.classList.remove('text-stone-400');
                 } else {
-                    btn.classList.remove('bg-white/10', 'text-white');
-                    btn.classList.add('text-slate-400');
+                    btn.classList.remove('bg-amber-500/20', 'text-amber-200', 'border-amber-500/40');
+                    btn.classList.add('text-stone-400');
                 }
             });
         }
@@ -1304,32 +1273,32 @@
         function setLightMode(mode) {
             activeLightMode = mode;
             if (mode === 'day') {
-                scene.background.set('#0a0d14');
-                scene.fog.color.set('#0a0d14');
-                ambientLight.color.set('#ffffff');
-                ambientLight.intensity = 0.7;
-                sunLight.intensity = 0.8;
+                scene.background.set('#0c0e15');
+                scene.fog.color.set('#0c0e15');
+                ambientLight.color.set('#fff8e7');
+                ambientLight.intensity = 0.75;
+                sunLight.color.set('#fff0d0');
+                sunLight.intensity = 0.9;
                 moonLight.intensity = 0.0;
                 activePointLight.intensity = 0;
             } else if (mode === 'sunset') {
-                scene.background.set('#181024');
-                scene.fog.color.set('#181024');
-                ambientLight.color.set('#3b2d54');
-                ambientLight.intensity = 0.45;
-                sunLight.color.set('#fb923c');
-                sunLight.intensity = 1.35;
+                scene.background.set('#1a101f');
+                scene.fog.color.set('#1a101f');
+                ambientLight.color.set('#3d253b');
+                ambientLight.intensity = 0.5;
+                sunLight.color.set('#f59e0b');
+                sunLight.intensity = 1.4;
                 moonLight.intensity = 0.0;
                 activePointLight.intensity = 0;
             } else if (mode === 'night') {
-                scene.background.set('#04050a');
-                scene.fog.color.set('#04050a');
-                ambientLight.color.set('#0f172a');
-                ambientLight.intensity = 0.15;
+                scene.background.set('#05060b');
+                scene.fog.color.set('#05060b');
+                ambientLight.color.set('#0e1726');
+                ambientLight.intensity = 0.2;
                 sunLight.intensity = 0.0;
                 moonLight.color.set('#38bdf8');
-                moonLight.intensity = 0.4;
+                moonLight.intensity = 0.45;
                 
-                // Spotlights trigger if active point selected
                 if (activePoint) {
                     activePointLight.intensity = 5;
                 }
@@ -1352,34 +1321,28 @@
 
         // Raycasting check for markers hovering & clicks
         function onPointerMove(event) {
-            // Normalize mouse position: range [-1, 1]
             mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
             mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
-            // Hover checks
             raycaster.setFromCamera(mouse, camera);
             
-            // Only raycast against marker tips (glowing sphere meshes)
             const targets = markers.filter(m => m.visible).map(m => m.userData.tip);
             const intersects = raycaster.intersectObjects(targets);
 
             const tooltip = document.getElementById('hover-tooltip');
             
             if (intersects.length > 0) {
-                // Get the parent group
                 const hoveredTip = intersects[0].object;
                 const hoveredMarkerGroup = hoveredTip.parent;
                 const p = hoveredMarkerGroup.userData.pointData;
 
-                // Set cursor style
                 document.body.style.cursor = 'pointer';
 
-                // Display HTML tooltip
                 const techColors = {
-                    'PLTMH': 'bg-pltmh',
-                    'PLTS': 'bg-plts',
-                    'PLTB': 'bg-pltb',
-                    'PLTBm': 'bg-pltbm'
+                    'PLTMH': 'bg-sky-400',
+                    'PLTS': 'bg-amber-400',
+                    'PLTB': 'bg-rose-400',
+                    'PLTBm': 'bg-emerald-400'
                 };
                 
                 document.getElementById('tooltip-dot').className = `w-2.5 h-2.5 rounded-full inline-block ${techColors[p.technology]}`;
@@ -1390,15 +1353,13 @@
                 tooltip.style.top = `${event.clientY - 35}px`;
                 tooltip.classList.remove('hidden');
 
-                // Visual Hover Effect (Scale up slightly)
                 if (!hoveredMarkerGroup.userData.isSelected) {
-                    hoveredMarkerGroup.scale.set(1.3, 1.3, 1.3);
+                    hoveredMarkerGroup.scale.set(1.35, 1.35, 1.35);
                 }
             } else {
                 document.body.style.cursor = 'default';
                 tooltip.classList.add('hidden');
 
-                // Restore original scale for non-selected markers
                 markers.forEach(marker => {
                     if (!marker.userData.isSelected) {
                         marker.scale.set(1, 1, 1);
@@ -1408,7 +1369,6 @@
         }
 
         function onPointerDown(event) {
-            // Only handle left clicks
             if (event.button !== 0) return;
 
             raycaster.setFromCamera(mouse, camera);
@@ -1426,13 +1386,9 @@
         function takeScreenshot() {
             if (!renderer || !scene || !camera) return;
 
-            // Momentarily render just in case
             renderer.render(scene, camera);
-
-            // Fetch image data
             const dataURL = renderer.domElement.toDataURL('image/png');
             
-            // Create link trigger
             const link = document.createElement('a');
             const dateStr = new Date().toISOString().slice(0, 10);
             link.download = `RE_Suitability_Map_KulonProgo_${dateStr}.png`;
@@ -1444,26 +1400,16 @@
         function animate() {
             requestAnimationFrame(animate);
 
-            // Update orbit controls
             controls.update();
-
-            // Run camera smooth move animations
             updateCameraSmoothMove();
 
-
-
-            // Bobbing animation for candidate markers
             const time = Date.now() * 0.0025;
             markers.forEach((marker, index) => {
                 if (marker.visible) {
                     const tip = marker.userData.tip;
-                    const stem = marker.userData.stem;
-                    
-                    // Simple sine bobbing
                     const bobOffset = Math.sin(time + index * 0.5) * 0.15;
                     tip.position.y = bobOffset;
                     
-                    // selected marker rotative animation
                     if (marker.userData.isSelected) {
                         marker.rotation.y += 0.04;
                     } else {
@@ -1472,10 +1418,7 @@
                 }
             });
 
-            // Animate background star particles
             animateParticles();
-
-            // Render scene
             renderer.render(scene, camera);
         }
     </script>
