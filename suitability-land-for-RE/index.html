@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>RE Suitability Map | Muhammad Fachrurrozy</title>
-    <meta name="description" content="Interactive 3D GIS web application displaying Renewable Energy Suitability Land Analysis in Kulon Progo, featuring PLTMH, PLTS, PLTB, and PLTBm candidates.">
+    <title>RE Suitability SDSS | Spatial Decision Support System | Muhammad Fachrurrozy</title>
+    <meta name="description" content="Advanced 3D Spatial Decision Support System (SDSS) for Renewable Energy Land Suitability Analysis in Kulon Progo, featuring dynamic MCDA weight simulation, multi-site radar benchmarking, financial ROI estimation, and 3D suitability heatmaps.">
     
     <!-- Google Fonts: Cormorant Garamond (Serif), Cinzel (Display), Plus Jakarta Sans (Body) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -25,7 +25,7 @@
                     },
                     colors: {
                         darkBg: '#0b0d14',
-                        panelBg: 'rgba(15, 18, 27, 0.88)',
+                        panelBg: 'rgba(15, 18, 27, 0.92)',
                         amberGold: '#d4af37',
                         amberLight: '#f3e5ab',
                         warmCream: '#f7f4ee',
@@ -39,6 +39,9 @@
             }
         }
     </script>
+    
+    <!-- Chart.js for Multi-Site Comparison Radar Charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -66,7 +69,7 @@
         .font-display {
             font-family: 'Cinzel', 'Cormorant Garamond', serif;
         }
-        /* Custom scrollbar for sidebar */
+        /* Custom scrollbar */
         .custom-scrollbar::-webkit-scrollbar {
             width: 4px;
         }
@@ -74,19 +77,19 @@
             background: rgba(15, 18, 27, 0.4);
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: rgba(212, 175, 55, 0.25);
+            background: rgba(212, 175, 55, 0.3);
             border-radius: 2px;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: rgba(212, 175, 55, 0.45);
+            background: rgba(212, 175, 55, 0.55);
         }
         /* Glassmorphism utility with classic warm brass border */
         .glass-panel {
-            background: rgba(14, 17, 26, 0.92);
+            background: rgba(14, 17, 26, 0.93);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(212, 175, 55, 0.2);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(212, 175, 55, 0.22);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.08);
         }
         /* Ornate corner accents */
         .ornate-corner {
@@ -112,6 +115,10 @@
             border-bottom: 1px solid rgba(212, 175, 55, 0.4);
             border-left: 1px solid rgba(212, 175, 55, 0.4);
         }
+        /* Slider styling */
+        input[type=range] {
+            accent-color: #d4af37;
+        }
     </style>
 </head>
 <body class="h-full w-full select-none text-stone-200 antialiased overflow-hidden">
@@ -122,206 +129,367 @@
     <!-- MAIN DASHBOARD LAYOUT -->
     <div class="relative z-10 flex flex-col md:flex-row h-full w-full pointer-events-none overflow-hidden">
         
-        <!-- SIDEBAR / MOBILE BOTTOM SHEET PANEL - Interactive controls, search, lists, details -->
-        <aside id="main-sidebar" class="fixed md:relative bottom-0 left-0 right-0 z-40 md:z-10 w-full md:w-[410px] h-[155px] md:h-full flex flex-col glass-panel border-t md:border-t-0 md:border-r border-amber-500/20 pointer-events-auto shadow-2xl transition-all duration-300 ease-in-out rounded-t-2xl md:rounded-none">
+        <!-- SIDEBAR / MOBILE BOTTOM SHEET PANEL -->
+        <aside id="main-sidebar" class="fixed md:relative bottom-0 left-0 right-0 z-40 md:z-10 w-full md:w-[430px] h-[160px] md:h-full flex flex-col glass-panel border-t md:border-t-0 md:border-r border-amber-500/25 pointer-events-auto shadow-2xl transition-all duration-300 ease-in-out rounded-t-2xl md:rounded-none">
             
             <!-- Mobile Drag Handle Bar (Mobile Only) -->
-            <div id="mobile-sheet-handle" class="w-full py-2 flex flex-col items-center justify-center border-b border-amber-500/15 cursor-pointer md:hidden bg-stone-950/80 rounded-t-2xl select-none active:bg-amber-500/10">
+            <div id="mobile-sheet-handle" class="w-full py-2 flex flex-col items-center justify-center border-b border-amber-500/15 cursor-pointer md:hidden bg-stone-950/80 rounded-t-2xl select-none">
                 <div class="w-12 h-1.5 bg-amber-500/40 rounded-full hover:bg-amber-300 transition-colors"></div>
                 <span id="mobile-sheet-label" class="text-[9px] font-display uppercase tracking-widest text-amber-300/90 mt-1 flex items-center gap-1">
-                    <i data-lucide="chevron-up" class="w-3 h-3 text-amber-400"></i> Tap / Pull for Candidates
+                    <i data-lucide="chevron-up" class="w-3 h-3 text-amber-400"></i> Tap / Pull for SDSS Tools
                 </span>
             </div>
 
             <!-- Header -->
-            <div class="p-4 md:p-6 border-b border-amber-500/15 flex flex-col gap-1.5 relative bg-gradient-to-b from-amber-500/5 to-transparent">
+            <div class="p-4 md:p-5 border-b border-amber-500/15 flex flex-col gap-1.5 relative bg-gradient-to-b from-amber-500/10 to-transparent">
                 <div class="flex items-center justify-between">
                     <a href="/" class="flex items-center gap-1.5 text-xs font-medium text-stone-400 hover:text-amber-300 transition-colors group min-h-[36px]">
                         <i data-lucide="arrow-left" class="w-3.5 h-3.5 group-hover:-translate-x-0.5 transition-transform"></i> Portfolio
                     </a>
-                    <span class="text-[9px] font-bold tracking-widest uppercase bg-amber-500/10 text-amber-300 px-2.5 py-1 rounded-full border border-amber-500/30 font-display">
-                        GIS Cartography
-                    </span>
+                    <div class="flex items-center gap-1.5">
+                        <span class="text-[9px] font-bold tracking-widest uppercase bg-amber-500/15 text-amber-300 px-2.5 py-1 rounded-full border border-amber-500/30 font-display">
+                            SDSS v2.0 Pro
+                        </span>
+                    </div>
                 </div>
                 <div>
-                    <span class="text-[9px] md:text-[10px] uppercase font-bold tracking-widest text-amber-400/80 font-display block">Kulon Progo Regency</span>
+                    <span class="text-[9px] md:text-[10px] uppercase font-bold tracking-widest text-amber-400/80 font-display block">Kulon Progo Spatial Decision Support System</span>
                     <h1 class="text-xl md:text-2xl font-serif font-semibold tracking-wide text-amber-100/95 leading-tight">
-                        Renewable Energy Suitability
+                        RE Suitability Analytics
                     </h1>
                 </div>
-                <p class="text-xs text-stone-400 font-light leading-relaxed hidden md:block">
-                    Interactive multi-criteria spatial analysis for sustainable energy placement candidates in Central Java terrain.
-                </p>
             </div>
 
-            <!-- Search and Filter Section -->
-            <div class="p-3 md:p-4 border-b border-amber-500/15 flex flex-col gap-2.5 bg-black/20">
-                <!-- Search bar -->
-                <div class="relative">
-                    <i data-lucide="search" class="absolute left-3 top-2.5 w-4 h-4 text-stone-500"></i>
-                    <input type="text" id="search-input" placeholder="Search candidate (e.g. PLTMH-01)..." 
-                           class="w-full bg-stone-950/80 border border-amber-500/20 rounded-lg pl-9 pr-8 py-2.5 text-xs focus:outline-none focus:border-amber-400/60 transition-colors placeholder:text-stone-500 text-stone-200 min-h-[44px]">
-                    <button id="search-clear-btn" class="absolute right-3 top-3 hidden hover:text-amber-300 text-stone-500 transition-colors min-w-[36px] min-h-[36px] flex items-center justify-center">
-                        <i data-lucide="x" class="w-4 h-4"></i>
-                    </button>
-                </div>
-                
-                <!-- Category Pills (Toggles) - Minimum 44px touch targets -->
-                <div class="grid grid-cols-4 gap-1.5 text-[10px] font-bold text-center">
-                    <button id="toggle-PLTMH" class="px-2 py-2.5 rounded-lg bg-sky-500/15 border border-sky-400/40 text-sky-300 hover:bg-sky-500/25 transition-all cursor-pointer flex flex-col items-center justify-center gap-1 shadow-sm min-h-[44px] active:scale-95">
-                        <span class="w-2 h-2 rounded-full bg-sky-400 inline-block shadow-[0_0_8px_#38bdf8]"></span>
-                        PLTMH
-                    </button>
-                    <button id="toggle-PLTS" class="px-2 py-2.5 rounded-lg bg-amber-500/15 border border-amber-400/40 text-amber-300 hover:bg-amber-500/25 transition-all cursor-pointer flex flex-col items-center justify-center gap-1 shadow-sm min-h-[44px] active:scale-95">
-                        <span class="w-2 h-2 rounded-full bg-amber-400 inline-block shadow-[0_0_8px_#f59e0b]"></span>
-                        PLTS
-                    </button>
-                    <button id="toggle-PLTB" class="px-2 py-2.5 rounded-lg bg-rose-500/15 border border-rose-400/40 text-rose-300 hover:bg-rose-500/25 transition-all cursor-pointer flex flex-col items-center justify-center gap-1 shadow-sm min-h-[44px] active:scale-95">
-                        <span class="w-2 h-2 rounded-full bg-rose-400 inline-block shadow-[0_0_8px_#f43f5e]"></span>
-                        PLTB
-                    </button>
-                    <button id="toggle-PLTBm" class="px-2 py-2.5 rounded-lg bg-emerald-500/15 border border-emerald-400/40 text-emerald-300 hover:bg-emerald-500/25 transition-all cursor-pointer flex flex-col items-center justify-center gap-1 shadow-sm min-h-[44px] active:scale-95">
-                        <span class="w-2 h-2 rounded-full bg-emerald-400 inline-block shadow-[0_0_8px_#10b981]"></span>
-                        PLTBm
-                    </button>
-                </div>
+            <!-- MODULAR SIDEBAR TAB NAVIGATION -->
+            <div class="grid grid-cols-4 border-b border-amber-500/20 bg-stone-950/80 text-[10px] font-display font-bold text-center">
+                <button id="nav-tab-candidates" class="py-2.5 px-1 text-amber-200 border-b-2 border-amber-400 bg-amber-500/10 flex flex-col items-center gap-1 transition-all cursor-pointer">
+                    <i data-lucide="map-pin" class="w-3.5 h-3.5 text-amber-400"></i>
+                    <span>Sites</span>
+                </button>
+                <button id="nav-tab-mcda" class="py-2.5 px-1 text-stone-400 border-b-2 border-transparent hover:text-amber-200 hover:bg-amber-500/5 flex flex-col items-center gap-1 transition-all cursor-pointer">
+                    <i data-lucide="sliders" class="w-3.5 h-3.5 text-amber-400/80"></i>
+                    <span>MCDA Weights</span>
+                </button>
+                <button id="nav-tab-compare" class="py-2.5 px-1 text-stone-400 border-b-2 border-transparent hover:text-amber-200 hover:bg-amber-500/5 flex flex-col items-center gap-1 transition-all cursor-pointer relative">
+                    <i data-lucide="git-compare" class="w-3.5 h-3.5 text-amber-400/80"></i>
+                    <span>Compare (<span id="compare-count">0</span>)</span>
+                </button>
+                <button id="nav-tab-roi" class="py-2.5 px-1 text-stone-400 border-b-2 border-transparent hover:text-amber-200 hover:bg-amber-500/5 flex flex-col items-center gap-1 transition-all cursor-pointer">
+                    <i data-lucide="calculator" class="w-3.5 h-3.5 text-amber-400/80"></i>
+                    <span>Financial ROI</span>
+                </button>
             </div>
 
-            <!-- Dynamic Content (List or Details) -->
+            <!-- TAB CONTENT CONTAINER -->
             <div class="flex-1 overflow-y-auto custom-scrollbar relative flex flex-col">
                 
-                <!-- DEFAULT LIST VIEW -->
-                <div id="list-container" class="p-3 md:p-4 flex flex-col gap-2">
-                    <div class="flex items-center justify-between text-xs text-stone-400 font-semibold mb-1 px-1">
-                        <span class="font-display text-[11px] tracking-wider text-amber-200/80">Candidate Locations (<span id="visible-count">0</span>/65)</span>
-                        <span class="text-[10px] text-stone-500 uppercase tracking-widest">Sorted by Score</span>
-                    </div>
-                    <div id="candidates-list" class="flex flex-col gap-2">
-                        <!-- Points list item will be injected dynamically -->
-                    </div>
-                </div>
-
-                <!-- DETAILED DATA EXPLORER PANEL -->
-                <div id="details-container" class="hidden p-4 md:p-5 flex flex-col gap-4 md:gap-5">
-                    <!-- Detail Header -->
-                    <div class="flex items-start justify-between border-b border-amber-500/15 pb-3">
-                        <div class="flex flex-col gap-1">
-                            <span id="detail-badge" class="text-[10px] font-bold uppercase px-2.5 py-0.5 rounded-full border w-fit font-display">
-                                Technology
-                            </span>
-                            <h2 id="detail-name" class="text-xl md:text-2xl font-serif font-semibold tracking-wide text-amber-100">
-                                PLTS-01
-                            </h2>
-                            <p class="text-xs text-stone-400 font-light flex items-center gap-1.5">
-                                <i data-lucide="map-pin" class="w-3.5 h-3.5 text-amber-400"></i>
-                                <span id="detail-coords" class="font-mono text-[11px]">0.00000, 0.00000</span>
-                            </p>
+                <!-- ================= TAB 1: CANDIDATES EXPLORER ================= -->
+                <div id="tab-content-candidates" class="flex flex-col flex-1">
+                    <!-- Search and Filter Section -->
+                    <div class="p-3 md:p-4 border-b border-amber-500/15 flex flex-col gap-2.5 bg-black/20">
+                        <div class="relative">
+                            <i data-lucide="search" class="absolute left-3 top-2.5 w-4 h-4 text-stone-500"></i>
+                            <input type="text" id="search-input" placeholder="Search candidate (e.g. PLTMH-01)..." 
+                                   class="w-full bg-stone-950/80 border border-amber-500/20 rounded-lg pl-9 pr-8 py-2 text-xs focus:outline-none focus:border-amber-400/60 transition-colors placeholder:text-stone-500 text-stone-200 min-h-[40px]">
+                            <button id="search-clear-btn" class="absolute right-3 top-2.5 hidden hover:text-amber-300 text-stone-500">
+                                <i data-lucide="x" class="w-4 h-4"></i>
+                            </button>
                         </div>
-                        <button id="close-details-btn" title="Back to Candidate List" class="p-2.5 rounded-lg border border-amber-500/20 bg-stone-900/60 hover:bg-amber-500/15 text-stone-300 hover:text-amber-200 transition-all cursor-pointer min-h-[44px] min-w-[44px] flex items-center justify-center">
-                            <i data-lucide="arrow-left" class="w-4 h-4"></i>
-                        </button>
+                        
+                        <div class="grid grid-cols-4 gap-1.5 text-[10px] font-bold text-center">
+                            <button id="toggle-PLTMH" class="px-1.5 py-2 rounded-lg bg-sky-500/15 border border-sky-400/40 text-sky-300 hover:bg-sky-500/25 transition-all cursor-pointer flex flex-col items-center justify-center gap-0.5 min-h-[40px]">
+                                <span class="w-2 h-2 rounded-full bg-sky-400 inline-block shadow-[0_0_8px_#38bdf8]"></span>
+                                PLTMH
+                            </button>
+                            <button id="toggle-PLTS" class="px-1.5 py-2 rounded-lg bg-amber-500/15 border border-amber-400/40 text-amber-300 hover:bg-amber-500/25 transition-all cursor-pointer flex flex-col items-center justify-center gap-0.5 min-h-[40px]">
+                                <span class="w-2 h-2 rounded-full bg-amber-400 inline-block shadow-[0_0_8px_#f59e0b]"></span>
+                                PLTS
+                            </button>
+                            <button id="toggle-PLTB" class="px-1.5 py-2 rounded-lg bg-rose-500/15 border border-rose-400/40 text-rose-300 hover:bg-rose-500/25 transition-all cursor-pointer flex flex-col items-center justify-center gap-0.5 min-h-[40px]">
+                                <span class="w-2 h-2 rounded-full bg-rose-400 inline-block shadow-[0_0_8px_#f43f5e]"></span>
+                                PLTB
+                            </button>
+                            <button id="toggle-PLTBm" class="px-1.5 py-2 rounded-lg bg-emerald-500/15 border border-emerald-400/40 text-emerald-300 hover:bg-emerald-500/25 transition-all cursor-pointer flex flex-col items-center justify-center gap-0.5 min-h-[40px]">
+                                <span class="w-2 h-2 rounded-full bg-emerald-400 inline-block shadow-[0_0_8px_#10b981]"></span>
+                                PLTBm
+                            </button>
+                        </div>
                     </div>
 
-                    <!-- Score indicator Card -->
-                    <div class="p-4 rounded-xl border border-amber-500/25 bg-stone-950/70 flex flex-col gap-3 relative overflow-hidden ornate-corner shadow-lg">
-                        <div class="flex items-center justify-between z-10">
-                            <div class="flex flex-col gap-0.5">
-                                <span class="text-[10px] font-bold uppercase tracking-widest text-amber-400/90 font-display">Suitability Index</span>
-                                <span id="detail-rank-text" class="text-[11px] text-stone-400 font-medium">Rank #0 overall</span>
-                            </div>
-                            <div class="flex flex-col items-end">
-                                <span id="detail-score-val" class="text-3xl font-serif font-bold tracking-tight text-amber-200 leading-none" style="text-shadow: 0 0 20px currentColor">0%</span>
-                                <span id="detail-top-badge" class="text-[9px] text-amber-300 bg-amber-500/20 border border-amber-500/30 px-1.5 py-0.5 rounded-full hidden flex items-center gap-1 mt-1 font-display">
-                                    <i data-lucide="award" class="w-3 h-3 text-amber-400"></i> Prime Site
+                    <!-- CANDIDATES LIST VIEW -->
+                    <div id="list-container" class="p-3 md:p-4 flex flex-col gap-2">
+                        <div class="flex items-center justify-between text-xs text-stone-400 font-semibold mb-1 px-1">
+                            <span class="font-display text-[11px] tracking-wider text-amber-200/80">Candidate Locations (<span id="visible-count">0</span>/65)</span>
+                            <span class="text-[10px] text-stone-500 uppercase tracking-widest">Sorted by MCDA Score</span>
+                        </div>
+                        <div id="candidates-list" class="flex flex-col gap-2">
+                            <!-- Points list item will be injected dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- DETAILED DATA EXPLORER PANEL -->
+                    <div id="details-container" class="hidden p-4 md:p-5 flex flex-col gap-4">
+                        <div class="flex items-start justify-between border-b border-amber-500/15 pb-3">
+                            <div class="flex flex-col gap-1">
+                                <span id="detail-badge" class="text-[10px] font-bold uppercase px-2.5 py-0.5 rounded-full border w-fit font-display">
+                                    Technology
                                 </span>
+                                <h2 id="detail-name" class="text-xl md:text-2xl font-serif font-semibold tracking-wide text-amber-100">
+                                    PLTS-01
+                                </h2>
+                                <p class="text-xs text-stone-400 font-light flex items-center gap-1.5">
+                                    <i data-lucide="map-pin" class="w-3.5 h-3.5 text-amber-400"></i>
+                                    <span id="detail-coords" class="font-mono text-[11px]">0.00000, 0.00000</span>
+                                </p>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button id="btn-add-compare" title="Add to Compare List" class="px-2.5 py-1.5 rounded-lg border border-amber-500/30 bg-amber-500/10 hover:bg-amber-500/20 text-amber-200 text-xs font-display flex items-center gap-1 transition-all cursor-pointer min-h-[40px]">
+                                    <i data-lucide="plus" class="w-3.5 h-3.5"></i> Compare
+                                </button>
+                                <button id="close-details-btn" title="Back to List" class="p-2 rounded-lg border border-amber-500/20 bg-stone-900/60 hover:bg-amber-500/15 text-stone-300 hover:text-amber-200 transition-all cursor-pointer min-h-[40px] min-w-[40px] flex items-center justify-center">
+                                    <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                                </button>
                             </div>
                         </div>
-                        <div class="w-full bg-stone-900/90 rounded-full h-3 overflow-hidden z-10 border border-amber-500/20 p-0.5">
-                            <div id="detail-score-bar" class="h-full rounded-full transition-all duration-700 relative" style="width: 0%">
-                                <div class="absolute inset-0 rounded-full opacity-50" style="background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.4) 100%)"></div>
-                            </div>
-                        </div>
-                        <!-- Background glow -->
-                        <div id="detail-glow" class="absolute -right-6 -top-6 w-32 h-32 rounded-full blur-3xl opacity-20"></div>
-                    </div>
 
-                    <!-- Geographical Info -->
-                    <div class="flex flex-col gap-2.5">
-                        <h3 class="text-[11px] font-bold uppercase tracking-wider text-amber-400/90 font-display flex items-center gap-1.5">
-                            <i data-lucide="compass" class="w-3.5 h-3.5 text-amber-400"></i> Terrain Metrics
-                        </h3>
-                        <div class="grid grid-cols-2 gap-2 text-xs">
-                            <div class="p-2.5 rounded-lg bg-stone-950/40 border border-amber-500/15 flex flex-col gap-0.5">
-                                <span class="text-[10px] text-stone-400 font-medium uppercase tracking-wide">Elevation</span>
-                                <span id="detail-elev" class="font-semibold text-stone-100 font-mono text-xs">-</span>
+                        <!-- Score indicator Card -->
+                        <div class="p-4 rounded-xl border border-amber-500/25 bg-stone-950/70 flex flex-col gap-3 relative overflow-hidden ornate-corner shadow-lg">
+                            <div class="flex items-center justify-between z-10">
+                                <div class="flex flex-col gap-0.5">
+                                    <span class="text-[10px] font-bold uppercase tracking-widest text-amber-400/90 font-display">Suitability Index</span>
+                                    <span id="detail-rank-text" class="text-[11px] text-stone-400 font-medium">Rank #0 overall</span>
+                                </div>
+                                <div class="flex flex-col items-end">
+                                    <span id="detail-score-val" class="text-3xl font-serif font-bold tracking-tight text-amber-200 leading-none" style="text-shadow: 0 0 20px currentColor">0%</span>
+                                    <span id="detail-top-badge" class="text-[9px] text-amber-300 bg-amber-500/20 border border-amber-500/30 px-1.5 py-0.5 rounded-full hidden flex items-center gap-1 mt-1 font-display">
+                                        <i data-lucide="award" class="w-3 h-3 text-amber-400"></i> Prime Site
+                                    </span>
+                                </div>
                             </div>
-                            <div class="p-2.5 rounded-lg bg-stone-950/40 border border-amber-500/15 flex flex-col gap-0.5">
-                                <span class="text-[10px] text-stone-400 font-medium uppercase tracking-wide">Slope Gradient</span>
-                                <span id="detail-slope" class="font-semibold text-stone-100 font-mono text-xs">-</span>
+                            <div class="w-full bg-stone-900/90 rounded-full h-3 overflow-hidden z-10 border border-amber-500/20 p-0.5">
+                                <div id="detail-score-bar" class="h-full rounded-full transition-all duration-700 relative" style="width: 0%">
+                                    <div class="absolute inset-0 rounded-full opacity-50" style="background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.4) 100%)"></div>
+                                </div>
                             </div>
-                            <div class="p-2.5 rounded-lg bg-stone-950/40 border border-amber-500/15 flex flex-col gap-0.5">
-                                <span class="text-[10px] text-stone-400 font-medium uppercase tracking-wide">Road Access</span>
-                                <span id="detail-road" class="font-semibold text-stone-100 font-mono text-xs">-</span>
-                            </div>
-                            <div id="detail-river-card" class="p-2.5 rounded-lg bg-stone-950/40 border border-amber-500/15 flex flex-col gap-0.5">
-                                <span id="detail-river-label" class="text-[10px] text-stone-400 font-medium uppercase tracking-wide">River Buffer</span>
-                                <span id="detail-river" class="font-semibold text-stone-100 font-mono text-xs">-</span>
-                            </div>
+                            <div id="detail-glow" class="absolute -right-6 -top-6 w-32 h-32 rounded-full blur-3xl opacity-20"></div>
                         </div>
-                    </div>
 
-                    <!-- Interactive Map & Street View Card -->
-                    <div class="flex flex-col gap-2.5">
-                        <div class="flex items-center justify-between">
+                        <!-- Geographical Info -->
+                        <div class="flex flex-col gap-2.5">
                             <h3 class="text-[11px] font-bold uppercase tracking-wider text-amber-400/90 font-display flex items-center gap-1.5">
-                                <i data-lucide="map" class="w-3.5 h-3.5 text-amber-400"></i> Cartographic Live View
+                                <i data-lucide="compass" class="w-3.5 h-3.5 text-amber-400"></i> Terrain Metrics
                             </h3>
-                            <a id="street-view-link" href="#" target="_blank" class="text-[10px] text-amber-300 hover:text-amber-200 font-semibold flex items-center gap-1 transition-colors cursor-pointer min-h-[36px] flex items-center">
-                                Open Maps <i data-lucide="external-link" class="w-2.5 h-2.5"></i>
-                            </a>
+                            <div class="grid grid-cols-2 gap-2 text-xs">
+                                <div class="p-2.5 rounded-lg bg-stone-950/40 border border-amber-500/15 flex flex-col gap-0.5">
+                                    <span class="text-[10px] text-stone-400 font-medium uppercase tracking-wide">Elevation</span>
+                                    <span id="detail-elev" class="font-semibold text-stone-100 font-mono text-xs">-</span>
+                                </div>
+                                <div class="p-2.5 rounded-lg bg-stone-950/40 border border-amber-500/15 flex flex-col gap-0.5">
+                                    <span class="text-[10px] text-stone-400 font-medium uppercase tracking-wide">Slope Gradient</span>
+                                    <span id="detail-slope" class="font-semibold text-stone-100 font-mono text-xs">-</span>
+                                </div>
+                                <div class="p-2.5 rounded-lg bg-stone-950/40 border border-amber-500/15 flex flex-col gap-0.5">
+                                    <span class="text-[10px] text-stone-400 font-medium uppercase tracking-wide">Road Access</span>
+                                    <span id="detail-road" class="font-semibold text-stone-100 font-mono text-xs">-</span>
+                                </div>
+                                <div id="detail-river-card" class="p-2.5 rounded-lg bg-stone-950/40 border border-amber-500/15 flex flex-col gap-0.5">
+                                    <span id="detail-river-label" class="text-[10px] text-stone-400 font-medium uppercase tracking-wide">River Buffer</span>
+                                    <span id="detail-river" class="font-semibold text-stone-100 font-mono text-xs">-</span>
+                                </div>
+                            </div>
                         </div>
-                        
-                        <!-- Header button -->
-                        <div class="flex justify-between items-center px-0.5">
-                            <span class="text-[11px] font-semibold text-amber-300/90 flex items-center gap-1.5">
-                                <i data-lucide="globe" class="w-3.5 h-3.5 text-amber-400"></i>
-                                Satellite View
-                            </span>
-                            <a id="btn-streetview-link" href="#" target="_blank" rel="noopener noreferrer" class="text-[10px] font-semibold flex items-center gap-1 text-stone-950 bg-amber-400 hover:bg-amber-300 px-3 py-1.5 rounded-md transition-all shadow-md shadow-amber-500/20 font-display min-h-[36px]">
-                                <i data-lucide="navigation-2" class="w-3 h-3"></i>
-                                360° Panorama ↗
-                            </a>
-                        </div>
-                        
-                        <div class="relative w-full h-40 md:h-44 rounded-xl border border-amber-500/20 bg-stone-950/60 overflow-hidden group shadow-inner">
-                            <!-- Map Iframe -->
-                            <iframe id="street-view-iframe" class="w-full h-full border-none transition-all duration-300 group-hover:scale-[1.01]" 
-                                     src="" 
-                                     allowfullscreen 
-                                     loading="lazy" 
-                                     referrerpolicy="no-referrer"></iframe>
-                        </div>
-                    </div>
 
-                    <!-- Details Description -->
-                    <div class="p-3.5 rounded-lg bg-stone-950/50 border border-amber-500/15 text-xs leading-relaxed text-stone-300">
-                        <span class="font-serif font-semibold text-amber-200 text-sm block mb-1">GIS Analysis Summary:</span>
-                        <span id="detail-context-text" class="text-stone-300 font-light text-[11px] leading-relaxed block">-</span>
-                    </div>
+                        <!-- Interactive Map & Street View Card -->
+                        <div class="flex flex-col gap-2">
+                            <div class="flex items-center justify-between px-0.5">
+                                <span class="text-[11px] font-semibold text-amber-300/90 flex items-center gap-1.5">
+                                    <i data-lucide="globe" class="w-3.5 h-3.5 text-amber-400"></i> Satellite View
+                                </span>
+                                <a id="btn-streetview-link" href="#" target="_blank" rel="noopener noreferrer" class="text-[10px] font-semibold flex items-center gap-1 text-stone-950 bg-amber-400 hover:bg-amber-300 px-2.5 py-1 rounded-md transition-all shadow-md shadow-amber-500/20 font-display">
+                                    360° Panorama ↗
+                                </a>
+                            </div>
+                            <div class="relative w-full h-36 rounded-xl border border-amber-500/20 bg-stone-950/60 overflow-hidden group shadow-inner">
+                                <iframe id="street-view-iframe" class="w-full h-full border-none transition-all duration-300" src="" allowfullscreen loading="lazy"></iframe>
+                            </div>
+                        </div>
 
-                    <!-- Navigation between points -->
-                    <div class="flex items-center gap-2 pt-1">
-                        <button id="prev-candidate-btn" class="flex-1 bg-stone-900/80 hover:bg-amber-500/15 border border-amber-500/20 text-stone-300 hover:text-amber-200 py-3 rounded-lg font-bold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer min-h-[44px]">
-                            <i data-lucide="chevron-left" class="w-4 h-4"></i> Prev
-                        </button>
-                        <button id="focus-cam-btn" class="flex-1 bg-amber-400 hover:bg-amber-300 text-stone-950 shadow-lg shadow-amber-500/20 py-3 rounded-lg font-bold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer font-display min-h-[44px]">
-                            <i data-lucide="locate-fixed" class="w-4 h-4"></i> Focus
-                        </button>
-                        <button id="next-candidate-btn" class="flex-1 bg-stone-900/80 hover:bg-amber-500/15 border border-amber-500/20 text-stone-300 hover:text-amber-200 py-3 rounded-lg font-bold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer min-h-[44px]">
-                            Next <i data-lucide="chevron-right" class="w-4 h-4"></i>
-                        </button>
+                        <!-- Context Text -->
+                        <div class="p-3 rounded-lg bg-stone-950/50 border border-amber-500/15 text-xs leading-relaxed text-stone-300">
+                            <span class="font-serif font-semibold text-amber-200 text-sm block mb-1">GIS Analysis Context:</span>
+                            <span id="detail-context-text" class="text-stone-300 font-light text-[11px] leading-relaxed block">-</span>
+                        </div>
+
+                        <!-- Navigation Buttons -->
+                        <div class="flex items-center gap-2 pt-1">
+                            <button id="prev-candidate-btn" class="flex-1 bg-stone-900/80 hover:bg-amber-500/15 border border-amber-500/20 text-stone-300 hover:text-amber-200 py-2.5 rounded-lg font-bold text-xs flex items-center justify-center gap-1 transition-all cursor-pointer min-h-[40px]">
+                                <i data-lucide="chevron-left" class="w-4 h-4"></i> Prev
+                            </button>
+                            <button id="focus-cam-btn" class="flex-1 bg-amber-400 hover:bg-amber-300 text-stone-950 shadow-lg shadow-amber-500/20 py-2.5 rounded-lg font-bold text-xs flex items-center justify-center gap-1 transition-all cursor-pointer font-display min-h-[40px]">
+                                <i data-lucide="locate-fixed" class="w-4 h-4"></i> Focus 3D
+                            </button>
+                            <button id="next-candidate-btn" class="flex-1 bg-stone-900/80 hover:bg-amber-500/15 border border-amber-500/20 text-stone-300 hover:text-amber-200 py-2.5 rounded-lg font-bold text-xs flex items-center justify-center gap-1 transition-all cursor-pointer min-h-[40px]">
+                                Next <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                            </button>
+                        </div>
                     </div>
                 </div>
+
+                <!-- ================= TAB 2: MCDA WEIGHT SIMULATOR ================= -->
+                <div id="tab-content-mcda" class="hidden p-4 flex flex-col gap-4">
+                    <div class="p-3.5 rounded-xl border border-amber-500/25 bg-amber-500/10 flex flex-col gap-1">
+                        <h3 class="text-sm font-serif font-bold text-amber-100 flex items-center gap-2">
+                            <i data-lucide="sliders" class="w-4 h-4 text-amber-400"></i> Dynamic AHP / MCDA Weight Simulator
+                        </h3>
+                        <p class="text-[11px] text-stone-300 font-light leading-relaxed">
+                            Adjust criteria weights below to dynamically recalculate suitability scores and candidate rankings across all 65 sites in real time.
+                        </p>
+                    </div>
+
+                    <!-- Scenario Presets -->
+                    <div class="flex flex-col gap-1.5">
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-amber-400/90 font-display">Preset Spatial Scenarios</span>
+                        <div class="grid grid-cols-2 gap-1.5 text-[10px] font-display">
+                            <button id="preset-balanced" class="p-2 rounded-lg border border-amber-500/30 bg-amber-500/20 text-amber-200 hover:bg-amber-500/30 transition-all text-left">
+                                ⚖️ Balanced Standard
+                            </button>
+                            <button id="preset-logistics" class="p-2 rounded-lg border border-amber-500/20 bg-stone-900/60 text-stone-300 hover:bg-amber-500/10 transition-all text-left">
+                                🛣️ Logistics Priority
+                            </button>
+                            <button id="preset-safety" class="p-2 rounded-lg border border-amber-500/20 bg-stone-900/60 text-stone-300 hover:bg-amber-500/10 transition-all text-left">
+                                📐 Terrain Safety
+                            </button>
+                            <button id="preset-yield" class="p-2 rounded-lg border border-amber-500/20 bg-stone-900/60 text-stone-300 hover:bg-amber-500/10 transition-all text-left">
+                                ⚡ Max Energy Yield
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Weight Sliders -->
+                    <div class="flex flex-col gap-3 pt-2">
+                        <!-- Slope Weight -->
+                        <div class="flex flex-col gap-1 p-2.5 rounded-lg bg-stone-950/50 border border-amber-500/15">
+                            <div class="flex justify-between text-xs font-semibold">
+                                <span class="text-stone-200 flex items-center gap-1.5"><i data-lucide="trending-up" class="w-3.5 h-3.5 text-amber-400"></i> Slope Gradient Weight</span>
+                                <span id="weight-val-slope" class="text-amber-300 font-mono">35%</span>
+                            </div>
+                            <input type="range" id="slider-slope" min="0" max="100" value="35" class="w-full h-1.5 bg-stone-800 rounded-lg cursor-pointer">
+                            <span class="text-[9px] text-stone-400">Lower slope angles yield higher safety and structural stability.</span>
+                        </div>
+
+                        <!-- Road Access Weight -->
+                        <div class="flex flex-col gap-1 p-2.5 rounded-lg bg-stone-950/50 border border-amber-500/15">
+                            <div class="flex justify-between text-xs font-semibold">
+                                <span class="text-stone-200 flex items-center gap-1.5"><i data-lucide="truck" class="w-3.5 h-3.5 text-amber-400"></i> Road Infrastructure Access</span>
+                                <span id="weight-val-road" class="text-amber-300 font-mono">25%</span>
+                            </div>
+                            <input type="range" id="slider-road" min="0" max="100" value="25" class="w-full h-1.5 bg-stone-800 rounded-lg cursor-pointer">
+                            <span class="text-[9px] text-stone-400">Proximity to transportation network reduces logistics CAPEX.</span>
+                        </div>
+
+                        <!-- Resource Potential Weight -->
+                        <div class="flex flex-col gap-1 p-2.5 rounded-lg bg-stone-950/50 border border-amber-500/15">
+                            <div class="flex justify-between text-xs font-semibold">
+                                <span class="text-stone-200 flex items-center gap-1.5"><i data-lucide="zap" class="w-3.5 h-3.5 text-amber-400"></i> Specific Resource Potential</span>
+                                <span id="weight-val-resource" class="text-amber-300 font-mono">25%</span>
+                            </div>
+                            <input type="range" id="slider-resource" min="0" max="100" value="25" class="w-full h-1.5 bg-stone-800 rounded-lg cursor-pointer">
+                            <span class="text-[9px] text-stone-400">River flow (PLTMH), GHI solar (PLTS), wind speed (PLTB), biomass.</span>
+                        </div>
+
+                        <!-- Elevation Weight -->
+                        <div class="flex flex-col gap-1 p-2.5 rounded-lg bg-stone-950/50 border border-amber-500/15">
+                            <div class="flex justify-between text-xs font-semibold">
+                                <span class="text-stone-200 flex items-center gap-1.5"><i data-lucide="mountain" class="w-3.5 h-3.5 text-amber-400"></i> Elevation Profile Weight</span>
+                                <span id="weight-val-elev" class="text-amber-300 font-mono">15%</span>
+                            </div>
+                            <input type="range" id="slider-elev" min="0" max="100" value="15" class="w-full h-1.5 bg-stone-800 rounded-lg cursor-pointer">
+                            <span class="text-[9px] text-stone-400">Optimal altitude zones for clean wind currents and head pressure.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ================= TAB 3: COMPARE SITES ================= -->
+                <div id="tab-content-compare" class="hidden p-4 flex flex-col gap-4">
+                    <div class="flex items-center justify-between border-b border-amber-500/15 pb-2">
+                        <h3 class="text-sm font-serif font-bold text-amber-100 flex items-center gap-2">
+                            <i data-lucide="git-compare" class="w-4 h-4 text-amber-400"></i> Site Benchmarking & Radar Analysis
+                        </h3>
+                        <button id="btn-clear-compare" class="text-[10px] text-stone-400 hover:text-amber-300 font-display">Clear All</button>
+                    </div>
+
+                    <div id="compare-empty-msg" class="p-6 text-center text-stone-400 text-xs border border-dashed border-amber-500/20 rounded-xl">
+                        <i data-lucide="layers" class="w-8 h-8 mx-auto text-amber-500/40 mb-2"></i>
+                        <p class="font-semibold text-stone-300">No sites selected for comparison</p>
+                        <p class="text-[10px] text-stone-500 mt-1">Click "Compare" on candidate cards in the Sites tab (up to 3 sites).</p>
+                    </div>
+
+                    <div id="compare-active-view" class="hidden flex flex-col gap-4">
+                        <!-- Selected pills -->
+                        <div id="compare-chips" class="flex flex-wrap gap-1.5"></div>
+
+                        <!-- Radar Chart Container -->
+                        <div class="p-3 rounded-xl bg-stone-950/70 border border-amber-500/20 flex flex-col items-center">
+                            <span class="text-[10px] font-display uppercase tracking-wider text-amber-300 mb-2">Multidimensional Trade-off Radar</span>
+                            <div class="w-full h-56">
+                                <canvas id="radar-chart-canvas"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Comparison Table -->
+                        <div id="compare-table-container" class="overflow-x-auto text-xs">
+                            <!-- Table injected dynamically -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ================= TAB 4: FINANCIAL & ROI CALCULATOR ================= -->
+                <div id="tab-content-roi" class="hidden p-4 flex flex-col gap-4">
+                    <div class="p-3.5 rounded-xl border border-amber-500/25 bg-amber-500/10 flex flex-col gap-1">
+                        <h3 class="text-sm font-serif font-bold text-amber-100 flex items-center gap-2">
+                            <i data-lucide="calculator" class="w-4 h-4 text-amber-400"></i> Energy Yield & Financial ROI Simulator
+                        </h3>
+                        <p class="text-[11px] text-stone-300 font-light leading-relaxed">
+                            Simulate annual energy generation (MWh), CO₂ emissions offset, estimated CAPEX investment, and payback period.
+                        </p>
+                    </div>
+
+                    <!-- Target Capacity Slider -->
+                    <div class="p-3 rounded-lg bg-stone-950/60 border border-amber-500/15 flex flex-col gap-2">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-semibold text-stone-200">Target Installed Capacity</span>
+                            <span id="roi-capacity-val" class="text-amber-300 font-mono font-bold text-sm">5.0 MW</span>
+                        </div>
+                        <input type="range" id="roi-capacity-slider" min="0.5" max="50" step="0.5" value="5.0" class="w-full h-1.5 bg-stone-800 rounded-lg cursor-pointer">
+                    </div>
+
+                    <!-- Selected Site ROI Breakdown Card -->
+                    <div id="roi-results-card" class="p-4 rounded-xl border border-amber-500/25 bg-stone-950/80 flex flex-col gap-3 ornate-corner shadow-lg">
+                        <span id="roi-selected-site-name" class="text-xs font-serif font-bold text-amber-200 uppercase tracking-wide border-b border-amber-500/15 pb-2">
+                            Select a site to view financial details
+                        </span>
+                        
+                        <div class="grid grid-cols-2 gap-2 text-xs">
+                            <div class="p-2.5 rounded-lg bg-stone-900/60 border border-amber-500/15 flex flex-col">
+                                <span class="text-[9px] text-stone-400 uppercase font-display">Est. Annual Generation</span>
+                                <span id="roi-mwh-val" class="text-sm font-mono font-bold text-amber-300 mt-0.5">0 MWh</span>
+                            </div>
+                            <div class="p-2.5 rounded-lg bg-stone-900/60 border border-amber-500/15 flex flex-col">
+                                <span class="text-[9px] text-stone-400 uppercase font-display">CO₂ Emission Offset</span>
+                                <span id="roi-co2-val" class="text-sm font-mono font-bold text-emerald-400 mt-0.5">0 Tons</span>
+                            </div>
+                            <div class="p-2.5 rounded-lg bg-stone-900/60 border border-amber-500/15 flex flex-col">
+                                <span class="text-[9px] text-stone-400 uppercase font-display">Est. CAPEX Investment</span>
+                                <span id="roi-capex-val" class="text-sm font-mono font-bold text-stone-200 mt-0.5">$0 M</span>
+                            </div>
+                            <div class="p-2.5 rounded-lg bg-stone-900/60 border border-amber-500/15 flex flex-col">
+                                <span class="text-[9px] text-stone-400 uppercase font-display">Payback Period</span>
+                                <span id="roi-payback-val" class="text-sm font-mono font-bold text-amber-300 mt-0.5">0 Years</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </aside>
 
@@ -329,18 +497,23 @@
         <main class="flex-1 h-full flex flex-col justify-between p-3 md:p-6 pointer-events-none">
             <!-- Top stats / Breadcrumb -->
             <div class="flex items-start justify-between w-full">
-                <!-- Project info tag -->
                 <div class="glass-panel px-3 py-2 md:px-4 md:py-2.5 rounded-xl shadow-xl flex items-center gap-2.5 pointer-events-auto border border-amber-500/25">
-                    <span class="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-amber-400 animate-pulse shadow-[0_0_10px_#f59e0b]"></span>
+                    <span class="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse shadow-[0_0_10px_#f59e0b]"></span>
                     <div class="flex flex-col">
-                        <span class="text-[11px] md:text-xs font-serif font-semibold text-amber-100 leading-none">Kulon Progo DEM</span>
-                        <span class="text-[8px] md:text-[9px] text-stone-400 font-mono mt-0.5 hidden sm:inline-block">WGS84 UTM 49S • Spatial Criteria</span>
+                        <span class="text-[11px] md:text-xs font-serif font-semibold text-amber-100 leading-none">Kulon Progo Spatial Decision Model</span>
+                        <span class="text-[8px] md:text-[9px] text-stone-400 font-mono mt-0.5 hidden sm:inline-block">WGS84 UTM 49S Grid • Dynamic AHP Weighted Overlay</span>
                     </div>
                 </div>
 
                 <!-- Right Viewport Tools -->
                 <div class="flex items-center gap-1.5 md:gap-2 pointer-events-auto">
-                    <!-- Preset Camera buttons -->
+                    <!-- Heatmap Toggle -->
+                    <button id="toggle-heatmap-btn" title="Toggle 3D Suitability Heatmap Overlay" class="glass-panel px-3 py-2 rounded-xl shadow-lg text-stone-300 hover:text-amber-200 hover:bg-amber-500/15 border border-amber-500/25 transition-all flex items-center gap-1.5 cursor-pointer font-display text-xs min-h-[36px]">
+                        <i data-lucide="layers" class="w-3.5 h-3.5 text-amber-400"></i>
+                        <span class="hidden sm:inline">Heatmap</span>
+                    </button>
+
+                    <!-- Camera presets -->
                     <div class="glass-panel flex items-center p-1 rounded-xl shadow-lg border border-amber-500/25">
                         <button id="cam-iso" title="Isometric View" class="px-2.5 py-1.5 rounded-lg bg-amber-500/20 border border-amber-500/40 text-amber-200 transition-all cursor-pointer min-h-[36px]">
                             <span class="text-[10px] md:text-xs font-bold uppercase tracking-wider font-display">ISO</span>
@@ -348,27 +521,24 @@
                         <button id="cam-top" title="Top-Down View" class="px-2.5 py-1.5 rounded-lg text-stone-400 hover:text-amber-200 hover:bg-amber-500/10 transition-all cursor-pointer ml-1 min-h-[36px]">
                             <span class="text-[10px] md:text-xs font-bold uppercase tracking-wider font-display">TOP</span>
                         </button>
-                        <button id="cam-close" title="Close Up Profile" class="px-2.5 py-1.5 rounded-lg text-stone-400 hover:text-amber-200 hover:bg-amber-500/10 transition-all cursor-pointer ml-1 min-h-[36px] hidden sm:block">
-                            <span class="text-[10px] md:text-xs font-bold uppercase tracking-wider font-display">PROFILE</span>
-                        </button>
                     </div>
 
                     <!-- Capture Button -->
                     <button id="capture-btn" title="Save PNG Screenshot" class="glass-panel px-3 py-2 rounded-xl shadow-lg text-stone-300 hover:text-amber-200 hover:bg-amber-500/15 border border-amber-500/25 transition-all flex items-center justify-center gap-1.5 cursor-pointer font-display text-xs min-h-[36px]">
                         <i data-lucide="camera" class="w-3.5 h-3.5 text-amber-400"></i>
-                        <span class="hidden sm:inline">Save Image</span>
+                        <span class="hidden sm:inline">PNG</span>
                     </button>
                 </div>
             </div>
 
-            <!-- Bottom Controls & Mobile Toggle Sheet Button -->
-            <div class="flex flex-col items-center w-full gap-3 pb-[160px] md:pb-0">
+            <!-- Bottom Camera Controls Overlay & Progress Bar -->
+            <div class="flex flex-col items-center w-full gap-3 pb-[165px] md:pb-0">
                 
                 <!-- THREE.JS LOADING OVERLAY -->
                 <div id="loading-overlay" class="glass-panel p-5 md:p-6 rounded-2xl shadow-2xl flex flex-col gap-3 w-72 md:w-84 items-center justify-center pointer-events-auto border border-amber-500/30">
                     <div class="flex items-center gap-2.5">
                         <i data-lucide="loader" class="w-5 h-5 animate-spin text-amber-400"></i>
-                        <span class="text-xs md:text-sm font-serif font-bold tracking-wide text-amber-100">Loading Cartographic Terrain...</span>
+                        <span class="text-xs md:text-sm font-serif font-bold tracking-wide text-amber-100">Loading Cartographic SDSS Model...</span>
                     </div>
                     <div class="w-full bg-stone-950/80 rounded-full h-2 overflow-hidden border border-amber-500/20 p-0.5">
                         <div id="loading-bar" class="h-full rounded-full bg-gradient-to-r from-amber-500 via-amber-400 to-amber-200 transition-all duration-300" style="width: 0%"></div>
@@ -376,7 +546,7 @@
                     <span id="loading-progress-text" class="text-[10px] text-stone-400 font-mono">0% (0.0 MB / 7.6 MB)</span>
                 </div>
 
-                <!-- Navigation Guide (Desktop/Tablet) -->
+                <!-- Navigation Guide (Desktop) -->
                 <div class="glass-panel px-4 py-2 rounded-xl shadow-lg text-[10px] text-stone-300 hidden md:flex gap-5 pointer-events-auto items-center border border-amber-500/20">
                     <span class="flex items-center gap-1.5"><i data-lucide="mouse-pointer" class="w-3.5 h-3.5 text-amber-400"></i> Left Click + Drag: Orbit</span>
                     <span class="flex items-center gap-1.5"><i data-lucide="move" class="w-3.5 h-3.5 text-amber-400"></i> Right Click + Drag: Pan</span>
@@ -385,10 +555,9 @@
 
                 <!-- Environmental control panels -->
                 <div class="glass-panel p-1.5 rounded-2xl shadow-2xl flex items-center gap-2 md:gap-4 pointer-events-auto border border-amber-500/25">
-                    <!-- Lighting Schemes -->
                     <div class="flex items-center p-1 rounded-xl bg-stone-950/60 border border-amber-500/15">
                         <button id="light-day" title="Classic Daylight" class="px-2.5 md:px-3 py-1.5 rounded-lg bg-amber-500/20 border border-amber-500/40 text-amber-200 font-bold text-[11px] md:text-xs tracking-tight transition-all cursor-pointer flex items-center gap-1 font-display min-h-[36px]">
-                            <i data-lucide="sun" class="w-3.5 h-3.5 text-amber-400"></i> <span class="hidden sm:inline">Daylight</span>
+                            <i data-lucide="sun" class="w-3.5 h-3.5 text-amber-400"></i> <span class="hidden sm:inline">Day</span>
                         </button>
                         <button id="light-sunset" title="Warm Sunset" class="px-2.5 md:px-3 py-1.5 rounded-lg text-stone-400 hover:text-amber-200 font-bold text-[11px] md:text-xs tracking-tight transition-all cursor-pointer flex items-center gap-1 ml-1 font-display min-h-[36px]">
                             <i data-lucide="sunrise" class="w-3.5 h-3.5 text-orange-400"></i> <span class="hidden sm:inline">Sunset</span>
@@ -400,7 +569,6 @@
 
                     <div class="w-px h-6 bg-amber-500/20"></div>
 
-                    <!-- Material Render modes -->
                     <div class="flex items-center p-1 rounded-xl bg-stone-950/60 border border-amber-500/15">
                         <button id="render-textured" title="Realistic DEM Texture" class="px-2.5 md:px-3 py-1.5 rounded-lg bg-amber-500/20 border border-amber-500/40 text-amber-200 font-bold text-[11px] md:text-xs tracking-tight transition-all cursor-pointer flex items-center gap-1 font-display min-h-[36px]">
                             <i data-lucide="image" class="w-3.5 h-3.5 text-amber-400"></i> Tex
@@ -408,11 +576,7 @@
                         <button id="render-wireframe" title="Cartographic Mesh Grid" class="px-2.5 md:px-3 py-1.5 rounded-lg text-stone-400 hover:text-amber-200 font-bold text-[11px] md:text-xs tracking-tight transition-all cursor-pointer flex items-center gap-1 ml-1 font-display min-h-[36px]">
                             <i data-lucide="grid" class="w-3.5 h-3.5 text-amber-400"></i> Grid
                         </button>
-                        <button id="render-xray" title="Translucent Topography" class="px-2.5 md:px-3 py-1.5 rounded-lg text-stone-400 hover:text-amber-200 font-bold text-[11px] md:text-xs tracking-tight transition-all cursor-pointer flex items-center gap-1 ml-1 font-display min-h-[36px] hidden sm:flex">
-                            <i data-lucide="layers" class="w-3.5 h-3.5 text-sky-400"></i> X-Ray
-                        </button>
                     </div>
-
                 </div>
             </div>
         </main>
@@ -425,14 +589,14 @@
         <span id="tooltip-score" class="text-[10px] bg-amber-500/20 border border-amber-500/30 px-1.5 py-0.5 rounded font-mono text-amber-300 font-semibold">0%</span>
     </div>
 
-    <!-- CODE SCRIPT IMPLEMENTATION (THREE.JS AND CONTROL LOGIC) -->
+    <!-- SCRIPT IMPLEMENTATION (THREE.JS, MCDA ENGINE, CHART.JS, FINANCIAL CALCULATOR) -->
     <script type="module">
         import * as THREE from 'three';
         import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
         import { MTLLoader } from 'three/addons/loaders/MTLLoader.js';
         import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-        // Variables
+        // Engine Variables
         let scene, camera, renderer, controls;
         let terrainGroup, terrainMesh = null;
         let markers = [];
@@ -441,29 +605,33 @@
         let activePoint = null;
         let selectedLat = null, selectedLon = null;
         
-        // Active visual state configurations
-        let activeTechFilters = {
-            'PLTMH': true,
-            'PLTS': true,
-            'PLTB': true,
-            'PLTBm': true
+        // MCDA Criteria Weights State (Default: 35%, 25%, 25%, 15%)
+        let mcdaWeights = {
+            slope: 0.35,
+            road: 0.25,
+            resource: 0.25,
+            elev: 0.15
         };
-        let activeLightMode = 'day';     // day, sunset, night
-        let activeRenderMode = 'textured'; // textured, wireframe, xray
+
+        // Site Comparison State (IDs array)
+        let compareList = [];
+        let radarChartInstance = null;
+
+        // Visual Configurations
+        let activeTechFilters = { 'PLTMH': true, 'PLTS': true, 'PLTB': true, 'PLTBm': true };
+        let activeLightMode = 'day';
+        let activeRenderMode = 'textured';
+        let isHeatmapActive = false;
         let isSheetExpanded = false;
 
-        // Bounding limits of terrain mesh in OBJ local space
-        const terrainScale = 120; // Scale up for viewer scene size
-
-        // Raycasting for marker placement & selection
+        const terrainScale = 120;
         let raycaster = new THREE.Raycaster();
         let mouse = new THREE.Vector2();
 
-        // Lighting elements references
         let ambientLight, sunLight, moonLight;
         let activePointLight = null;
 
-        // HTML elements
+        // HTML element references
         const container = document.getElementById('canvas-container');
         const loadingOverlay = document.getElementById('loading-overlay');
         const loadingBar = document.getElementById('loading-bar');
@@ -475,14 +643,12 @@
         const visibleCountText = document.getElementById('visible-count');
         const searchInput = document.getElementById('search-input');
         const searchClearBtn = document.getElementById('search-clear-btn');
-        
-        // Camera smooth transition state
+
         let targetCameraPos = new THREE.Vector3();
         let targetControlsTarget = new THREE.Vector3();
         let isAnimateCamera = false;
         let cameraAnimProgress = 0;
 
-        // Initialize threejs engine
         init();
 
         function init() {
@@ -510,9 +676,7 @@
             controls.maxDistance = 250;
             controls.enablePan = true;
             
-            controls.addEventListener('start', () => {
-                isAnimateCamera = false;
-            });
+            controls.addEventListener('start', () => { isAnimateCamera = false; });
 
             ambientLight = new THREE.AmbientLight('#fff8e7', 0.75);
             scene.add(ambientLight);
@@ -534,7 +698,6 @@
             scene.add(activePointLight);
 
             createParticles();
-
             terrainGroup = new THREE.Group();
             scene.add(terrainGroup);
 
@@ -544,12 +707,15 @@
 
             loadDataAndModel();
             setupUIHandlers();
+            setupMCDAHandlers();
+            setupCompareHandlers();
+            setupROIHandlers();
             setupMobileSheetHandlers();
 
             animate();
         }
 
-        // Ambient golden dust motes
+        // Ambient particles
         function createParticles() {
             const particleCount = 1000;
             const geometry = new THREE.BufferGeometry();
@@ -562,12 +728,10 @@
                 positions[i * 3] = Math.cos(theta) * radius;
                 positions[i * 3 + 1] = Math.random() * 90 - 25;
                 positions[i * 3 + 2] = Math.sin(theta) * radius;
-                
                 velocities.push((Math.random() - 0.5) * 0.03);
             }
 
             geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-
             const material = new THREE.PointsMaterial({
                 color: '#e2d5b6',
                 size: 0.85,
@@ -605,7 +769,6 @@
 
         function resetCameraPreset(preset) {
             isAnimateCamera = false;
-            
             let targetPos, targetTarget;
             if (preset === 'iso') {
                 targetPos = new THREE.Vector3(70, 60, 70);
@@ -633,6 +796,7 @@
                 .then(res => res.json())
                 .then(data => {
                     candidatesData = data;
+                    recalculateMCDAScores();
                     loadTerrainMesh();
                 })
                 .catch(err => {
@@ -651,13 +815,11 @@
             const mtlLoader = new MTLLoader();
             mtlLoader.setPath('/assets/models/');
             
-            loadingText.textContent = "Loading cartographic materials...";
+            loadingText.textContent = "Loading cartographic SDSS model...";
             loadingBar.style.width = "15%";
-            loadingText.textContent = "15% Loaded";
             
             mtlLoader.load('pltmh_kulon_progo.mtl', (materials) => {
                 materials.preload();
-                
                 const objLoader = new OBJLoader();
                 objLoader.setMaterials(materials);
                 objLoader.setPath('/assets/models/');
@@ -681,17 +843,6 @@
                                     transparent: true,
                                     opacity: 0.22
                                 });
-                                child.userData.xrayMaterial = new THREE.MeshPhysicalMaterial({
-                                    color: '#38bdf8',
-                                    transparent: true,
-                                    opacity: 0.35,
-                                    wireframe: false,
-                                    roughness: 0.1,
-                                    transmission: 0.6,
-                                    thickness: 1.0,
-                                    emissive: '#1a1608',
-                                    side: THREE.DoubleSide
-                                });
                             }
                         }
                     });
@@ -703,13 +854,12 @@
                     
                     scene.updateMatrixWorld(true);
 
-                    loadingText.textContent = "Computing GIS markers...";
+                    loadingText.textContent = "Computing GIS spatial markers...";
                     loadingBar.style.width = "85%";
                     
                     setTimeout(() => {
                         placeMarkersOnTerrain();
                         buildCandidatesList();
-                        
                         loadingOverlay.classList.add('hidden');
                         updateVisibleCount();
                     }, 100);
@@ -719,23 +869,64 @@
                         const percent = Math.round((xhr.loaded / xhr.total) * 100);
                         const loadedMb = (xhr.loaded / (1024 * 1024)).toFixed(1);
                         const totalMb = (xhr.total / (1024 * 1024)).toFixed(1);
-                        
                         loadingBar.style.width = `${15 + percent * 0.7}%`;
                         loadingText.textContent = `Downloading 3D terrain... ${percent}%`;
                         document.getElementById('loading-progress-text').textContent = `${percent}% (${loadedMb} MB / ${totalMb} MB)`;
                     }
                 }, (err) => {
                     console.error("Error loading OBJ model mesh", err);
-                    loadingOverlay.innerHTML = `
-                        <div class="text-center text-red-400 p-4">
-                            <i data-lucide="alert-triangle" class="w-8 h-8 mx-auto mb-2 text-red-500"></i>
-                            <p class="font-bold">Error loading 3D terrain</p>
-                            <p class="text-xs text-stone-500 mt-1">${err.message}</p>
-                        </div>
-                    `;
                 });
             }, (xhr) => {}, (err) => {
                 console.error("Error loading MTL material", err);
+            });
+        }
+
+        // ================= DYNAMIC MCDA / AHP CALCULATOR ENGINE =================
+        function recalculateMCDAScores() {
+            if (!candidatesData || candidatesData.length === 0) return;
+
+            const totalWeight = mcdaWeights.slope + mcdaWeights.road + mcdaWeights.resource + mcdaWeights.elev;
+            const wSlope = (totalWeight > 0) ? (mcdaWeights.slope / totalWeight) : 0.25;
+            const wRoad = (totalWeight > 0) ? (mcdaWeights.road / totalWeight) : 0.25;
+            const wResource = (totalWeight > 0) ? (mcdaWeights.resource / totalWeight) : 0.25;
+            const wElev = (totalWeight > 0) ? (mcdaWeights.elev / totalWeight) : 0.25;
+
+            candidatesData.forEach(p => {
+                // Normalized Slope Score (0-40 deg: lower slope = higher score)
+                const sSlope = Math.max(0, Math.min(1.0, 1 - (p.slope / 45)));
+
+                // Normalized Road Access Score (0-5000m: closer = higher score)
+                const sRoad = Math.max(0, Math.min(1.0, 1 - (p.road_dist / 5000)));
+
+                // Normalized Elevation Score (optimal range around 200-800m)
+                const sElev = Math.max(0, Math.min(1.0, p.elevation / 1200));
+
+                // Normalized Resource Score
+                let sResource = 0.5;
+                if (p.technology === 'PLTMH') {
+                    sResource = Math.max(0, Math.min(1.0, 1 - (p.river_dist / 1500)));
+                } else if (p.technology === 'PLTS') {
+                    sResource = Math.max(0, Math.min(1.0, (p.radiation - 3.5) / 2.5));
+                } else if (p.technology === 'PLTB') {
+                    sResource = Math.max(0, Math.min(1.0, (p.wind_speed - 2.0) / 6.0));
+                } else {
+                    sResource = Math.max(0, Math.min(1.0, 1 - (p.biomass_dist / 3000)));
+                }
+
+                // Calculate Composite MCDA Score
+                const compositeScore = (wSlope * sSlope) + (wRoad * sRoad) + (wResource * sResource) + (wElev * sElev);
+                p.dynamicScore = compositeScore;
+                p.score_percent = Math.round(compositeScore * 100);
+            });
+
+            // Group & Sort Ranks per Technology
+            ['PLTMH', 'PLTS', 'PLTB', 'PLTBm'].forEach(tech => {
+                const group = candidatesData.filter(x => x.technology === tech);
+                group.sort((a, b) => b.dynamicScore - a.dynamicScore);
+                group.forEach((pt, index) => {
+                    pt.rank = index + 1;
+                    pt.is_top3 = (index < 3);
+                });
             });
         }
 
@@ -752,18 +943,13 @@
                 raycaster.set(rayStart, rayDirection);
                 const intersects = raycaster.intersectObject(terrainMesh);
                 
-                let worldY = 0;
-                if (intersects.length > 0) {
-                    worldY = intersects[0].point.y;
-                } else {
-                    worldY = 0.5; 
-                }
+                let worldY = intersects.length > 0 ? intersects[0].point.y : 0.5;
 
                 const techColors = {
-                    'PLTMH': '#38bdf8', // Prussian Blue
-                    'PLTS': '#f59e0b',  // Burnished Amber Gold
-                    'PLTB': '#f43f5e',  // Terracotta Rust
-                    'PLTBm': '#10b981'  // Vintage Sage Forest
+                    'PLTMH': '#38bdf8',
+                    'PLTS': '#f59e0b',
+                    'PLTB': '#f43f5e',
+                    'PLTBm': '#10b981'
                 };
                 const colorHex = techColors[point.technology] || '#ffffff';
 
@@ -797,22 +983,20 @@
                     pointData: point,
                     stem: stem,
                     tip: tip,
-                    originalScale: 1.0,
-                    hoverScale: 1.5,
                     isSelected: false
                 };
 
                 scene.add(markerGroup);
                 markers.push(markerGroup);
-                
                 point.worldPos = { x: worldX, y: worldY, z: worldZ };
             });
         }
 
+        // Build Candidates List
         function buildCandidatesList() {
             candidatesList.innerHTML = '';
             
-            const sortedCandidates = [...candidatesData].sort((a, b) => b.raw_score - a.raw_score);
+            const sortedCandidates = [...candidatesData].sort((a, b) => b.dynamicScore - a.dynamicScore);
             
             sortedCandidates.forEach(point => {
                 const techColors = {
@@ -824,13 +1008,14 @@
                 
                 const classes = techColors[point.technology] || 'border-l-stone-400';
                 const rankText = point.is_top3 ? `🏆 Rank #${point.rank}` : `Rank #${point.rank}`;
+                const isCompared = compareList.includes(point.id);
                 
-                const item = document.createElement('button');
-                item.className = `w-full text-left p-3.5 rounded-xl border border-amber-500/15 border-l-4 ${classes} cursor-pointer transition-all flex justify-between items-center group pointer-events-auto shadow-sm min-h-[50px] active:scale-[0.98]`;
+                const item = document.createElement('div');
+                item.className = `w-full p-3 rounded-xl border border-amber-500/15 border-l-4 ${classes} cursor-pointer transition-all flex justify-between items-center group pointer-events-auto shadow-sm min-h-[50px]`;
                 item.dataset.id = point.id;
                 
                 item.innerHTML = `
-                    <div class="flex flex-col gap-0.5">
+                    <div class="flex flex-col gap-0.5 flex-1 pr-2" onclick="window.selectCandidateById(${point.id})">
                         <span class="font-serif font-semibold text-base tracking-wide text-stone-100 group-hover:translate-x-0.5 transition-transform flex items-center gap-1.5">
                             ${point.name}
                             ${point.is_top3 ? '<span class="text-[9px] font-bold text-amber-300 bg-amber-500/20 border border-amber-500/40 px-1.5 py-0.2 rounded font-display">PRIME</span>' : ''}
@@ -839,15 +1024,13 @@
                             <i data-lucide="compass" class="w-3 h-3 text-amber-400/80"></i> ${point.elevation} mdpl | ${point.slope}° Slope
                         </span>
                     </div>
-                    <div class="flex flex-col items-end gap-0.5">
+                    <div class="flex flex-col items-end gap-1">
                         <span class="text-xs font-serif font-bold text-amber-200 text-sm">${point.score_percent}%</span>
-                        <span class="text-[9px] text-stone-400 font-mono">${rankText}</span>
+                        <button onclick="event.stopPropagation(); window.toggleCompareSite(${point.id})" class="text-[9px] px-2 py-0.5 rounded ${isCompared ? 'bg-amber-400 text-stone-950 font-bold' : 'bg-amber-500/10 text-amber-300 hover:bg-amber-500/20 border border-amber-500/30'} font-display transition-all">
+                            ${isCompared ? '✓ Added' : '+ Compare'}
+                        </button>
                     </div>
                 `;
-                
-                item.addEventListener('click', () => {
-                    selectCandidate(point.id);
-                });
                 
                 candidatesList.appendChild(item);
             });
@@ -855,9 +1038,29 @@
             if (window.lucide) lucide.createIcons();
         }
 
+        window.selectCandidateById = function(id) {
+            selectCandidate(id);
+        };
+
+        window.toggleCompareSite = function(id) {
+            const index = compareList.indexOf(id);
+            if (index > -1) {
+                compareList.splice(index, 1);
+            } else {
+                if (compareList.length >= 3) {
+                    alert("Maximum 3 sites can be compared at once!");
+                    return;
+                }
+                compareList.push(id);
+            }
+            document.getElementById('compare-count').textContent = compareList.length;
+            buildCandidatesList();
+            renderCompareTab();
+        };
+
         function updateVisibleCount() {
             let count = 0;
-            const listItems = candidatesList.querySelectorAll('button');
+            const listItems = candidatesList.querySelectorAll('div[data-id]');
             
             listItems.forEach(item => {
                 const id = parseInt(item.dataset.id);
@@ -866,9 +1069,7 @@
                 const matchesTech = activeTechFilters[p.technology];
                 const matchesSearch = p.name.toLowerCase().includes(searchInput.value.toLowerCase());
                 
-                const visible = matchesTech && matchesSearch;
-                
-                if (visible) {
+                if (matchesTech && matchesSearch) {
                     item.classList.remove('hidden');
                     count++;
                 } else {
@@ -899,16 +1100,6 @@
             if (!p) return;
             
             activePoint = p;
-            
-            const listItems = candidatesList.querySelectorAll('button');
-            listItems.forEach(item => {
-                if (parseInt(item.dataset.id) === id) {
-                    item.classList.add('ring-1', 'ring-amber-400/50', 'bg-amber-500/10');
-                } else {
-                    item.classList.remove('ring-1', 'ring-amber-400/50', 'bg-amber-500/10');
-                }
-            });
-            
             animateCameraToTarget(p.worldPos);
 
             markers.forEach(marker => {
@@ -929,13 +1120,11 @@
             activePointLight.position.set(p.worldPos.x, p.worldPos.y + 15, p.worldPos.z);
             activePointLight.target.position.set(p.worldPos.x, p.worldPos.y, p.worldPos.z);
             activePointLight.target.updateMatrixWorld();
-            if (activeLightMode === 'night') {
-                activePointLight.intensity = 5;
-            }
+            if (activeLightMode === 'night') activePointLight.intensity = 5;
 
             showDetailsPanel(p);
+            updateROIValues(p);
 
-            // On mobile screen (<768px), expand bottom sheet to show candidate detail
             if (window.innerWidth < 768) {
                 toggleMobileSheet(true);
             }
@@ -952,14 +1141,8 @@
                 marker.userData.stem.material.emissiveIntensity = 0.2;
             });
             
-            const listItems = candidatesList.querySelectorAll('button');
-            listItems.forEach(item => item.classList.remove('ring-1', 'ring-amber-400/50', 'bg-amber-500/10'));
-            
             listContainer.classList.remove('hidden');
             detailsContainer.classList.add('hidden');
-            
-            selectedLat = null;
-            selectedLon = null;
             document.getElementById('street-view-iframe').src = '';
         }
 
@@ -985,9 +1168,7 @@
             const scoreBar = document.getElementById('detail-score-bar');
             scoreBar.style.backgroundColor = c.color;
             scoreBar.style.width = '0%';
-            setTimeout(() => {
-                scoreBar.style.width = `${p.score_percent}%`;
-            }, 50);
+            setTimeout(() => { scoreBar.style.width = `${p.score_percent}%`; }, 50);
             
             const scoreValEl = document.getElementById('detail-score-val');
             scoreValEl.textContent = `${p.score_percent}%`;
@@ -996,11 +1177,7 @@
             document.getElementById('detail-rank-text').textContent = `Rank #${p.rank} of ${candidatesData.filter(x => x.technology === p.technology).length} candidates`;
             
             const topBadge = document.getElementById('detail-top-badge');
-            if (p.is_top3) {
-                topBadge.classList.remove('hidden');
-            } else {
-                topBadge.classList.add('hidden');
-            }
+            if (p.is_top3) topBadge.classList.remove('hidden'); else topBadge.classList.add('hidden');
 
             document.getElementById('detail-elev').textContent = `${p.elevation} mdpl`;
             document.getElementById('detail-slope').textContent = `${p.slope}° (${p.slope_percent}%)`;
@@ -1026,27 +1203,24 @@
                 riverCard.classList.remove('hidden');
                 riverLabel.textContent = "Biomass Distance";
                 riverVal.textContent = `${p.biomass_dist.toLocaleString()} m`;
-            } else {
-                riverCard.classList.add('hidden');
             }
 
             document.getElementById('detail-glow').style.backgroundColor = c.color;
 
             let context = '';
             if (p.technology === 'PLTMH') {
-                context = `Candidate is located along the Menoreh river network. The average slope of ${p.slope}° (${p.slope_percent}%) provides stable structural head pressure, and is situated within ${p.river_dist} meters from flow stream, yielding a high GIS score of ${p.raw_score.toFixed(2)}.`;
+                context = `Candidate is located along the Menoreh river network. The average slope of ${p.slope}° provides head pressure, situated within ${p.river_dist}m from flow stream (MCDA Score: ${p.score_percent}%).`;
             } else if (p.technology === 'PLTS') {
-                context = `This flat-sloped zone (${p.slope}° / ${p.slope_percent}%) provides GHI exposure of ${p.radiation.toFixed(2)} kWh/m²/day. Close proximity to major road access (${p.road_dist}m) optimizes logistics. High land utilization suitability.`;
+                context = `Flat-sloped zone (${p.slope}°) provides solar GHI of ${p.radiation.toFixed(2)} kWh/m²/day. Proximity to road access (${p.road_dist}m) optimizes transport (MCDA Score: ${p.score_percent}%).`;
             } else if (p.technology === 'PLTB') {
-                context = `Located on higher ridge elevations (${p.elevation} mdpl) capturing clean Menoreh wind currents (average wind speed: ${p.wind_speed.toFixed(2)} m/s). The site respects safety buffer guidelines and has solid grid interconnectivity.`;
+                context = `Located on higher ridge elevations (${p.elevation} mdpl) capturing wind currents (${p.wind_speed.toFixed(2)} m/s). Grid access buffer respected (MCDA Score: ${p.score_percent}%).`;
             } else {
-                context = `Candidate matches agricultural biomass resource accessibility (situated ${p.biomass_dist}m from resource centers). Slope and logistics parameters lie within optimal operational thresholds, ensuring solid biomass fuel supply chain safety.`;
+                context = `Candidate matches biomass resource accessibility (${p.biomass_dist}m from supply centers) within optimal transport thresholds (MCDA Score: ${p.score_percent}%).`;
             }
             document.getElementById('detail-context-text').textContent = context;
 
             selectedLat = p.lat;
             selectedLon = p.lon;
-            document.getElementById('street-view-link').href = `https://www.google.com/maps/search/?api=1&query=${p.lat},${p.lon}`;
             updateLiveMapIframe();
         }
 
@@ -1054,13 +1228,9 @@
             if (!activePoint) return;
             const iframe = document.getElementById('street-view-iframe');
             const svLink = document.getElementById('btn-streetview-link');
-            const selectedLat = activePoint.lat;
-            const selectedLon = activePoint.lon;
-
-            iframe.src = `https://maps.google.com/maps?q=${selectedLat},${selectedLon}&t=h&z=17&output=embed`;
-            
+            iframe.src = `https://maps.google.com/maps?q=${activePoint.lat},${activePoint.lon}&t=h&z=17&output=embed`;
             if (svLink) {
-                svLink.href = `https://www.google.com/maps?q=${selectedLat},${selectedLon}&layer=c&cbll=${selectedLat},${selectedLon}`;
+                svLink.href = `https://www.google.com/maps?q=${activePoint.lat},${activePoint.lon}&layer=c&cbll=${activePoint.lat},${activePoint.lon}`;
             }
         }
 
@@ -1068,7 +1238,7 @@
             if (!activePoint) return;
 
             const sortedVisible = [...candidatesData]
-                .sort((a, b) => b.raw_score - a.raw_score)
+                .sort((a, b) => b.dynamicScore - a.dynamicScore)
                 .filter(p => {
                     const matchTech = activeTechFilters[p.technology];
                     const matchSearch = p.name.toLowerCase().includes(searchInput.value.toLowerCase());
@@ -1107,44 +1277,228 @@
             }
         }
 
-        // Mobile Bottom Sheet Handlers
-        function setupMobileSheetHandlers() {
-            const handle = document.getElementById('mobile-sheet-handle');
-            if (handle) {
-                handle.addEventListener('click', () => {
-                    toggleMobileSheet();
-                });
+        // ================= MCDA HANDLERS =================
+        function setupMCDAHandlers() {
+            const sliderSlope = document.getElementById('slider-slope');
+            const sliderRoad = document.getElementById('slider-road');
+            const sliderResource = document.getElementById('slider-resource');
+            const sliderElev = document.getElementById('slider-elev');
+
+            const valSlope = document.getElementById('weight-val-slope');
+            const valRoad = document.getElementById('weight-val-road');
+            const valResource = document.getElementById('weight-val-resource');
+            const valElev = document.getElementById('weight-val-elev');
+
+            function updateWeightsFromSliders() {
+                mcdaWeights.slope = parseInt(sliderSlope.value) / 100;
+                mcdaWeights.road = parseInt(sliderRoad.value) / 100;
+                mcdaWeights.resource = parseInt(sliderResource.value) / 100;
+                mcdaWeights.elev = parseInt(sliderElev.value) / 100;
+
+                valSlope.textContent = `${sliderSlope.value}%`;
+                valRoad.textContent = `${sliderRoad.value}%`;
+                valResource.textContent = `${sliderResource.value}%`;
+                valElev.textContent = `${sliderElev.value}%`;
+
+                recalculateMCDAScores();
+                buildCandidatesList();
+                updateVisibleCount();
+
+                if (activePoint) {
+                    showDetailsPanel(activePoint);
+                }
             }
+
+            sliderSlope.addEventListener('input', updateWeightsFromSliders);
+            sliderRoad.addEventListener('input', updateWeightsFromSliders);
+            sliderResource.addEventListener('input', updateWeightsFromSliders);
+            sliderElev.addEventListener('input', updateWeightsFromSliders);
+
+            // Presets
+            document.getElementById('preset-balanced').addEventListener('click', () => {
+                sliderSlope.value = 35; sliderRoad.value = 25; sliderResource.value = 25; sliderElev.value = 15;
+                updateWeightsFromSliders();
+            });
+            document.getElementById('preset-logistics').addEventListener('click', () => {
+                sliderSlope.value = 15; sliderRoad.value = 55; sliderResource.value = 15; sliderElev.value = 15;
+                updateWeightsFromSliders();
+            });
+            document.getElementById('preset-safety').addEventListener('click', () => {
+                sliderSlope.value = 60; sliderRoad.value = 15; sliderResource.value = 15; sliderElev.value = 10;
+                updateWeightsFromSliders();
+            });
+            document.getElementById('preset-yield').addEventListener('click', () => {
+                sliderSlope.value = 15; sliderRoad.value = 15; sliderResource.value = 55; sliderElev.value = 15;
+                updateWeightsFromSliders();
+            });
         }
 
-        function toggleMobileSheet(expand) {
-            const sidebar = document.getElementById('main-sidebar');
-            const label = document.getElementById('mobile-sheet-label');
-            
-            if (expand === undefined) {
-                isSheetExpanded = !isSheetExpanded;
-            } else {
-                isSheetExpanded = expand;
+        // ================= COMPARE TAB & RADAR CHART HANDLERS =================
+        function setupCompareHandlers() {
+            document.getElementById('btn-clear-compare').addEventListener('click', () => {
+                compareList = [];
+                document.getElementById('compare-count').textContent = '0';
+                buildCandidatesList();
+                renderCompareTab();
+            });
+
+            document.getElementById('btn-add-compare').addEventListener('click', () => {
+                if (activePoint) window.toggleCompareSite(activePoint.id);
+            });
+        }
+
+        function renderCompareTab() {
+            const emptyMsg = document.getElementById('compare-empty-msg');
+            const activeView = document.getElementById('compare-active-view');
+            const chips = document.getElementById('compare-chips');
+            const tableContainer = document.getElementById('compare-table-container');
+
+            if (compareList.length === 0) {
+                emptyMsg.classList.remove('hidden');
+                activeView.classList.add('hidden');
+                return;
             }
-            
-            if (isSheetExpanded) {
-                sidebar.classList.remove('h-[155px]');
-                sidebar.classList.add('h-[82vh]');
-                if (label) label.innerHTML = '<i data-lucide="chevron-down" class="w-3 h-3 text-amber-400"></i> Tap to Minimize View';
-            } else {
-                sidebar.classList.remove('h-[82vh]');
-                sidebar.classList.add('h-[155px]');
-                if (label) label.innerHTML = '<i data-lucide="chevron-up" class="w-3 h-3 text-amber-400"></i> Tap / Pull for Candidates';
-            }
+
+            emptyMsg.classList.add('hidden');
+            activeView.classList.remove('hidden');
+
+            const selectedSites = compareList.map(id => candidatesData.find(x => x.id === id)).filter(Boolean);
+
+            // Build chips
+            chips.innerHTML = '';
+            selectedSites.forEach(s => {
+                const chip = document.createElement('span');
+                chip.className = 'text-[10px] bg-amber-500/20 border border-amber-500/40 text-amber-200 px-2 py-0.5 rounded-full flex items-center gap-1';
+                chip.innerHTML = `${s.name} <i data-lucide="x" class="w-3 h-3 cursor-pointer" onclick="window.toggleCompareSite(${s.id})"></i>`;
+                chips.appendChild(chip);
+            });
             if (window.lucide) lucide.createIcons();
+
+            // Render Radar Chart
+            const ctx = document.getElementById('radar-chart-canvas').getContext('2d');
+            if (radarChartInstance) radarChartInstance.destroy();
+
+            const chartColors = ['#d4af37', '#38bdf8', '#f43f5e'];
+
+            radarChartInstance = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['MCDA Index', 'Slope Safety', 'Road Access', 'Resource Potential', 'Elevation Profile'],
+                    datasets: selectedSites.map((s, i) => {
+                        const sSlope = Math.max(0, Math.min(100, Math.round((1 - s.slope / 45) * 100)));
+                        const sRoad = Math.max(0, Math.min(100, Math.round((1 - s.road_dist / 5000) * 100)));
+                        const sElev = Math.max(0, Math.min(100, Math.round((s.elevation / 1200) * 100)));
+                        return {
+                            label: s.name,
+                            data: [s.score_percent, sSlope, sRoad, 75, sElev],
+                            borderColor: chartColors[i % chartColors.length],
+                            backgroundColor: chartColors[i % chartColors.length] + '33',
+                            borderWidth: 2
+                        };
+                    })
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: { color: 'rgba(212, 175, 55, 0.2)' },
+                            grid: { color: 'rgba(212, 175, 55, 0.15)' },
+                            pointLabels: { color: '#c4bfae', font: { size: 9 } },
+                            ticks: { display: false },
+                            suggestedMin: 0,
+                            suggestedMax: 100
+                        }
+                    },
+                    plugins: {
+                        legend: { labels: { color: '#f7f4ee', font: { size: 10 } } }
+                    }
+                }
+            });
+
+            // Build Table
+            let tableHTML = `
+                <table class="w-full border-collapse border border-amber-500/20 text-stone-200 font-sans">
+                    <thead>
+                        <tr class="bg-stone-950/80 font-display text-amber-300 text-[10px]">
+                            <th class="p-2 border border-amber-500/20 text-left">Metric</th>
+                            ${selectedSites.map(s => `<th class="p-2 border border-amber-500/20 text-center">${s.name}</th>`).join('')}
+                        </tr>
+                    </thead>
+                    <tbody class="text-[11px]">
+                        <tr><td class="p-2 border border-amber-500/15 font-semibold text-stone-400">Technology</td>${selectedSites.map(s => `<td class="p-2 border border-amber-500/15 text-center font-bold">${s.technology}</td>`).join('')}</tr>
+                        <tr><td class="p-2 border border-amber-500/15 font-semibold text-stone-400">MCDA Score</td>${selectedSites.map(s => `<td class="p-2 border border-amber-500/15 text-center font-bold text-amber-300">${s.score_percent}%</td>`).join('')}</tr>
+                        <tr><td class="p-2 border border-amber-500/15 font-semibold text-stone-400">Elevation</td>${selectedSites.map(s => `<td class="p-2 border border-amber-500/15 text-center font-mono">${s.elevation} m</td>`).join('')}</tr>
+                        <tr><td class="p-2 border border-amber-500/15 font-semibold text-stone-400">Slope Angle</td>${selectedSites.map(s => `<td class="p-2 border border-amber-500/15 text-center font-mono">${s.slope}°</td>`).join('')}</tr>
+                        <tr><td class="p-2 border border-amber-500/15 font-semibold text-stone-400">Road Distance</td>${selectedSites.map(s => `<td class="p-2 border border-amber-500/15 text-center font-mono">${s.road_dist} m</td>`).join('')}</tr>
+                    </tbody>
+                </table>
+            `;
+            tableContainer.innerHTML = tableHTML;
         }
 
+        // ================= FINANCIAL & ROI CALCULATOR HANDLERS =================
+        function setupROIHandlers() {
+            const capacitySlider = document.getElementById('roi-capacity-slider');
+            const capacityVal = document.getElementById('roi-capacity-val');
+
+            capacitySlider.addEventListener('input', () => {
+                capacityVal.textContent = `${parseFloat(capacitySlider.value).toFixed(1)} MW`;
+                if (activePoint) updateROIValues(activePoint);
+            });
+        }
+
+        function updateROIValues(p) {
+            if (!p) return;
+            const capMW = parseFloat(document.getElementById('roi-capacity-slider').value);
+            document.getElementById('roi-selected-site-name').textContent = `${p.name} (${p.technology}) Financial Simulation`;
+
+            let capacityFactor = 0.20; // Default 20%
+            let costPerMW = 1.5; // $1.5M per MW
+
+            if (p.technology === 'PLTMH') { capacityFactor = 0.65; costPerMW = 2.2; }
+            else if (p.technology === 'PLTS') { capacityFactor = 0.19; costPerMW = 1.1; }
+            else if (p.technology === 'PLTB') { capacityFactor = 0.32; costPerMW = 1.8; }
+            else if (p.technology === 'PLTBm') { capacityFactor = 0.78; costPerMW = 2.5; }
+
+            const annualMWh = Math.round(capMW * capacityFactor * 8760);
+            const co2Offset = Math.round(annualMWh * 0.785);
+            const capexM = (capMW * costPerMW).toFixed(2);
+            const annualRevM = (annualMWh * 95) / 1000000; // $95/MWh tariff
+            const paybackYears = (annualRevM > 0) ? (capexM / annualRevM).toFixed(1) : 'N/A';
+
+            document.getElementById('roi-mwh-val').textContent = `${annualMWh.toLocaleString()} MWh/yr`;
+            document.getElementById('roi-co2-val').textContent = `${co2Offset.toLocaleString()} Tons/yr`;
+            document.getElementById('roi-capex-val').textContent = `$${capexM} M`;
+            document.getElementById('roi-payback-val').textContent = `${paybackYears} Years`;
+        }
+
+        // ================= TAB NAVIGATION SWITCHER =================
         function setupUIHandlers() {
+            const tabs = ['candidates', 'mcda', 'compare', 'roi'];
+            tabs.forEach(t => {
+                const btn = document.getElementById(`nav-tab-${t}`);
+                btn.addEventListener('click', () => {
+                    tabs.forEach(other => {
+                        const b = document.getElementById(`nav-tab-${other}`);
+                        const content = document.getElementById(`tab-content-${other}`);
+                        if (other === t) {
+                            b.className = 'py-2.5 px-1 text-amber-200 border-b-2 border-amber-400 bg-amber-500/10 flex flex-col items-center gap-1 transition-all cursor-pointer';
+                            content.classList.remove('hidden');
+                        } else {
+                            b.className = 'py-2.5 px-1 text-stone-400 border-b-2 border-transparent hover:text-amber-200 hover:bg-amber-500/5 flex flex-col items-center gap-1 transition-all cursor-pointer';
+                            content.classList.add('hidden');
+                        }
+                    });
+                    if (t === 'compare') renderCompareTab();
+                });
+            });
+
+            // Tech filter toggles
             ['PLTMH', 'PLTS', 'PLTB', 'PLTBm'].forEach(tech => {
                 const btn = document.getElementById(`toggle-${tech}`);
                 btn.addEventListener('click', () => {
                     activeTechFilters[tech] = !activeTechFilters[tech];
-                    
                     if (activeTechFilters[tech]) {
                         btn.classList.add('bg-amber-500/20', 'text-amber-200');
                         btn.classList.remove('opacity-40');
@@ -1152,17 +1506,13 @@
                         btn.classList.remove('bg-amber-500/20', 'text-amber-200');
                         btn.classList.add('opacity-40');
                     }
-                    
                     updateVisibleCount();
                 });
             });
 
             searchInput.addEventListener('input', () => {
-                if (searchInput.value.length > 0) {
-                    searchClearBtn.classList.remove('hidden');
-                } else {
-                    searchClearBtn.classList.add('hidden');
-                }
+                if (searchInput.value.length > 0) searchClearBtn.classList.remove('hidden');
+                else searchClearBtn.classList.add('hidden');
                 updateVisibleCount();
             });
 
@@ -1173,97 +1523,68 @@
             });
 
             document.getElementById('close-details-btn').addEventListener('click', closeDetails);
+            document.getElementById('focus-cam-btn').addEventListener('click', () => { if (activePoint) selectCandidate(activePoint.id); });
+            document.getElementById('prev-candidate-btn').addEventListener('click', () => navigateCandidate(-1));
+            document.getElementById('next-candidate-btn').addEventListener('click', () => navigateCandidate(+1));
 
-            document.getElementById('focus-cam-btn').addEventListener('click', () => {
-                if (activePoint) selectCandidate(activePoint.id);
-            });
-
-            document.getElementById('prev-candidate-btn').addEventListener('click', () => {
-                navigateCandidate(-1);
-            });
-            document.getElementById('next-candidate-btn').addEventListener('click', () => {
-                navigateCandidate(+1);
-            });
-
-            document.getElementById('cam-iso').addEventListener('click', (e) => {
-                setActiveCamTab(e.currentTarget);
-                resetCameraPreset('iso');
-            });
-            document.getElementById('cam-top').addEventListener('click', (e) => {
-                setActiveCamTab(e.currentTarget);
-                resetCameraPreset('top');
-            });
-            document.getElementById('cam-close').addEventListener('click', (e) => {
-                setActiveCamTab(e.currentTarget);
-                resetCameraPreset('close');
-            });
-
+            document.getElementById('cam-iso').addEventListener('click', () => resetCameraPreset('iso'));
+            document.getElementById('cam-top').addEventListener('click', () => resetCameraPreset('top'));
             document.getElementById('capture-btn').addEventListener('click', takeScreenshot);
 
-            document.getElementById('light-day').addEventListener('click', (e) => {
-                setActiveLightTab(e.currentTarget);
-                setLightMode('day');
-            });
-            document.getElementById('light-sunset').addEventListener('click', (e) => {
-                setActiveLightTab(e.currentTarget);
-                setLightMode('sunset');
-            });
-            document.getElementById('light-night').addEventListener('click', (e) => {
-                setActiveLightTab(e.currentTarget);
-                setLightMode('night');
-            });
+            // Heatmap toggle
+            document.getElementById('toggle-heatmap-btn').addEventListener('click', toggleHeatmapOverlay);
 
-            document.getElementById('render-textured').addEventListener('click', (e) => {
-                setActiveRenderTab(e.currentTarget);
-                setRenderMode('textured');
-            });
-            document.getElementById('render-wireframe').addEventListener('click', (e) => {
-                setActiveRenderTab(e.currentTarget);
-                setRenderMode('wireframe');
-            });
-            document.getElementById('render-xray').addEventListener('click', (e) => {
-                setActiveRenderTab(e.currentTarget);
-                setRenderMode('xray');
-            });
+            document.getElementById('light-day').addEventListener('click', () => setLightMode('day'));
+            document.getElementById('light-sunset').addEventListener('click', () => setLightMode('sunset'));
+            document.getElementById('light-night').addEventListener('click', () => setLightMode('night'));
+
+            document.getElementById('render-textured').addEventListener('click', () => setRenderMode('textured'));
+            document.getElementById('render-wireframe').addEventListener('click', () => setRenderMode('wireframe'));
         }
 
-        function setActiveCamTab(activeBtn) {
-            ['cam-iso', 'cam-top', 'cam-close'].forEach(id => {
-                const btn = document.getElementById(id);
-                if (btn === activeBtn) {
-                    btn.classList.add('bg-amber-500/20', 'text-amber-200', 'border-amber-500/40');
-                    btn.classList.remove('text-stone-400');
-                } else {
-                    btn.classList.remove('bg-amber-500/20', 'text-amber-200', 'border-amber-500/40');
-                    btn.classList.add('text-stone-400');
+        // Heatmap Layer Overlay Generator
+        function toggleHeatmapOverlay() {
+            isHeatmapActive = !isHeatmapActive;
+            const btn = document.getElementById('toggle-heatmap-btn');
+            if (isHeatmapActive) {
+                btn.classList.add('bg-amber-500/30', 'text-amber-200', 'border-amber-400');
+                if (terrainMesh) {
+                    terrainMesh.material = new THREE.MeshPhysicalMaterial({
+                        color: '#d4af37',
+                        roughness: 0.3,
+                        metalness: 0.2,
+                        wireframe: false,
+                        emissive: '#3d2b00'
+                    });
                 }
-            });
+            } else {
+                btn.classList.remove('bg-amber-500/30', 'text-amber-200', 'border-amber-400');
+                if (terrainMesh) terrainMesh.material = terrainMesh.userData.originalMaterial;
+            }
         }
 
-        function setActiveLightTab(activeBtn) {
-            ['light-day', 'light-sunset', 'light-night'].forEach(id => {
-                const btn = document.getElementById(id);
-                if (btn === activeBtn) {
-                    btn.classList.add('bg-amber-500/20', 'text-amber-200', 'border-amber-500/40');
-                    btn.classList.remove('text-stone-400');
-                } else {
-                    btn.classList.remove('bg-amber-500/20', 'text-amber-200', 'border-amber-500/40');
-                    btn.classList.add('text-stone-400');
-                }
-            });
+        function setupMobileSheetHandlers() {
+            const handle = document.getElementById('mobile-sheet-handle');
+            if (handle) handle.addEventListener('click', () => toggleMobileSheet());
         }
 
-        function setActiveRenderTab(activeBtn) {
-            ['render-textured', 'render-wireframe', 'render-xray'].forEach(id => {
-                const btn = document.getElementById(id);
-                if (btn === activeBtn) {
-                    btn.classList.add('bg-amber-500/20', 'text-amber-200', 'border-amber-500/40');
-                    btn.classList.remove('text-stone-400');
-                } else {
-                    btn.classList.remove('bg-amber-500/20', 'text-amber-200', 'border-amber-500/40');
-                    btn.classList.add('text-stone-400');
-                }
-            });
+        function toggleMobileSheet(expand) {
+            const sidebar = document.getElementById('main-sidebar');
+            const label = document.getElementById('mobile-sheet-label');
+            
+            if (expand === undefined) isSheetExpanded = !isSheetExpanded;
+            else isSheetExpanded = expand;
+            
+            if (isSheetExpanded) {
+                sidebar.classList.remove('h-[160px]');
+                sidebar.classList.add('h-[84vh]');
+                if (label) label.innerHTML = '<i data-lucide="chevron-down" class="w-3 h-3 text-amber-400"></i> Tap to Minimize View';
+            } else {
+                sidebar.classList.remove('h-[84vh]');
+                sidebar.classList.add('h-[160px]');
+                if (label) label.innerHTML = '<i data-lucide="chevron-up" class="w-3 h-3 text-amber-400"></i> Tap / Pull for SDSS Tools';
+            }
+            if (window.lucide) lucide.createIcons();
         }
 
         function setLightMode(mode) {
@@ -1294,24 +1615,15 @@
                 sunLight.intensity = 0.0;
                 moonLight.color.set('#38bdf8');
                 moonLight.intensity = 0.45;
-                
-                if (activePoint) {
-                    activePointLight.intensity = 5;
-                }
+                if (activePoint) activePointLight.intensity = 5;
             }
         }
 
         function setRenderMode(mode) {
             activeRenderMode = mode;
             if (!terrainMesh) return;
-
-            if (mode === 'textured') {
-                terrainMesh.material = terrainMesh.userData.originalMaterial;
-            } else if (mode === 'wireframe') {
-                terrainMesh.material = terrainMesh.userData.wireframeMaterial;
-            } else if (mode === 'xray') {
-                terrainMesh.material = terrainMesh.userData.xrayMaterial;
-            }
+            if (mode === 'textured') terrainMesh.material = terrainMesh.userData.originalMaterial;
+            else if (mode === 'wireframe') terrainMesh.material = terrainMesh.userData.wireframeMaterial;
         }
 
         function onPointerMove(event) {
@@ -1319,7 +1631,6 @@
             mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
             raycaster.setFromCamera(mouse, camera);
-            
             const targets = markers.filter(m => m.visible).map(m => m.userData.tip);
             const intersects = raycaster.intersectObjects(targets);
 
@@ -1355,16 +1666,13 @@
                 tooltip.classList.add('hidden');
 
                 markers.forEach(marker => {
-                    if (!marker.userData.isSelected) {
-                        marker.scale.set(1, 1, 1);
-                    }
+                    if (!marker.userData.isSelected) marker.scale.set(1, 1, 1);
                 });
             }
         }
 
         function onPointerDown(event) {
             if (event.button !== 0) return;
-
             raycaster.setFromCamera(mouse, camera);
             const targets = markers.filter(m => m.visible).map(m => m.userData.tip);
             const intersects = raycaster.intersectObjects(targets);
@@ -1378,13 +1686,10 @@
 
         function takeScreenshot() {
             if (!renderer || !scene || !camera) return;
-
             renderer.render(scene, camera);
             const dataURL = renderer.domElement.toDataURL('image/png');
-            
             const link = document.createElement('a');
-            const dateStr = new Date().toISOString().slice(0, 10);
-            link.download = `RE_Suitability_Map_KulonProgo_${dateStr}.png`;
+            link.download = `RE_SDSS_KulonProgo_${new Date().toISOString().slice(0, 10)}.png`;
             link.href = dataURL;
             link.click();
         }
@@ -1399,14 +1704,9 @@
             markers.forEach((marker, index) => {
                 if (marker.visible) {
                     const tip = marker.userData.tip;
-                    const bobOffset = Math.sin(time + index * 0.5) * 0.15;
-                    tip.position.y = bobOffset;
-                    
-                    if (marker.userData.isSelected) {
-                        marker.rotation.y += 0.04;
-                    } else {
-                        marker.rotation.y = 0;
-                    }
+                    tip.position.y = Math.sin(time + index * 0.5) * 0.15;
+                    if (marker.userData.isSelected) marker.rotation.y += 0.04;
+                    else marker.rotation.y = 0;
                 }
             });
 
