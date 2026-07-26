@@ -53,3 +53,7 @@ Thumbs.db
 .env
 .env.*
 editor.html
+
+.dev.vars*
+!.dev.vars.example
+!.env.example
