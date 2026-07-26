@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "tsx scripts/build-cms.ts && vite",
     "build": "tsx scripts/build-cms.ts && vite build",
-    "preview": "vite preview"
+    "preview": "npm run build && wrangler dev",
+    "deploy": "npm run build && wrangler deploy"
   },
   "repository": {
     "type": "git",
@@ -20,6 +21,7 @@
   },
   "homepage": "https://github.com/fachrur1/portfolio#readme",
   "devDependencies": {
+    "@cloudflare/vite-plugin": "^1.47.0",
     "@tailwindcss/container-queries": "^0.1.1",
     "@tailwindcss/forms": "^0.5.11",
     "@tailwindcss/typography": "^0.5.20",
@@ -32,7 +34,8 @@
     "tailwindcss": "^3.4.19",
     "tsx": "^4.22.4",
     "typescript": "^6.0.3",
-    "vite": "^8.0.16"
+    "vite": "^8.0.16",
+    "wrangler": "^4.114.0"
   },
   "type": "module",
   "dependencies": {
