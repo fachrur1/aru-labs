@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>RE Suitability SDSS | Spatial Decision Support System | Muhammad Fachrurrozy</title>
-    <meta name="description" content="Advanced 3D Spatial Decision Support System (SDSS) for Renewable Energy Land Suitability Analysis in Kulon Progo, featuring dynamic MCDA weight simulation, multi-site radar benchmarking, ecological impact assessment, and 3D elevation profiling.">
+    <meta name="description" content="Advanced 3D Spatial Decision Support System (SDSS) for Renewable Energy Land Suitability Analysis in Kulon Progo, featuring dynamic MCDA weight simulation and multi-site radar benchmarking.">
     
     <!-- Google Fonts: Cormorant Garamond (Serif), Cinzel (Display), Plus Jakarta Sans (Body) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -40,7 +40,7 @@
         }
     </script>
     
-    <!-- Chart.js for Multi-Site Comparison Radar Charts & Elevation Profiler -->
+    <!-- Chart.js for Multi-Site Comparison Radar Charts -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <!-- Lucide Icons -->
@@ -157,23 +157,19 @@
                 </div>
             </div>
 
-            <!-- MODULAR SIDEBAR TAB NAVIGATION -->
-            <div class="grid grid-cols-4 border-b border-amber-500/20 bg-stone-950/80 text-[10px] font-display font-bold text-center">
+            <!-- MODULAR SIDEBAR TAB NAVIGATION (3 TABS) -->
+            <div class="grid grid-cols-3 border-b border-amber-500/20 bg-stone-950/80 text-[11px] font-display font-bold text-center">
                 <button id="nav-tab-candidates" class="py-2.5 px-1 text-amber-200 border-b-2 border-amber-400 bg-amber-500/10 flex flex-col items-center gap-1 transition-all cursor-pointer">
-                    <i data-lucide="map-pin" class="w-3.5 h-3.5 text-amber-400"></i>
+                    <i data-lucide="map-pin" class="w-4 h-4 text-amber-400"></i>
                     <span>Sites</span>
                 </button>
                 <button id="nav-tab-mcda" class="py-2.5 px-1 text-stone-400 border-b-2 border-transparent hover:text-amber-200 hover:bg-amber-500/5 flex flex-col items-center gap-1 transition-all cursor-pointer">
-                    <i data-lucide="sliders" class="w-3.5 h-3.5 text-amber-400/80"></i>
+                    <i data-lucide="sliders" class="w-4 h-4 text-amber-400/80"></i>
                     <span>MCDA Weights</span>
                 </button>
                 <button id="nav-tab-compare" class="py-2.5 px-1 text-stone-400 border-b-2 border-transparent hover:text-amber-200 hover:bg-amber-500/5 flex flex-col items-center gap-1 transition-all cursor-pointer relative">
-                    <i data-lucide="git-compare" class="w-3.5 h-3.5 text-amber-400/80"></i>
+                    <i data-lucide="git-compare" class="w-4 h-4 text-amber-400/80"></i>
                     <span>Compare (<span id="compare-count">0</span>)</span>
-                </button>
-                <button id="nav-tab-eco" class="py-2.5 px-1 text-stone-400 border-b-2 border-transparent hover:text-amber-200 hover:bg-amber-500/5 flex flex-col items-center gap-1 transition-all cursor-pointer">
-                    <i data-lucide="leaf" class="w-3.5 h-3.5 text-emerald-400/80"></i>
-                    <span>Eco Impact</span>
                 </button>
             </div>
 
@@ -294,17 +290,6 @@
                                     <span id="detail-river" class="font-semibold text-stone-100 font-mono text-xs">-</span>
                                 </div>
                             </div>
-                        </div>
-
-                        <!-- FITUR 2: Elevation Profile & Topographic Cross-Section Graph -->
-                        <div class="flex flex-col gap-2 p-3 rounded-xl bg-stone-950/60 border border-amber-500/20">
-                            <span class="text-[10px] font-display uppercase tracking-wider text-amber-300 flex items-center gap-1.5">
-                                <i data-lucide="trending-up" class="w-3.5 h-3.5 text-amber-400"></i> Topographic Elevation Cross-Section
-                            </span>
-                            <div class="w-full h-32">
-                                <canvas id="detail-elev-profile-canvas"></canvas>
-                            </div>
-                            <span class="text-[9px] text-stone-400 text-center font-mono">Slope & Altitude gradient slice across 2.0 km radius</span>
                         </div>
 
                         <!-- Interactive Map & Street View Card -->
@@ -452,61 +437,6 @@
                     </div>
                 </div>
 
-                <!-- ================= TAB 4: FITUR 1 - ENVIRONMENTAL & ECOLOGICAL IMPACT ASSESSMENT ================= -->
-                <div id="tab-content-eco" class="hidden p-4 flex flex-col gap-4">
-                    <div class="p-3.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 flex flex-col gap-1">
-                        <h3 class="text-sm font-serif font-bold text-emerald-200 flex items-center gap-2">
-                            <i data-lucide="leaf" class="w-4 h-4 text-emerald-400"></i> Environmental & Ecological Assessment
-                        </h3>
-                        <p class="text-[11px] text-stone-300 font-light leading-relaxed">
-                            Spatial evaluation of soil stability, soil erosion hazard, conservation buffer compliance, and net carbon offset potential.
-                        </p>
-                    </div>
-
-                    <!-- Selected Site Eco Card -->
-                    <div class="p-4 rounded-xl border border-amber-500/25 bg-stone-950/80 flex flex-col gap-3 ornate-corner shadow-lg">
-                        <span id="eco-selected-site-name" class="text-xs font-serif font-bold text-amber-200 uppercase tracking-wide border-b border-amber-500/15 pb-2">
-                            Select a site from the Sites tab
-                        </span>
-                        
-                        <div class="grid grid-cols-2 gap-2 text-xs">
-                            <div class="p-2.5 rounded-lg bg-stone-900/60 border border-amber-500/15 flex flex-col">
-                                <span class="text-[9px] text-stone-400 uppercase font-display">Eco-Risk Rating</span>
-                                <span id="eco-risk-val" class="text-sm font-mono font-bold text-emerald-400 mt-0.5">LOW RISK</span>
-                            </div>
-                            <div class="p-2.5 rounded-lg bg-stone-900/60 border border-amber-500/15 flex flex-col">
-                                <span class="text-[9px] text-stone-400 uppercase font-display">Soil Erosion Risk</span>
-                                <span id="eco-erosion-val" class="text-sm font-mono font-bold text-amber-300 mt-0.5">2.1% (Stable)</span>
-                            </div>
-                            <div class="p-2.5 rounded-lg bg-stone-900/60 border border-amber-500/15 flex flex-col">
-                                <span class="text-[9px] text-stone-400 uppercase font-display">Est. Carbon Offset</span>
-                                <span id="eco-co2-val" class="text-sm font-mono font-bold text-emerald-300 mt-0.5">4,850 Tons/yr</span>
-                            </div>
-                            <div class="p-2.5 rounded-lg bg-stone-900/60 border border-amber-500/15 flex flex-col">
-                                <span class="text-[9px] text-stone-400 uppercase font-display">Zonasi Forest Buffer</span>
-                                <span id="eco-buffer-val" class="text-sm font-mono font-bold text-sky-300 mt-0.5">Compliant</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Eco Compliance Checklist -->
-                    <div class="flex flex-col gap-2 p-3 rounded-xl bg-stone-950/60 border border-amber-500/15 text-xs">
-                        <span class="font-display text-[10px] text-amber-300 uppercase tracking-wider">Environmental Regulatory Compliance</span>
-                        <div class="flex items-center gap-2 text-[11px] text-stone-300">
-                            <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400"></i>
-                            <span>Outside Menoreh Strict Protection Reserve Buffer</span>
-                        </div>
-                        <div class="flex items-center gap-2 text-[11px] text-stone-300">
-                            <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400"></i>
-                            <span>Low Water Catchment Runoff Impact Zone</span>
-                        </div>
-                        <div class="flex items-center gap-2 text-[11px] text-stone-300">
-                            <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400"></i>
-                            <span>Compatible with Kulon Progo Regional Spatial Plan (RTRW)</span>
-                        </div>
-                    </div>
-                </div>
-
             </div>
         </aside>
 
@@ -626,7 +556,6 @@
         let mcdaWeights = { slope: 0.35, road: 0.25, resource: 0.25, elev: 0.15 };
         let compareList = [];
         let radarChartInstance = null;
-        let elevProfileChartInstance = null;
 
         // Visual Configurations
         let activeTechFilters = { 'PLTMH': true, 'PLTS': true, 'PLTB': true, 'PLTBm': true };
@@ -1040,7 +969,6 @@
             document.getElementById('compare-count').textContent = compareList.length;
             buildCandidatesList();
             
-            // If compare tab is currently active, re-render it with delay
             const compareTabContent = document.getElementById('tab-content-compare');
             if (!compareTabContent.classList.contains('hidden')) {
                 setTimeout(renderCompareTab, 50);
@@ -1109,8 +1037,6 @@
             if (activeLightMode === 'night') activePointLight.intensity = 5;
 
             showDetailsPanel(p);
-            updateEcoImpactValues(p);
-            renderElevationProfileChart(p);
 
             if (window.innerWidth < 768) {
                 toggleMobileSheet(true);
@@ -1201,79 +1127,6 @@
             selectedLat = p.lat;
             selectedLon = p.lon;
             updateLiveMapIframe();
-        }
-
-        // FITUR 2: ELEVATION PROFILE & TOPOGRAPHIC CROSS-SECTION CHART
-        function renderElevationProfileChart(p) {
-            const canvas = document.getElementById('detail-elev-profile-canvas');
-            if (!canvas) return;
-            const ctx = canvas.getContext('2d');
-            if (elevProfileChartInstance) elevProfileChartInstance.destroy();
-
-            // Simulate elevation slice profile around candidate point
-            const baseElev = p.elevation;
-            const profileData = [
-                baseElev - 45, baseElev - 30, baseElev - 15, baseElev, baseElev + 20, baseElev + 35, baseElev + 10
-            ];
-            const labels = ['-1.0 km', '-0.6 km', '-0.3 km', 'Site Center', '+0.3 km', '+0.6 km', '+1.0 km'];
-
-            if (typeof Chart !== 'undefined') {
-                elevProfileChartInstance = new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            label: 'Elevation (mdpl)',
-                            data: profileData,
-                            borderColor: '#d4af37',
-                            backgroundColor: 'rgba(212, 175, 55, 0.15)',
-                            fill: true,
-                            tension: 0.35,
-                            borderWidth: 2,
-                            pointBackgroundColor: '#f59e0b'
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        scales: {
-                            x: { grid: { color: 'rgba(212, 175, 55, 0.1)' }, ticks: { color: '#c4bfae', font: { size: 8 } } },
-                            y: { grid: { color: 'rgba(212, 175, 55, 0.1)' }, ticks: { color: '#c4bfae', font: { size: 8 } } }
-                        },
-                        plugins: { legend: { display: false } }
-                    }
-                });
-            }
-        }
-
-        // FITUR 1: ENVIRONMENTAL & ECOLOGICAL IMPACT ASSESSMENT CALCULATOR
-        function updateEcoImpactValues(p) {
-            if (!p) return;
-            document.getElementById('eco-selected-site-name').textContent = `${p.name} (${p.technology}) Ecological Risk Matrix`;
-
-            // Calculate Erosion Risk & Rating based on slope
-            let erosionRisk = (p.slope * 0.15).toFixed(1);
-            let riskRating = 'LOW RISK';
-            let riskColor = 'text-emerald-400';
-
-            if (p.slope > 25) {
-                riskRating = 'HIGH EROSI RISK';
-                riskColor = 'text-rose-400';
-            } else if (p.slope > 15) {
-                riskRating = 'MODERATE RISK';
-                riskColor = 'text-amber-300';
-            }
-
-            const estMWh = Math.round(5.0 * 0.25 * 8760);
-            const estCarbonOffset = Math.round(estMWh * 0.785);
-
-            const riskEl = document.getElementById('eco-risk-val');
-            riskEl.textContent = riskRating;
-            riskEl.className = `text-sm font-mono font-bold mt-0.5 ${riskColor}`;
-
-            document.getElementById('eco-erosion-val').textContent = `${erosionRisk}% (${p.slope}° Slope)`;
-            document.getElementById('eco-co2-val').textContent = `${estCarbonOffset.toLocaleString()} Tons/yr`;
-            document.getElementById('eco-buffer-val').textContent = (p.road_dist > 100) ? 'Compliant (>100m)' : 'Buffer Alert (<100m)';
         }
 
         function updateLiveMapIframe() {
@@ -1381,7 +1234,7 @@
             });
         }
 
-        // ================= COMPARE TAB & RADAR CHART HANDLERS (FIXED 100% WORKING) =================
+        // ================= COMPARE TAB & RADAR CHART HANDLERS =================
         function setupCompareHandlers() {
             document.getElementById('btn-clear-compare').addEventListener('click', () => {
                 compareList = [];
@@ -1429,7 +1282,6 @@
             });
             if (window.lucide) lucide.createIcons();
 
-            // Render Radar Chart safely with delay
             setTimeout(() => {
                 const canvas = document.getElementById('radar-chart-canvas');
                 if (!canvas) return;
@@ -1500,7 +1352,7 @@
 
         // ================= TAB NAVIGATION SWITCHER =================
         function setupUIHandlers() {
-            const tabs = ['candidates', 'mcda', 'compare', 'eco'];
+            const tabs = ['candidates', 'mcda', 'compare'];
             tabs.forEach(t => {
                 const btn = document.getElementById(`nav-tab-${t}`);
                 btn.addEventListener('click', () => {
