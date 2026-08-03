@@ -374,7 +374,7 @@
                     <input type="text" id="user-name" placeholder="Enter your name" class="glass-input w-full px-4 py-2.5 rounded-lg text-sm" value="">
                 </div>
                 
-                <div id="room-input-container">
+                <div id="room-input-container" class="hidden">
                     <label class="block text-sm font-medium text-slate-300 mb-1">Room URL (to join)</label>
                     <input type="text" id="room-url" placeholder="https://domain.daily.co/room" class="glass-input w-full px-4 py-2.5 rounded-lg text-sm">
                 </div>
@@ -383,16 +383,16 @@
             <!-- Actions -->
             <div class="flex flex-col gap-3 mt-2">
                 <button id="join-btn" onclick="handleJoin()" class="btn btn-primary w-full py-3 rounded-xl font-medium flex items-center justify-center gap-2">
-                    Join Meeting
+                    Join Aru Meet
                 </button>
                 
-                <div class="flex items-center gap-3 text-slate-500 text-sm my-1">
+                <div class="hidden items-center gap-3 text-slate-500 text-sm my-1">
                     <div class="h-px bg-slate-700/50 flex-1"></div>
                     <span>or</span>
                     <div class="h-px bg-slate-700/50 flex-1"></div>
                 </div>
                 
-                <button id="create-btn" onclick="handleCreate()" class="btn btn-success w-full py-3 rounded-xl font-medium flex items-center justify-center gap-2">
+                <button id="create-btn" onclick="handleCreate()" class="hidden btn-success w-full py-3 rounded-xl font-medium items-center justify-center gap-2">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                     Create New Room
                 </button>
@@ -680,8 +680,7 @@
             }
             
             if (!targetUrl) {
-                showToast("Please enter a room URL", "error");
-                return;
+                targetUrl = "https://fachrur-rz.daily.co/fachrur-rz";
             }
             
             joinBtn.disabled = true;
