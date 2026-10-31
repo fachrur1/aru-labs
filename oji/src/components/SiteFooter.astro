@@ -1,0 +1,28 @@
+---
+import { getContact } from '../lib/content';
+import WorldScene from './WorldScene.astro';
+import '../styles/public-pages.css';
+interface Props { compact?: boolean; }
+const { compact = false } = Astro.props;
+const contact = await getContact();
+---
+<footer class:list={['public-footer', { 'public-footer--compact': compact }]}>
+  {!compact && <section class="footer-invitation" aria-labelledby="footer-invite">
+    <div class="footer-invitation__scene" aria-hidden="true"><WorldScene variant="sunset" compact /></div>
+    <div class="oji-shell footer-invitation__copy">
+      <p class="section-label">The next chapter</p>
+      <h2 id="footer-invite" class="oji-display">Have something<br /><span class="oji-editorial">in mind?</span></h2>
+      <a class="button button--orange" href="/contact/">Let’s make a connection <span aria-hidden="true">↗</span></a>
+    </div>
+  </section>}
+  <div class="oji-shell footer-bottom">
+    <a class="footer-wordmark oji-display" href="/" aria-label="OJI home">OJI<span aria-hidden="true">®</span></a>
+    <p class="footer-note">An independent collection of<br />design, characters & curious ideas.</p>
+    <nav aria-label="Footer" class="footer-links">
+      <a href="/work/">Work</a><a href="/portfolio/">Portfolio</a><a href="/exhibition/">Exhibition</a><a href="/about/">About</a><a href="/contact/">Contact</a>
+    </nav>
+    <div class="footer-socials oji-mono"><a href={contact.instagram} target="_blank" rel="noopener noreferrer">Instagram ↗</a><a href={contact.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn ↗</a><a href={`mailto:${contact.email}`}>Email ↗</a></div>
+    <p class="footer-credit oji-mono">Muhammad Fachrurrozy / Original work, thoughtfully collected.</p>
+    <a class="footer-home oji-mono" href="/">Back to the sky <span aria-hidden="true">↑</span></a>
+  </div>
+</footer>

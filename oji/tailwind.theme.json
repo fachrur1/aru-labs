@@ -1,0 +1,75 @@
+{
+  "theme": {
+    "extend": {
+      "colors": {
+        "primary": "#111110",
+        "neutral": "#edeae3",
+        "accent": "#ff4d1f",
+        "paper": "#f7f3e9",
+        "sky": "#a9d9e7",
+        "cyan": "#d7f0eb",
+        "yellow": "#f4d885",
+        "peach": "#f1b99d",
+        "green": "#506c55",
+        "lavender": "#c3bdd8",
+        "success": "#285239",
+        "danger": "#a32920"
+      },
+      "fontFamily": {
+        "h1": [
+          "Archivo"
+        ],
+        "body-md": [
+          "Archivo"
+        ],
+        "editorial": [
+          "Instrument Serif"
+        ],
+        "metadata": [
+          "JetBrains Mono"
+        ]
+      },
+      "fontSize": {
+        "h1": [
+          "6rem",
+          {
+            "letterSpacing": "-0.06em",
+            "fontWeight": "800"
+          }
+        ],
+        "body-md": [
+          "1rem",
+          {
+            "fontWeight": "400"
+          }
+        ],
+        "editorial": [
+          "3rem",
+          {
+            "fontWeight": "400"
+          }
+        ],
+        "metadata": [
+          "0.75rem",
+          {
+            "letterSpacing": "0.06em",
+            "fontWeight": "400"
+          }
+        ]
+      },
+      "borderRadius": {
+        "sm": "4px",
+        "md": "12px",
+        "pill": "999px"
+      },
+      "spacing": {
+        "xs": "8px",
+        "sm": "16px",
+        "md": "24px",
+        "lg": "40px",
+        "xl": "64px",
+        "scene": "120px"
+      }
+    }
+  }
+}

@@ -1,0 +1,55 @@
+---
+import Base from '../layouts/Base.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import WorldScene from '../components/WorldScene.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import { getPublishedProjects } from '../lib/content';
+const projects = await getPublishedProjects();
+---
+<Base title="OJI — Graphic Designer & 3D Artist" description="Step into the illustrated world of OJI. Original 3D characters, thoughtful objects and visual experiments by Muhammad Fachrurrozy.">
+  <SiteHeader />
+  <main id="main">
+    <section class="hero-world" aria-labelledby="hero-title">
+      <WorldScene>
+        <div class="world-wordmark" data-layer="typography" data-x="-20" data-y="-65" data-scale="-.015" aria-hidden="true">OJI<span>®</span></div>
+      </WorldScene>
+      <div class="hero-topline oji-shell"><p class="oji-mono">Independent creative portfolio</p><span class="oji-mono">Based in Indonesia</span></div>
+      <div class="hero-intro oji-shell">
+        <p class="hero-note oji-editorial">A head in the clouds.<br />An eye for the details.</p>
+        <h1 id="hero-title">Graphic Designer.<br /><span>3D Artist.</span></h1>
+        <p class="hero-description">I'm Muhammad Fachrurrozy — Oji for short.<br />Making characters, objects, and ideas<br class="desktop-break" /> a little more extraordinary.</p>
+        <a class="button button--orange" href="#selected-work">Explore my work <span aria-hidden="true">↗</span></a>
+      </div>
+      <div class="hero-bottom oji-shell"><a href="#the-atelier" class="scroll-cue oji-mono"><span aria-hidden="true">↓</span> Scroll to wander</a><p class="oji-mono">A small world. A lot of imagination.</p><span class="scene-badge oji-mono">01 / The floating atelier</span></div>
+    </section>
+    <section class="atelier-intro oji-shell" id="the-atelier">
+      <p class="section-label">Welcome to my corner of the sky</p>
+      <div class="atelier-statement"><h2>Somewhere between<br /><span class="oji-editorial">curiosity</span> &amp; creation.</h2><div><p>I bring a technical mind to imaginative things. From a character's first expression to the smallest detail of a product, this is a collection of ideas made tangible.</p><a class="text-link" href="/about/">Meet the maker <span aria-hidden="true">↗</span></a></div></div>
+      <div class="atelier-doodle" aria-hidden="true"><svg viewBox="0 0 250 90"><path d="M5 60q60-65 127-28t100-5m-24-4 27 3-13 22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" /></svg><span class="oji-editorial">Follow your curiosity.</span></div>
+    </section>
+    <section class="home-work oji-shell" id="selected-work">
+      <div class="section-heading"><div><p class="section-label">02 / A few things I've made</p><h2 class="oji-display">Selected <em class="oji-editorial">works.</em></h2></div><a class="text-link" href="/work/">View selected work <span aria-hidden="true">↗</span></a></div>
+      <div class="home-projects">{projects.filter(project => project.status === 'published').slice(0, 4).map((project,index) => <ProjectCard project={project} index={index} />)}</div>
+      <div class="gallery-invitation"><p class="oji-editorial">There's more where that came from.</p><a class="button" href="/portfolio/">Enter the full gallery <span aria-hidden="true">↗</span></a></div>
+    </section>
+    <section class="exhibition-strip">
+      <div class="oji-shell exhibition-strip__inner"><p class="section-label">03 / Another dimension</p><h2>Flat screen.<br /><span class="oji-editorial">Not-so-flat ideas.</span></h2><p>Characters with personality. Objects with a story.<br />Original renders, up close and in their own space.</p><a class="button button--orange" href="/exhibition/">Step into the 3D exhibition <span aria-hidden="true">↗</span></a><svg class="orbit-object" viewBox="0 0 300 300" aria-hidden="true"><ellipse cx="150" cy="150" rx="140" ry="55" transform="rotate(-25 150 150)" fill="none" stroke="#f1ead4" stroke-width="2" /><path d="m150 48 87 51v102l-87 51-87-51V99Z" fill="#edb47f" stroke="#253b2c" stroke-width="3" /><path d="m63 99 87 52 87-52-87-51Z" fill="#f4d885" stroke="#253b2c" stroke-width="3" /><path d="M150 151v101l87-51V99Z" fill="#e77d54" stroke="#253b2c" stroke-width="3" /><path d="M100 177v22m76-15 24-13" stroke="#253b2c" stroke-width="3" /><circle cx="263" cy="104" r="14" fill="#ff4d1f" stroke="#f1ead4" stroke-width="2" /></svg></div>
+    </section>
+    <section class="maker-teaser oji-shell"><p class="section-label">04 / The person behind the pixels</p><h2>A little engineering.<br />A lot of <em class="oji-editorial">imagination.</em></h2><div><p>Engineering Physics at Universitas Gadjah Mada. A creative practice spanning 3D modeling, character design, and the intersection of design and technology.</p><a class="text-link" href="/about/">A little more about Oji <span aria-hidden="true">↗</span></a></div></section>
+  </main>
+  <SiteFooter />
+</Base>
+<style>
+  .hero-world{position:relative;min-height:900px;height:100svh;max-height:1200px;isolation:isolate;overflow:hidden;background:var(--sky)}
+  .world-wordmark{position:absolute;z-index:4;left:3.8%;top:14%;font-size:clamp(250px,34vw,660px);font-weight:900;letter-spacing:-.09em;line-height:.8;color:var(--oji-paper);text-shadow:2px 3px 0 #527a7522;user-select:none;pointer-events:none}.world-wordmark span{font:18px var(--font-mono);letter-spacing:0;vertical-align:top;margin-left:12px}
+  .hero-topline{position:absolute;top:115px;z-index:10;display:flex;justify-content:space-between}.hero-topline .oji-mono{font-size:10px;letter-spacing:.09em}.hero-intro{position:absolute;top:51%;z-index:10;pointer-events:none}.hero-intro>*{pointer-events:auto}.hero-note{font-size:clamp(22px,2.2vw,35px);line-height:1.05;position:absolute;left:42%;top:-95px;rotate:-7deg;color:#34594e}.hero-intro h1{font-size:clamp(29px,3.2vw,51px);line-height:1.08;letter-spacing:-.05em;font-weight:600}.hero-intro h1 span{font-family:var(--font-editorial);font-style:italic;font-size:1.25em;font-weight:400}.hero-description{font-size:13px;line-height:1.6;margin:20px 0 23px;max-width:330px}.hero-bottom{position:absolute;bottom:76px;z-index:11;display:flex;align-items:center;justify-content:space-between;gap:20px}.hero-bottom .oji-mono{font-size:9px;letter-spacing:.06em}.scroll-cue{display:flex;align-items:center;gap:10px;min-height:44px}.scroll-cue span{border:1px solid #11111066;border-radius:30px;width:30px;height:40px;display:grid;place-items:center;font:20px var(--font-display)}.scene-badge{padding:10px 14px;border:1px solid #11111033;border-radius:30px}
+  .atelier-intro{padding-block:90px 50px;position:relative}.atelier-statement{display:grid;grid-template-columns:1.4fr 1fr;gap:8%;align-items:end;margin-top:32px}.atelier-statement h2{font-size:clamp(40px,4.9vw,78px);line-height:1.04;letter-spacing:-.05em;font-weight:600}.atelier-statement h2 span{color:var(--green)}.atelier-statement p{font-size:15px;line-height:1.8;max-width:42ch;margin-bottom:20px}.atelier-doodle{display:flex;align-items:center;justify-content:center;gap:15px;color:var(--green);margin-top:35px}.atelier-doodle svg{width:170px}.atelier-doodle span{rotate:-7deg;font-size:25px}
+  .home-work{padding-block:75px 100px;scroll-margin-top:30px}.section-heading{display:flex;align-items:end;justify-content:space-between;gap:25px;margin-bottom:50px}.section-heading h2{font-size:clamp(46px,6vw,90px);margin-top:24px;font-weight:600;letter-spacing:-.06em}.section-heading em{font-size:1.1em}.home-projects{display:grid;grid-template-columns:1.2fr 1fr;column-gap:7%;row-gap:90px;align-items:start}.home-projects>:nth-child(even){margin-top:140px}.gallery-invitation{border-top:1px solid var(--oji-rule);margin-top:70px;padding-top:35px;display:flex;align-items:center;justify-content:space-between;gap:20px}.gallery-invitation p{font-size:30px}
+  .exhibition-strip{background:var(--green);color:var(--oji-paper);overflow:hidden}.exhibition-strip__inner{position:relative;padding-block:75px 85px}.exhibition-strip h2{font-size:clamp(45px,6vw,90px);line-height:.98;letter-spacing:-.05em;margin-block:28px 22px;font-weight:600}.exhibition-strip p:not(.section-label){font-size:14px;line-height:1.7;max-width:55%}.exhibition-strip .button{margin-top:30px}.orbit-object{position:absolute;right:7%;top:15%;width:33%;rotate:8deg}
+  .maker-teaser{padding-block:110px;display:grid;grid-template-columns:1.4fr 1fr;gap:35px 8%;align-items:end}.maker-teaser>.section-label{grid-column:1/-1}.maker-teaser h2{font-size:clamp(40px,4.6vw,72px);line-height:1.06;letter-spacing:-.05em;font-weight:600}.maker-teaser p:not(.section-label){font-size:15px;line-height:1.8;max-width:42ch;margin-bottom:22px}
+  @media(min-width:1700px){.hero-intro{top:54%}.hero-note{left:39%}.hero-description{font-size:15px}.hero-bottom .oji-mono{font-size:11px}}
+  @media(max-width:1024px){.hero-world{min-height:820px;height:900px}.hero-topline{top:30px}.world-wordmark{top:12%;font-size:38vw}.hero-intro{top:50%}.hero-note{left:45%;top:-65px;font-size:25px}.hero-bottom>p{display:none}.home-projects{gap:55px 5%}.home-projects>:nth-child(even){margin-top:80px}}
+  @media(max-width:767px){.hero-world{height:900px;min-height:0;max-height:none}.world-wordmark{top:11%;left:6%;font-size:57vw;letter-spacing:-.095em}.world-wordmark span{font-size:11px}.hero-topline{top:22px}.hero-topline>span{display:none}.hero-intro{top:48%}.hero-intro h1{font-size:35px}.hero-note{top:-160px;left:12%;font-size:25px}.hero-description{font-size:13px;max-width:260px}.hero-bottom{bottom:54px}.scene-badge{max-width:150px;font-size:8px!important}.hero-bottom .oji-mono{font-size:9px}.atelier-intro{padding-block:55px 25px}.atelier-statement{grid-template-columns:1fr;gap:25px;margin-top:25px}.atelier-statement h2{font-size:43px}.atelier-statement p{font-size:14px}.atelier-doodle{margin-top:15px;gap:5px}.atelier-doodle svg{width:110px}.atelier-doodle span{font-size:22px}.home-work{padding-block:50px 65px}.section-heading{align-items:start;flex-direction:column;margin-bottom:35px;gap:14px}.section-heading h2{font-size:51px}.home-projects{grid-template-columns:1fr;gap:40px}.home-projects>:nth-child(even){margin-top:0}.gallery-invitation{flex-direction:column;align-items:start;margin-top:40px}.gallery-invitation p{font-size:28px}.exhibition-strip__inner{padding-block:55px 230px}.exhibition-strip h2{font-size:49px}.exhibition-strip p:not(.section-label){max-width:100%;font-size:13px}.orbit-object{width:190px;right:12%;top:auto;bottom:20px;rotate:10deg}.maker-teaser{grid-template-columns:1fr;padding-block:65px;gap:25px}.maker-teaser h2{font-size:42px}.maker-teaser p:not(.section-label){font-size:14px}}
+  @media(max-width:350px){.hero-world{height:850px}.hero-intro h1{font-size:31px}.hero-note{top:-140px}.hero-description{font-size:12px}.hero-bottom{gap:8px}.scene-badge{max-width:120px;padding:8px;font-size:7px!important}.atelier-statement h2,.maker-teaser h2{font-size:36px}.section-heading h2{font-size:44px}.exhibition-strip h2{font-size:40px}}
+</style>

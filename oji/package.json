@@ -1,0 +1,25 @@
+{
+  "name": "oji-portfolio",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "OJI — creative portfolio by Muhammad Fachrurrozy. Graphic Designer and 3D Artist.",
+  "license": "ISC",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "typecheck": "tsc --noEmit",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/cloudflare": "14.4.3",
+    "astro": "7.4.4"
+  },
+  "devDependencies": {
+    "@cloudflare/workerd-windows-64": "1.20261023.1",
+    "typescript": "5.9.3",
+    "wrangler": "4.156.0"
+  }
+}

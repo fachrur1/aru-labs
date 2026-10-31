@@ -1,0 +1,63 @@
+---
+import type { MediaItem } from '../lib/content';
+
+interface Props {
+  media: MediaItem;
+  sizes?: string;
+  loading?: 'lazy' | 'eager';
+  priority?: boolean;
+  class?: string;
+}
+
+const {
+  media,
+  sizes = '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 40vw',
+  loading = 'lazy',
+  priority = false,
+  class: className = '',
+} = Astro.props;
+---
+
+{
+  media.type === 'image' && (
+    <img
+      src={media.src}
+      alt={media.alt}
+      width={media.width}
+      height={media.height}
+      loading={priority ? 'eager' : loading}
+      decoding="async"
+      fetchpriority={priority ? 'high' : 'auto'}
+      class={className}
+    />
+  )
+}
+
+{
+  media.type === 'video' && (
+    <video
+      src={media.src}
+      poster={media.poster}
+      width={media.width}
+      height={media.height}
+      controls
+      preload="none"
+      playsinline
+      aria-label={media.alt}
+      class={className}
+    />
+  )
+}
+
+{
+  media.type === 'embed' && media.embedUrl && (
+    <iframe
+      src={media.embedUrl}
+      title={media.alt}
+      loading="lazy"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen
+      class={className}
+    />
+  )
+}

@@ -1,0 +1,61 @@
+---
+import Base from '../../layouts/Base.astro';
+import SiteHeader from '../../components/SiteHeader.astro';
+import SiteFooter from '../../components/SiteFooter.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+import { getPublishedProjects, getCategories } from '../../lib/content';
+import '../../styles/public-pages.css';
+const projects = await getPublishedProjects();
+const categories = await getCategories();
+const published = projects;
+---
+<Base title="Portfolio — OJI" description="Browse original character design, product design, research visualization, and event documentation. Filter the OJI collection by discipline." canonical="https://oji.is-cool.dev/portfolio/">
+  <SiteHeader />
+  <main id="main" class="support-page" data-portfolio>
+    <header class="oji-shell page-intro collection-intro">
+      <p class="section-label">02 / The collection</p>
+      <h1 class="oji-display">A little bit<br /><span class="oji-editorial">of everything.</span></h1>
+      <div class="collection-intro__bottom"><p>An open shelf of original work. Follow a character, inspect a product, or see where engineering meets an image.</p><a href="/exhibition/" class="text-link">Enter the exhibition <span aria-hidden="true">↗</span></a></div>
+    </header>
+    <section class="oji-shell public-collection" aria-label="Project collection">
+      <div class="portfolio-toolbar">
+        <div class="portfolio-filters" data-filter-controls hidden role="group" aria-label="Filter projects by discipline">
+          <button type="button" class="oji-mono" data-category="" aria-pressed="true">All work <span>{published.length}</span></button>
+          {categories.map(category => <button type="button" class="oji-mono" data-category={category} aria-pressed="false">{category} <span>{published.filter(project => project.category === category).length}</span></button>)}
+        </div>
+        <p class="oji-mono portfolio-count" data-filter-count role="status" aria-live="polite" aria-atomic="true">{published.length} projects</p>
+      </div>
+      <noscript><p class="portfolio-noscript">All original projects are shown below. Enable JavaScript to filter by discipline.</p></noscript>
+      <div class="project-grid" data-project-grid>{published.map((project, index) => <ProjectCard project={project} index={index} />)}</div>
+    </section>
+  </main>
+  <SiteFooter />
+</Base>
+
+<script>
+  const collection = document.querySelector<HTMLElement>('[data-portfolio]');
+  if (collection) {
+    const controls = collection.querySelector<HTMLElement>('[data-filter-controls]');
+    const buttons = [...collection.querySelectorAll<HTMLButtonElement>('[data-category]')];
+    const cards = [...collection.querySelectorAll<HTMLElement>('[data-project-category]')];
+    const count = collection.querySelector<HTMLElement>('[data-filter-count]');
+    const applyFilter = (requested: string, push = false) => {
+      const category = buttons.some(button => button.dataset.category === requested) ? requested : '';
+      buttons.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.category === category)));
+      cards.forEach(card => { card.hidden = Boolean(category && card.dataset.projectCategory !== category); });
+      const visible = cards.filter(card => !card.hidden).length;
+      if (count) count.textContent = `${visible} ${visible === 1 ? 'project' : 'projects'}${category ? ` / ${category}` : ''}`;
+      const url = new URL(window.location.href);
+      if (category) url.searchParams.set('category', category);
+      else url.searchParams.delete('category');
+      if (url.href !== window.location.href) {
+        if (push) window.history.pushState({}, '', url);
+        else window.history.replaceState({}, '', url);
+      }
+    };
+    if (controls) controls.hidden = false;
+    buttons.forEach(button => button.addEventListener('click', () => applyFilter(button.dataset.category ?? '', true)));
+    window.addEventListener('popstate', () => applyFilter(new URL(window.location.href).searchParams.get('category') ?? ''));
+    applyFilter(new URL(window.location.href).searchParams.get('category') ?? '');
+  }
+</script>

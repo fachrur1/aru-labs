@@ -1,0 +1,52 @@
+{
+  // OJI — Cloudflare Worker configuration.
+  //
+  // Bindings and secrets are created during deployment (M9). The IDs below are
+  // placeholders and MUST be replaced with the real resource IDs before deploy.
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "oji",
+  "compatibility_date": "2026-10-01",
+  "compatibility_flags": ["nodejs_compat"],
+
+  "assets": {
+    "directory": "./dist/client",
+    "binding": "ASSETS"
+  },
+
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "oji-db",
+      "database_id": "REPLACE_WITH_D1_DATABASE_ID",
+      "migrations_dir": "migrations"
+    }
+  ],
+
+  "r2_buckets": [
+    {
+      "binding": "MEDIA_PRIVATE",
+      "bucket_name": "oji-media-private"
+    },
+    {
+      "binding": "MEDIA_PUBLIC",
+      "bucket_name": "oji-media-public"
+    }
+  ],
+
+  "triggers": {
+    "crons": ["0 3 * * *"]
+  },
+
+  "vars": {
+    "SITE_URL": "https://oji.is-cool.dev",
+    "MEDIA_BASE_URL": "https://media.oji.is-cool.dev"
+  }
+
+  // Secrets (set with `wrangler secret put`, never committed):
+  //   SESSION_SECRET      — HMAC key for the admin session cookie
+  //   BUILD_READ_TOKEN    — bearer token for the static build content endpoint
+  //   DEPLOY_HOOK_URL     — rebuild hook called after publish changes
+  //   R2_ACCESS_KEY_ID    — R2 S3 credentials for presigned upload URLs
+  //   R2_SECRET_ACCESS_KEY
+  //   R2_ACCOUNT_ID
+}

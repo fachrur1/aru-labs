@@ -1,0 +1,26 @@
+---
+import Base from '../../layouts/Base.astro';
+import SiteHeader from '../../components/SiteHeader.astro';
+import SiteFooter from '../../components/SiteFooter.astro';
+import WorldScene from '../../components/WorldScene.astro';
+import { getPublishedProjects } from '../../lib/content';
+import '../../styles/public-pages.css';
+const projects = await getPublishedProjects();
+const nala = projects.find(project => project.slug === 'nala-2024')!;
+const ferrumium = projects.find(project => project.slug === 'ferrumium')!;
+const reactor = projects.find(project => project.slug === 'photobioreactor')!;
+---
+<Base title="Exhibition — OJI" description="A digital exhibition of original OJI work: character, material, and engineering imagination. A different way through the collection." canonical="https://oji.is-cool.dev/exhibition/">
+  <SiteHeader />
+  <main id="main" class="support-page exhibition-page">
+    <header class="oji-shell page-intro exhibition-intro"><p class="section-label">03 / A digital exhibition</p><h1 class="oji-display">Take the<br /><span class="oji-editorial">scenic route.</span></h1><p>Not a place or an event. A slower way through the collection: three encounters with character, material, and possibility.</p><a class="text-link" href="#character">Step inside <span aria-hidden="true">↓</span></a></header>
+    <section class="exhibition-room exhibition-room--character" id="character" aria-labelledby="room-character">
+      <div class="exhibition-room__scene" aria-hidden="true"><WorldScene variant="garden" compact /></div>
+      <div class="oji-shell exhibition-room__inner"><div class="exhibition-room__copy"><p class="section-label">Room 01 / Character</p><h2 id="room-character" class="oji-editorial">A familiar face,<br />a new beginning.</h2><p>Nala’s identity moves from one chapter of Kesatria to the next. A study in keeping the personality while changing the presentation.</p><a class="text-link" href={`/work/${nala.slug}/`}>Meet Nala <span aria-hidden="true">↗</span></a></div><a class="exhibition-room__art" href={`/work/${nala.slug}/`} aria-label="Explore Nala 2024"><img src={nala.gallery[2].src} alt={nala.gallery[2].alt} loading="lazy" /></a></div>
+    </section>
+    <section class="exhibition-room exhibition-room--material" aria-labelledby="room-material"><div class="oji-shell exhibition-room__inner"><a class="exhibition-room__art" href={`/work/${ferrumium.slug}/`} aria-label="Explore Ferrumium"><img src={ferrumium.cover} alt={ferrumium.gallery[0].alt} loading="lazy" /></a><div class="exhibition-room__copy"><p class="section-label">Room 02 / Material</p><h2 id="room-material" class="oji-editorial">Nothing wasted.<br />Something imagined.</h2><p>A miniature robot begins with components that once belonged to a lighter. Product design shaped by a second use, not a blank page.</p><a class="text-link" href={`/work/${ferrumium.slug}/`}>Inspect Ferrumium <span aria-hidden="true">↗</span></a></div></div></section>
+    <section class="exhibition-room exhibition-room--possibility" aria-labelledby="room-possibility"><div class="oji-shell exhibition-room__inner"><div class="exhibition-room__copy"><p class="section-label">Room 03 / Possibility</p><h2 id="room-possibility" class="oji-editorial">Making an idea<br />visible.</h2><p>A photobioreactor concept brings a renewable-energy research question into view. An engineering visualization, not a claim of measured performance.</p><a class="text-link" href={`/work/${reactor.slug}/`}>See the concept <span aria-hidden="true">↗</span></a></div><a class="exhibition-room__art" href={`/work/${reactor.slug}/`} aria-label="Explore the photobioreactor"><img src={reactor.cover} alt={reactor.gallery[0].alt} loading="lazy" /></a></div></section>
+    <div class="oji-shell exhibition-exit"><p class="oji-editorial">Every idea has a way in.</p><a class="button" href="/portfolio/">Browse the complete collection <span aria-hidden="true">↗</span></a><a class="text-link" href="/about/">Meet the person behind it</a></div>
+  </main>
+  <SiteFooter />
+</Base>

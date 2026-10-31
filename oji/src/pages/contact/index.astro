@@ -1,0 +1,17 @@
+---
+import Base from '../../layouts/Base.astro';
+import SiteHeader from '../../components/SiteHeader.astro';
+import SiteFooter from '../../components/SiteFooter.astro';
+import WorldScene from '../../components/WorldScene.astro';
+import { getContact } from '../../lib/content';
+import '../../styles/public-pages.css';
+const contact = await getContact();
+---
+<Base title="Contact — OJI" description="Contact Muhammad Fachrurrozy about creative collaborations, research opportunities, or technical discussions. Email, Instagram, and LinkedIn." canonical="https://oji.is-cool.dev/contact/">
+  <SiteHeader />
+  <main id="main" class="support-page contact-page">
+    <header class="contact-stage"><div class="contact-stage__scene" aria-hidden="true"><WorldScene variant="sunset" /></div><div class="oji-shell page-intro contact-intro"><p class="section-label">05 / An open conversation</p><h1 class="oji-display">Good things<br />start with<br /><span class="oji-editorial">a hello.</span></h1><p>A character to bring to life, a research idea to discuss, or something not quite defined yet. There’s room for a conversation.</p><a class="button button--orange" href={`mailto:${contact.email}`}>Send an email <span aria-hidden="true">↗</span></a></div></header>
+    <section class="oji-shell contact-links" aria-labelledby="contact-heading"><div><p class="section-label">Find me here</p><h2 id="contact-heading" class="oji-editorial">Let’s connect.</h2><p>Open to collaborations, research opportunities, and discussions around design and sustainable energy.</p></div><div class="contact-link-list"><a href={`mailto:${contact.email}`}><span class="oji-mono">01 / Email</span><strong>{contact.email}</strong><span aria-hidden="true">↗</span></a><a href={contact.instagram} target="_blank" rel="noopener noreferrer"><span class="oji-mono">02 / Instagram</span><strong>@fachrur.rz_</strong><span aria-hidden="true">↗</span></a><a href={contact.linkedin} target="_blank" rel="noopener noreferrer"><span class="oji-mono">03 / LinkedIn</span><strong>Muhammad Fachrurrozy</strong><span aria-hidden="true">↗</span></a><p class="contact-note">Direct links, no form in the middle. Social links open in a new tab.</p></div></section>
+  </main>
+  <SiteFooter compact />
+</Base>

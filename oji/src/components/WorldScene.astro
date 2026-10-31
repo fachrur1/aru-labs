@@ -1,0 +1,101 @@
+---
+interface Props { variant?: 'hero' | 'sunset' | 'garden' | 'night'; compact?: boolean; }
+const { variant = 'hero', compact = false } = Astro.props;
+const uid = `world-${variant}-${crypto.randomUUID().slice(0, 8)}`;
+---
+<div class:list={['world-scene', `world-scene--${variant}`, { 'world-scene--compact': compact }]} data-scene data-hero={variant === 'hero' && !compact ? 'true' : undefined}>
+  <div class="scene-sky" aria-hidden="true"></div>
+  <svg class="scene-plane scene-mountains" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" aria-hidden="true" data-layer="landscape" data-x="-8" data-y="-22" data-scale=".015">
+    <circle cx="1310" cy="230" r="91" fill="var(--scene-sun)" />
+    <path d="M-100 790 140 500 310 653 590 386 810 635 1060 478 1360 690 1550 452 1740 755V1100H-100Z" fill="var(--scene-far)" />
+    <path d="m140 500 170 153-102-52-39 25-29-27-48 34Zm450-114 220 249-128-74-30 24-42-74-54 24-38-27-73 60Z" fill="var(--scene-haze)" opacity=".7" />
+    <path d="M-60 850 140 744 350 816 645 653 840 784 1035 674 1230 798 1460 645 1720 830V1100H-60Z" fill="var(--scene-near)" />
+    <path d="M-30 922Q190 782 410 887T930 897T1640 859V1030H-30Z" fill="var(--scene-field)" />
+    <g fill="var(--scene-near)" opacity=".7"><path d="m1310 739 18-69 18 69h-10v30h-14v-30Zm45 14 13-51 14 51h-8v23h-11v-23ZM230 790l15-60 18 60h-10v26h-13v-26Z" /></g>
+  </svg>
+  <svg class="scene-plane scene-clouds" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" aria-hidden="true" data-layer="clouds" data-x="100" data-y="28" data-mobile>
+    <g class="cloud-drift" fill="var(--scene-cloud)" stroke="var(--scene-cloud-line)" stroke-width="2" stroke-linejoin="round">
+      <path d="M-100 235q10-30 52-27-8-38 32-40 7-45 52-43 39-3 53 38 44-18 62 18 65-7 75 37 55-9 71 17Z" />
+      <path d="M608 126q20-24 49-16-1-35 29-39 7-26 36-25 32 1 39 35 41-9 55 24 38-7 60 21Z" />
+      <path d="M1240 369q20-28 51-20-7-31 23-41 5-38 45-37 40-2 51 35 43-9 51 28 44-2 64 35Z" />
+      <path d="M312 464q12-24 35-22-3-29 28-30 32 1 36 30 35-8 45 22Z" opacity=".8" />
+    </g>
+    <g fill="none" stroke="var(--scene-cloud-line)" stroke-width="2" stroke-linecap="round"><path d="M36 252h125m-149 10h47M696 143h81m-105 9h25m572 235h116m-141 9h36" /></g>
+    <g fill="none" stroke="#3c6063" stroke-width="2.5" stroke-linecap="round"><path d="M405 218q9-11 18 0 8-11 17-3m-13 27q7-8 14 0 7-8 13-2m702-93q10-10 20 0 8-10 17-3" /></g>
+  </svg>
+  <svg class="scene-plane scene-far-islands" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" aria-hidden="true" data-layer="structures" data-x="-45" data-y="-55" data-rotate="-1" data-scale=".025">
+    <g transform="translate(220 540) rotate(-4)" stroke="#395958" stroke-width="2" stroke-linejoin="round">
+      <path d="m-89 15 178-4-28 37-25 11-33 62-29-49-35-24Z" fill="#91b3a0" /><path d="m-60 29 58 93 7-99 34 36 23-36" fill="none" />
+      <path d="M-102 13Q-40-20 21-8T100 9Q99 32 23 36T-102 13" fill="#aec49e" />
+      <path d="M-25-10v-47h54v45" fill="#f1dfb2" /><path d="m-39-53 42-33 42 33Z" fill="#d99978" /><path d="M-3-35h14v23H-3Z" fill="#658c89" /><path d="M55-7v-35m-15 12q-8-30 15-44 26 14 18 39Z" fill="#729a82" />
+      <path d="M-76 14q43-11 99-1m-75 11 36-3" fill="none" stroke="#74967a" />
+    </g>
+    <g transform="translate(1440 545) scale(.7)" stroke="#496c69" stroke-width="3" stroke-linejoin="round">
+      <path d="m-87 4 163 1-53 70-39 35-33-65Z" fill="#8caaa0" /><path d="m-16 110 11-95 29 60" fill="none" /><ellipse cy="7" rx="90" ry="22" fill="#a9bba0" />
+      <path d="M-23-3v-62h39v62" fill="#e2d4b2" /><path d="m-34-62 29-36 32 36Z" fill="#c7957b" /><path d="M-5-47v14M-5-22v18" fill="none" /><path d="M51-2v-27m0-42-19 38h38Z" fill="#729a82" />
+    </g>
+    <path d="M315 565Q650 669 904 559" fill="none" stroke="#597a71" stroke-width="2" stroke-dasharray="4 12" opacity=".5" />
+  </svg>
+  <slot />
+  <svg class="scene-plane scene-atelier" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" aria-hidden="true" data-layer="atelier" data-x="38" data-y="-100" data-rotate="1" data-scale=".035" data-mobile>
+    <defs>
+      <pattern id={`${uid}-roof`} width="25" height="17" patternUnits="userSpaceOnUse"><path d="M0 16h25M12 0v16" fill="none" stroke="#7f3e2e" stroke-width="1.3" opacity=".45" /></pattern>
+      <pattern id={`${uid}-rock`} width="24" height="24" patternUnits="userSpaceOnUse"><path d="m4 4 2 3m12 11 3-1" stroke="#574e41" stroke-width="1.2" opacity=".3" /></pattern>
+    </defs>
+    <g class="atelier-pointer" transform="translate(1042 653)" stroke="#364d40" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+      <path d="m-245-5 446-18-30 79-59 42-37 78-50 18-51 88-55-68-53-16-20-77-57-20Z" fill="#8d8064" />
+      <path d="m-245-5 135 61 24 121 55 17 55 68-1-140L5 18Zm245 20 59 65-8 145 44-31 28-111 48-27 30-79Z" fill="#a99b76" />
+      <path d="m-110 56 57 12 36 53 40 1M-86 177l21-84m89 169 35-72m-35-68L5 18m54 62 64 3m-175 38-24 7m223-73-10 19" fill="none" opacity=".7" />
+      <path d="m-245-5 446-18-30 79-59 42-37 78-50 18-51 88-55-68-53-16-20-77-57-20Z" fill={`url(#${uid}-rock)`} stroke="none" />
+      <path d="M-256-23q20-42 85-44l90-9q54-30 146-8l90 24q40-9 61 14l14 22-22 22q-14 11-49 3L109 22Q28 42-40 21q-76 7-121-2l-73 4Z" fill="#a7b878" />
+      <path d="M-256-23q20-42 85-44l90-9q54-30 146-8l90 24q40-9 61 14" fill="none" stroke="#d8dc99" stroke-width="9" />
+      <path d="m-214-1 34 4 10 23m20-22 21 1 9 18m125-1 5 24m94-44 17 20m19-22 20 7" fill="none" stroke="#527955" stroke-width="5" />
+      <path d="M-117-60v-149l122-78 145 76v142Q48-29-117-60Z" fill="#f3e3bc" />
+      <path d="m5-287 145 76v142L18-40V-208Z" fill="#d8c695" />
+      <path d="m-145-203 28-25 114-96 176 118-31 14L-1-280l-118 89Z" fill="#ff4d1f" />
+      <path d="m-145-203 28-25 114-96 176 118-31 14L-1-280l-118 89Z" fill={`url(#${uid}-roof)`} />
+      <path d="m-144-203 25 12L-1-280l143 88 31-14" fill="none" stroke="#933f2c" stroke-width="5" />
+      <path d="m95-272 2-58 26 3v74" fill="#bd7550" /><path d="m91-331 36 1v9l-36-1Z" fill="#e1aa70" />
+      <path d="m102-357 6-12m-1-12 5-14" stroke="#fcf1d6" stroke-width="9" opacity=".7" />
+      <path d="M-84-147h48v56h-48Z" fill="#89b5b0" /><path d="M-81-144h41v15h-41Z" fill="#bfe0cf" /><path d="M-60-147v56m-24-29h48" fill="none" stroke="#f7edcc" stroke-width="4" />
+      <path d="M-26-184v-28l25-15 27 19v28Z" fill="#f4d885" /><path d="M0-220v36m-22-20h44" fill="none" />
+      <path d="m53-163 53 25v47L53-109Z" fill="#76a9a7" /><path d="m79-151 1 53m-26-36 51 24" fill="none" stroke="#f4e2bc" stroke-width="4" />
+      <path d="M-16-59v-65q22-24 42 0v78" fill="#526c60" /><circle cx="14" cy="-91" r="3" fill="#f4d885" stroke="none" />
+      <path d="m-88-87 56 1-5 13-45-1Z" fill="#c27c50" /><path d="m-80-89 7-9 7 10 7-12 10 13 9-8" fill="none" stroke="#688659" stroke-width="6" />
+      <path d="m-6-42 35 1 15 19-43 2Z" fill="#d5c8a1" /><path d="m0-20 44-2 16 18-53 4Z" fill="#dfd2b0" /><path d="M7 0q-3 12-25 17" fill="none" stroke="#e7ddb9" stroke-width="15" />
+      <g transform="translate(-191 -79)"><path d="M0 2v-88" fill="none" stroke-width="7" /><path d="M0-26q-48 13-53-20-15-19 2-37-3-32 29-30 25-25 49 0 28-1 31 27 24 24-3 43-17 25-55 17Z" fill="#66845c" /><path d="M-42-87q25-37 55-15m-39 41q27 13 50-6" fill="none" stroke="#91a477" stroke-width="6" /><path d="m0-51-24-21M0-35l23-20" fill="none" stroke="#425e49" stroke-width="4" /></g>
+      <g transform="translate(180 -73)"><path d="M0 28v-90" fill="none" stroke-width="5" /><path d="m-30-38 30-68 34 68Z" fill="#54785a" /><path d="m-36-12 36-61 41 61Z" fill="#6e8e60" /><path d="m-44 16 44-62 47 62Z" fill="#7f9b63" /></g>
+      <g transform="translate(-107 -63)"><path d="M0 13v-38m-9 3 41-2v19L-9 1Z" fill="#f0d5a2" /><path d="M0-12h21" fill="none" stroke-width="2" /></g>
+      <g transform="translate(95 20)"><path d="M0 0q9 23 3 45m4-34q29-5 24 14-24 3-24-14m-3 19q-26-9-26 8 20 13 26-8" fill="#6f8c55" /></g>
+      <g fill="#f7dfa4" stroke="none"><circle cx="-146" cy="-11" r="3" /><circle cx="-132" cy="-19" r="3" /><circle cx="130" cy="-23" r="3" /><circle cx="145" cy="-15" r="3" /></g>
+      <path d="m-216-30 3-8m7 8 2-12m117 40 2-8m7 7 3-10m188 4 2-9" fill="none" stroke="#56784f" stroke-width="2" />
+      <g transform="translate(66 -87) rotate(6)"><path d="m12-81-10 71h22L19-81Z" fill="#ad8d60" /><path d="m15-82-8-42-17 5 18 40-42 8 5 17 40-18 9 41 17-4-18-39 41-10-4-17Z" fill="#f8edcc" /><circle cx="15" cy="-82" r="7" fill="#ff4d1f" /></g>
+    </g>
+  </svg>
+  <svg class="scene-plane scene-objects" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" aria-hidden="true" data-layer="glider" data-x="135" data-y="-145" data-rotate="12" data-scale=".04" data-mobile>
+    <g transform="translate(646 616) rotate(-16)" stroke="#37534c" stroke-width="2.5" stroke-linejoin="round"><path d="m-53-16 112-23-65 78-7-37Z" fill="#f8edce" /><path d="m-13 2 72-41L-6 39 7-7Z" fill="#e5cda5" /><path d="M7-7 59-39" fill="none" /></g>
+    <path d="M582 637q-35 70-143 54-86-13-46-64 22-24 44-7 24 31-38 52-52 18-106 6" fill="none" stroke="#476955" stroke-width="2" stroke-dasharray="5 9" />
+    <g fill="#edc56e" stroke="#48664f" stroke-width="2"><path d="m1314 451 18-13-4 24-14 4Z" /><path d="m383 380 8-16 9 16-8 12Z" /></g>
+    <g stroke="#fcf2d7" stroke-width="3" stroke-linecap="round"><path d="M1354 198v16m-8-8h16M545 337v12m-6-6h12M1216 399v11m-5-5h10" /></g>
+  </svg>
+  <svg class="scene-plane scene-front" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" aria-hidden="true" data-layer="foreground" data-x="-105" data-y="-175" data-scale=".06" data-rotate="-2">
+    <g fill="var(--scene-cloud)" stroke="var(--scene-cloud-line)" stroke-width="2"><path d="M-80 813q32-57 105-45-6-66 58-67 48-59 101-17 69-23 98 45 72-8 99 52 51-5 95 37l-5 75H-80Z" /><path d="M1320 806q-1-54 55-54-1-49 53-49 28-41 67-18 47-10 66 34 79-18 101 59 47-5 60 29v94h-420Z" /></g>
+    <g stroke="#385440" stroke-width="3" stroke-linejoin="round"><path d="M-10 1003q61-73 72-201m-4 55q-69-6-78-50 63-9 78 50m0 34q78-45 84-1-43 41-84 1m-27 62q-66-44-73-8 29 52 73 8" fill="#6d8f65" /><path d="M1588 1004q-60-90-67-157m3 39q67-26 76-64-56-10-76 64m22 58q-82-29-90 11 53 33 90-11" fill="#6f8d64" /></g>
+  </svg>
+  <svg class="scene-edge" viewBox="0 0 1600 100" preserveAspectRatio="none" aria-hidden="true"><path d="M0 64q66-37 143-12 91-46 168-3 80-24 150 4 91-34 183 4 69-17 137 8 72-23 148-5 84-41 171-12 80-30 151 9 91-21 169 8 75-29 180-2v37H0Z" fill="var(--scene-edge)" /></svg>
+</div>
+<style>
+  .world-scene{position:absolute;inset:0;isolation:isolate;overflow:hidden;--scene-sky:#9ed3df;--scene-bottom:#e1e6bc;--scene-sun:#f7e5a3;--scene-far:#91bcb8;--scene-haze:#c9dbcc;--scene-near:#91ad8d;--scene-field:#bdc99c;--scene-cloud:#f8f1da;--scene-cloud-line:#c9c9af;--scene-edge:var(--oji-base)}
+  .scene-sky{position:absolute;inset:0;background:linear-gradient(180deg,var(--scene-sky),var(--scene-bottom));z-index:0}
+  .scene-plane{position:absolute;inset:0;width:100%;height:100%;max-width:none;pointer-events:none;overflow:visible;transform-origin:65% 55%}
+  .scene-mountains{z-index:1}.scene-clouds{z-index:2}.scene-far-islands{z-index:3}.scene-atelier{z-index:5}.scene-objects{z-index:7}.scene-front{z-index:8}.scene-edge{position:absolute;bottom:-1px;left:0;width:100%;height:9%;z-index:9;pointer-events:none}
+  .cloud-drift{animation:cloud-drift 28s ease-in-out infinite alternate}.atelier-pointer{translate:var(--pointer-x,0px) var(--pointer-y,0px)}
+  .world-scene--sunset{--scene-sky:#edb99b;--scene-bottom:#f3d0a3;--scene-far:#bcabb0;--scene-haze:#e4c6b8;--scene-near:#adab8e;--scene-field:#d6bd8d;--scene-cloud:#f9dfbc;--scene-cloud-line:#d5b89e;--scene-sun:#f7e1a0}
+  .world-scene--garden{--scene-sky:#c2d4b8;--scene-bottom:#e2dfb7;--scene-far:#a5bea0;--scene-near:#7e9b7b;--scene-field:#b5c195}
+  .world-scene--night{--scene-sky:#7b879d;--scene-bottom:#bfc4bf;--scene-far:#87999e;--scene-near:#748b80;--scene-field:#a8b29b;--scene-cloud:#d9dcce;--scene-cloud-line:#a4b4b2}
+  .world-scene--compact .scene-far-islands{opacity:.6}.world-scene--compact .scene-front{opacity:.8}
+  :global([data-motion='off']) .cloud-drift{animation:none}
+  @keyframes cloud-drift{to{translate:24px 0}}
+  @media(max-width:767px){.scene-plane{width:150%;left:-25%}.scene-far-islands{display:none}.scene-front{opacity:.75}.scene-atelier{width:160%;left:-40%}.scene-objects{width:130%;left:-15%}.world-scene--compact .scene-atelier{left:-55%}}
+  @media(prefers-reduced-motion:reduce){.cloud-drift{animation:none}.atelier-pointer{translate:none}}
+</style>

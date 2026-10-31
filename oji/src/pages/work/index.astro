@@ -1,0 +1,25 @@
+---
+import Base from '../../layouts/Base.astro';
+import SiteHeader from '../../components/SiteHeader.astro';
+import SiteFooter from '../../components/SiteFooter.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+import { getPublishedProjects } from '../../lib/content';
+import '../../styles/public-pages.css';
+const projects = await getPublishedProjects();
+const selected = projects.slice(0, 4);
+---
+<Base title="Selected work — OJI" description="Original 3D characters, upcycled product concepts, and research visualizations by Muhammad Fachrurrozy." canonical="https://oji.is-cool.dev/work/">
+  <SiteHeader />
+  <main id="main" class="support-page">
+    <header class="oji-shell page-intro collection-intro">
+      <p class="section-label">01 / Selected work</p>
+      <h1 class="oji-display">Ideas with<br /><span class="oji-editorial">a life of their own.</span></h1>
+      <div class="collection-intro__bottom"><p>Characters with personality. Objects with a second life. Technical ideas made visible. A few places where curiosity has led.</p><a href="/portfolio/" class="text-link">Explore the full portfolio <span aria-hidden="true">↗</span></a></div>
+    </header>
+    <section class="oji-shell public-collection" aria-label="Selected projects">
+      <div class="project-grid project-grid--selected">{selected.map((project, index) => <ProjectCard project={project} index={index} />)}</div>
+    </section>
+    <section class="oji-shell collection-outro"><p class="oji-editorial">There’s more around the corner.</p><a href="/portfolio/" class="button">All projects & filters <span aria-hidden="true">↗</span></a><a href="/exhibition/" class="text-link">Take the scenic route</a></section>
+  </main>
+  <SiteFooter />
+</Base>

@@ -1,0 +1,22 @@
+---
+import type { Project } from '../lib/content';
+import '../styles/public-pages.css';
+
+interface Props { project: Project; index?: number; }
+const { project, index = 0 } = Astro.props;
+---
+
+<article class:list={['project-card', `project-card--${project.slug}`]} style={`--art-color:${project.color}`} data-project-category={project.category}>
+  <a class="project-card__art" href={`/work/${project.slug}/`} aria-label={`Explore ${project.title}`}>
+    <span class="project-card__orbit" aria-hidden="true"></span>
+    <img src={project.cover} alt={project.gallery.find(image => image.src === project.cover)?.alt ?? project.title} loading="lazy" decoding="async" />
+    <span class="project-card__open" aria-hidden="true">↗</span>
+  </a>
+  <div class="project-card__caption">
+    <span class="project-card__number oji-mono" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
+    <div>
+      <h3><a href={`/work/${project.slug}/`}>{project.title}</a></h3>
+      <p class="oji-mono">{project.category} <span aria-hidden="true">/</span> {project.year}</p>
+    </div>
+  </div>
+</article>

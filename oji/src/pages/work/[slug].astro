@@ -1,0 +1,41 @@
+---
+import Base from '../../layouts/Base.astro';
+import SiteHeader from '../../components/SiteHeader.astro';
+import SiteFooter from '../../components/SiteFooter.astro';
+import { getPublishedProjects, type Project } from '../../lib/content';
+import '../../styles/public-pages.css';
+export async function getStaticPaths() {
+  const projects = await getPublishedProjects();
+  return projects.map(project => ({ params: { slug: project.slug }, props: { project } }));
+}
+interface Props { project: Project; }
+const { project } = Astro.props;
+const published = await getPublishedProjects();
+const index = published.findIndex(item => item.slug === project.slug);
+const previous = published[(index - 1 + published.length) % published.length];
+const next = published[(index + 1) % published.length];
+---
+<Base title={`${project.title} — OJI`} description={project.description.split('\n\n')[0]} canonical={`https://oji.is-cool.dev/work/${project.slug}/`}>
+  <SiteHeader />
+  <main id="main" class:list={['support-page', 'project-detail', `project-detail--${project.slug}`]} style={`--art-color:${project.color}`}>
+    <header class="oji-shell page-intro project-intro">
+      <a class="text-link project-back" href="/portfolio/"><span aria-hidden="true">←</span> Back to the collection</a>
+      <p class="section-label">{project.category} / {project.year}</p>
+      <h1 class="oji-display">{project.title}</h1>
+      <p class="project-intro__role">{project.role}</p>
+    </header>
+    <div class="oji-shell"><div class="project-cover"><span class="project-cover__disc" aria-hidden="true"></span><img src={project.cover} alt={project.gallery.find(image => image.src === project.cover)?.alt ?? project.title} decoding="async" fetchpriority="high" /></div></div>
+    <section class="oji-shell project-story" aria-labelledby="project-story-title">
+      <div class="project-story__label"><p class="section-label">The story</p><h2 id="project-story-title" class="oji-editorial">From thought<br />to form.</h2></div>
+      <div class="project-story__body">{project.description.split('\n\n').map(paragraph => <p>{paragraph}</p>)}</div>
+      <dl class="project-facts"><div><dt class="oji-mono">Role</dt><dd>{project.role}</dd></div><div><dt class="oji-mono">Year</dt><dd>{project.year}</dd></div><div><dt class="oji-mono">Tools & methods</dt><dd><ul>{project.tools.map(tool => <li>{tool}</li>)}</ul></dd></div></dl>
+    </section>
+    <section class="oji-shell project-gallery" aria-labelledby="gallery-title">
+      <div class="gallery-heading"><h2 id="gallery-title" class="section-label">A closer look</h2><p class="oji-mono">Select an image to open the full view ↗</p></div>
+      <div class="project-gallery__grid">{project.gallery.map((image, imageIndex) => <figure class:list={['gallery-piece', { 'gallery-piece--wide': imageIndex === project.gallery.length - 1 && project.gallery.length % 2 === 1 }]}><a href={image.src} target="_blank" rel="noopener noreferrer" aria-label={`Open full image: ${image.caption} (new tab)`}><img src={image.src} alt={image.alt} loading="lazy" decoding="async" /></a><figcaption><span class="oji-mono">{String(imageIndex + 1).padStart(2, '0')}</span>{image.caption}</figcaption></figure>)}</div>
+    </section>
+    {project.video && <section class="oji-shell project-video" aria-labelledby="video-title"><h2 id="video-title" class="section-label">In motion</h2><video controls playsinline preload="metadata" poster={project.cover} aria-label={`${project.title} project video`}><source src={project.video} /><p>Your browser does not support this video. <a href={project.video}>Download the project video</a>.</p></video></section>}
+    <nav class="oji-shell project-pagination" aria-label="Other projects"><a href={`/work/${previous.slug}/`}><span class="oji-mono">← Previous project</span><strong>{previous.title}</strong></a><a href={`/work/${next.slug}/`}><span class="oji-mono">Next project →</span><strong>{next.title}</strong></a></nav>
+  </main>
+  <SiteFooter />
+</Base>

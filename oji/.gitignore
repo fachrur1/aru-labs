@@ -1,0 +1,22 @@
+node_modules/
+dist/
+.astro/
+.wrangler/
+.output/
+
+# Build-time content snapshot (generated from the CMS build endpoint)
+src/content-data/
+
+# Local media staging (copied from the legacy repo by scripts/stage-media.mjs).
+# Production serves artwork from media.oji.is-cool.dev instead.
+public/media/
+
+# Local secrets
+.env
+.env.*
+!.env.example
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.log

@@ -1,0 +1,74 @@
+/* OJI design tokens.
+ *
+ * Palette, type scale, spacing, grid, motion. See DESIGN_SYSTEM.md.
+ */
+
+:root {
+  /* Color */
+  --oji-base: #edeae3;
+  --oji-ink: #111110;
+  --oji-accent: #ff4d1f;
+  --oji-ink-soft: rgba(17, 17, 16, 0.62);
+  --oji-ink-faint: rgba(17, 17, 16, 0.38);
+  --oji-rule: rgba(17, 17, 16, 0.14);
+  --oji-paper: #f7f3e9;
+  --sky: #a9d9e7;
+  --cyan: #d7f0eb;
+  --yellow: #f4d885;
+  --peach: #f1b99d;
+  --green: #506c55;
+  --lavender: #c3bdd8;
+
+  /* Type */
+  --font-display: 'Archivo', 'Helvetica Neue', Arial, sans-serif;
+  --font-editorial: 'Instrument Serif', 'Times New Roman', serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: clamp(1.125rem, 1.6vw, 1.375rem);
+  --text-xl: clamp(1.5rem, 3vw, 2.25rem);
+  --text-2xl: clamp(2.25rem, 6vw, 4.5rem);
+  --text-hero: clamp(4rem, 22vw, 20rem);
+
+  --leading-tight: 0.88;
+  --leading-snug: 1.1;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.7;
+
+  --tracking-tight: -0.03em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.08em;
+  --tracking-mono: 0.16em;
+
+  /* Space */
+  --space-3xs: 0.25rem;
+  --space-2xs: 0.5rem;
+  --space-xs: 0.75rem;
+  --space-sm: 1rem;
+  --space-md: 1.5rem;
+  --space-lg: 2.5rem;
+  --space-xl: 4rem;
+  --space-2xl: 6.5rem;
+  --space-3xl: 10rem;
+
+  /* Grid */
+  --grid-columns: 12;
+  --grid-gutter: clamp(1rem, 2.2vw, 2rem);
+  --page-margin: clamp(1.25rem, 5vw, 5rem);
+  --page-max: 1680px;
+
+  /* Motion */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
+  --dur-fast: 180ms;
+  --dur-base: 320ms;
+  --dur-slow: 640ms;
+  --dur-cinematic: 1100ms;
+
+  /* Layer depth for parallax (0 = far background, 1 = foreground) */
+  --depth-back: 0;
+  --depth-mid: 0.45;
+  --depth-front: 1;
+}

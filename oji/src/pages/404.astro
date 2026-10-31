@@ -1,0 +1,12 @@
+---
+import Base from '../layouts/Base.astro';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import WorldScene from '../components/WorldScene.astro';
+import '../styles/public-pages.css';
+---
+<Base title="Page not found — OJI" description="This corner of the OJI world is not on the map. Find your way back to the work." noindex>
+  <SiteHeader />
+  <main id="main" class="not-found"><div class="not-found__scene" aria-hidden="true"><WorldScene variant="night" /></div><div class="oji-shell not-found__copy"><p class="section-label">404 / Off the map</p><h1 class="oji-display">A little<br /><span class="oji-editorial">lost in the clouds.</span></h1><p>This page isn’t here. The work, on the other hand, is right where we left it.</p><div><a class="button button--orange" href="/">Return home <span aria-hidden="true">↗</span></a><a class="button" href="/portfolio/">Find the collection</a></div></div></main>
+  <SiteFooter compact />
+</Base>
