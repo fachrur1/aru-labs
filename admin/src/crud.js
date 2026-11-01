@@ -8,6 +8,8 @@ import {
   listCategories, syncProjectMedia,
 } from './api.js';
 import { renderControl, slugify, manageCategories } from './components.js';
+import { buildPayload } from './payload.js';
+export { buildPayload } from './payload.js';
 
 /* ------------------------------------------------------------------ */
 /* Validation                                                          */
@@ -70,9 +72,6 @@ export function validateField(field, value) {
 /* ------------------------------------------------------------------ */
 /* Form engine                                                         */
 /* ------------------------------------------------------------------ */
-
-const isNullable = (field) =>
-  field.nullable === true || ['url', 'image', 'date'].includes(field.type);
 
 /**
  * Build a form from a schema config.
@@ -207,37 +206,6 @@ export function buildForm(config, row = {}, categories = [], hooks = {}) {
   };
 
   return { root, collect, validate, setErrors, controls };
-}
-
-/** Convert collected values into a database payload. */
-export function buildPayload(config, values) {
-  const payload = {};
-  for (const field of config.fields) {
-    if (field.name.startsWith('__')) continue;
-    let value = values[field.name];
-    switch (field.type) {
-      case 'checkbox':
-        payload[field.name] = Boolean(value);
-        break;
-      case 'number':
-        payload[field.name] = value === null || value === undefined || Number.isNaN(value)
-          ? (field.nullable ? null : 0)
-          : Number(value);
-        break;
-      case 'tags':
-      case 'links':
-      case 'gallery':
-        payload[field.name] = Array.isArray(value) ? value : [];
-        break;
-      default:
-        if ((value === '' || value === null || value === undefined) && isNullable(field)) {
-          payload[field.name] = null;
-        } else {
-          payload[field.name] = value ?? '';
-        }
-    }
-  }
-  return payload;
 }
 
 /** Insert or update a row (plus project media sync when configured). */

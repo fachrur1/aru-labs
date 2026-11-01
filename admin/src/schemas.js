@@ -63,7 +63,7 @@ const projects = {
     { name: 'slug', label: 'Slug', type: 'slug', section: 'Basic', required: true, help: 'URL identifier: a-z, 0-9 and hyphens only. Auto-generated from the title.' },
     { name: 'short_description', label: 'Short description', type: 'textarea', section: 'Basic', rows: 3, help: 'One-paragraph summary shown in cards and lists.' },
     { name: 'full_description', label: 'Full description', type: 'markdown', section: 'Basic', rows: 12 },
-    { name: 'category_id', label: 'Category', type: 'select', section: 'Basic', optionsFromCategories: 'project' },
+    { name: 'category_id', label: 'Category', type: 'select', section: 'Basic', optionsFromCategories: 'project', nullable: true },
     STATUS_FIELD,
     { name: 'start_date', label: 'Start date', type: 'date', section: 'Basic' },
     { name: 'completion_date', label: 'Completion date', type: 'date', section: 'Basic' },
@@ -224,7 +224,7 @@ const skills = {
   sections: ['Basic', 'Technical', 'Media', 'Display'],
   fields: [
     { name: 'name', label: 'Name', type: 'text', section: 'Basic', required: true },
-    { name: 'category_id', label: 'Group', type: 'select', section: 'Basic', optionsFromCategories: 'skill_group' },
+    { name: 'category_id', label: 'Group', type: 'select', section: 'Basic', optionsFromCategories: 'skill_group', nullable: true },
     { name: 'proficiency_level', label: 'Proficiency level', type: 'select', section: 'Basic', options: PROFICIENCY_LEVELS, emptyLabel: '— Not set —' },
     { name: 'proficiency_percent', label: 'Proficiency percent', type: 'number', section: 'Basic', min: 0, max: 100, help: 'Optional 0–100 value used when proficiency is shown.' },
     { name: 'show_proficiency', label: 'Show proficiency', type: 'checkbox', section: 'Basic', checkboxLabel: 'Show proficiency on the public site', help: 'Proficiency is hidden on the public site unless enabled.' },
@@ -309,7 +309,7 @@ const gallery = {
   fields: [
     { name: 'title', label: 'Title', type: 'text', section: 'Basic', required: true },
     { name: 'description', label: 'Description', type: 'textarea', section: 'Basic', rows: 3 },
-    { name: 'category_id', label: 'Category', type: 'select', section: 'Basic', optionsFromCategories: 'gallery' },
+    { name: 'category_id', label: 'Category', type: 'select', section: 'Basic', optionsFromCategories: 'gallery', nullable: true },
     { name: 'location', label: 'Location', type: 'text', section: 'Basic' },
     { name: 'capture_date', label: 'Capture date', type: 'date', section: 'Basic' },
     STATUS_FIELD,
