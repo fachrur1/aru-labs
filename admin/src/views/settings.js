@@ -20,6 +20,8 @@ const KNOWN_SETTINGS = [
   },
   { key: 'site_title', label: 'Site title', type: 'text' },
   { key: 'meta_description', label: 'Meta description (SEO)', type: 'textarea', rows: 3 },
+  { key: 'photography_heading', label: 'Photography heading', type: 'text' },
+  { key: 'photography_description', label: 'Photography description', type: 'textarea', rows: 4 },
 ];
 
 export function renderSettings(container) {

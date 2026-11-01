@@ -82,6 +82,8 @@ try {
     works: document.querySelectorAll('#cms-works-container > div').length,
     photo: document.querySelectorAll('#cms-photography-container > div').length,
     orgs: document.querySelectorAll('#cms-orgs-container > div').length,
+    photographyHeading: document.getElementById('cms-photography-heading')?.textContent?.trim() || '',
+    photographyDescription: document.getElementById('cms-photography-description')?.textContent?.trim() || '',
     counter: document.getElementById('works-counter')?.textContent?.trim() || '',
     about: document.getElementById('cms-about-body')?.textContent?.trim().slice(0, 40) || '',
     contactEmail: document.getElementById('cms-contact-email')?.getAttribute('href') || ''
@@ -92,14 +94,19 @@ try {
   check('works counter "1 / 12"', counts.counter === '1 / 12', counts.counter);
   check('photography tiles (6)', counts.photo === 6, `${counts.photo}`);
   check('organization cards (2)', counts.orgs === 2, `${counts.orgs}`);
+  check('Photography heading has fallback', counts.photographyHeading === 'Photography', counts.photographyHeading);
+  check('Photography description has fallback', counts.photographyDescription.startsWith('The Symbiosis of Engineering'), counts.photographyDescription.slice(0, 52));
   check('about body rendered', counts.about.length > 10, counts.about);
   check('contact email link', counts.contactEmail.startsWith('mailto:'), counts.contactEmail);
 
-  // work modal: open the first project and inspect structured content
+  // work modal: the CMS can order projects and experiences together, so
+  // verify the modal against the actual first visible slide rather than a
+  // fixed project title.
+  const firstSlideTitle = await page.$eval('#cms-works-container [data-slide="0"] h3', el => el.textContent.trim());
   await page.evaluate(() => window.openWorkModal && window.openWorkModal(0));
   await page.waitForSelector('.modal-overlay .modal-content', { timeout: 10000 });
   const modalText = await page.$eval('.modal-overlay .modal-content', el => el.innerText);
-  check('modal opens with project title', modalText.includes('Agrovoltaic Smart Farming System'));
+  check('modal opens with first slide title', modalText.includes(firstSlideTitle), firstSlideTitle);
   check('modal shows Role meta', /Role/i.test(modalText));
   check('modal shows structured block', /Problem/i.test(modalText));
   await page.keyboard.press('Escape').catch(() => {});

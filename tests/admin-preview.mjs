@@ -274,6 +274,13 @@ async function shot({ name, hash, seedSession = true, width = 1440, height = 900
   const file = path.join(OUT, `${name}.png`);
   await page.screenshot({ path: file });
   const text = await page.evaluate(() => document.body.innerText.slice(0, 120).replace(/\n/g, ' '));
+  if (name === '08-settings') {
+    const labels = await page.$$eval('.known-region .field-label', nodes => nodes.map(node => node.textContent.trim()));
+    if (!labels.includes('Photography heading') || !labels.includes('Photography description')) {
+      throw new Error(`Photography settings fields missing: ${labels.join(', ')}`);
+    }
+    console.log('✓ Website Settings exposes editable Photography heading and description');
+  }
   if (name === '07-work') {
     const unified = await page.evaluate(() => ({
       heading: document.querySelector('.work-page .page-title')?.textContent.trim(),
@@ -307,6 +314,7 @@ files.push(await shot({ name: '04-project-form', hash: '#/projects/new', waitMs:
 files.push(await shot({ name: '05-documents', hash: '#/documents', waitMs: 1500 }));
 files.push(await shot({ name: '06-dashboard-mobile', hash: '#/dashboard', width: 390, height: 844, waitMs: 1800 }));
 files.push(await shot({ name: '07-work', hash: '#/work', waitMs: 2200 }));
+files.push(await shot({ name: '08-settings', hash: '#/settings', waitMs: 1800 }));
 
 await browser.close();
 server.close();

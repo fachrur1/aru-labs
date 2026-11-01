@@ -77,6 +77,9 @@ Run in the Supabase **SQL Editor** (*SQL → New query*) in order:
 
 1. Paste `supabase/migrations/0001_schema.sql` → **Run**.
 2. Paste `supabase/migrations/0002_rls.sql` → **Run**.
+3. Paste `supabase/migrations/0003_hardening.sql` → **Run**.
+4. Paste `supabase/migrations/0004_upload_fix.sql` → **Run**.
+5. Paste `supabase/migrations/0005_photography_section_settings.sql` → **Run** (adds editable public Photography heading/description and allowlists both keys for public reads).
 
 (Or use the Supabase CLI: `supabase db push` with these files in
 `supabase/migrations/`.)

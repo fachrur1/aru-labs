@@ -863,8 +863,8 @@ tailwind.config = {
 <section class="reveal px-margin-mobile md:px-margin-desktop py-section-gap max-w-container-max mx-auto relative transition-all duration-1000 ease-out opacity-100 translate-y-0" id="photography">
 <div class="environmental-gradient absolute inset-0 -z-10"></div>
 <div class="mb-12">
-<h2 class="font-headline-md text-headline-md text-primary mb-4">Photography</h2>
-<p class="font-body-lg text-body-lg text-on-surface-variant max-w-3xl">The Symbiosis of Engineering and Aesthetics: A visual storyteller bridging technical rigor with artistic vision, capturing the structural beauty of the human and industrial landscape.</p>
+<h2 id="cms-photography-heading" class="font-headline-md text-headline-md text-primary mb-4">Photography</h2>
+<p id="cms-photography-description" class="font-body-lg text-body-lg text-on-surface-variant max-w-3xl">The Symbiosis of Engineering and Aesthetics: A visual storyteller bridging technical rigor with artistic vision, capturing the structural beauty of the human and industrial landscape.</p>
 </div>
 <div id="cms-photography-container" class="grid grid-cols-1 md:grid-cols-3 gap-gutter"></div>
 </section><section class="reveal px-margin-mobile md:px-margin-desktop py-section-gap max-w-container-max mx-auto transition-all duration-1000 ease-out opacity-100 translate-y-0" id="organizations"><div class="text-center mb-12"><h2 class="font-headline-md text-headline-md text-primary mb-2">Organizations</h2><div class="h-px w-16 bg-primary/50 mx-auto"></div></div><div id="cms-orgs-container" class="grid grid-cols-1 md:grid-cols-2 gap-gutter"></div></section>
@@ -1290,6 +1290,14 @@ tailwind.config = {
         for (const k of Object.keys(imgData)) { imgData[k] = cleanUrl(imgData[k]); }
         const settingsData = bundle.settingsData || { text_alignment: 'text-justify' };
         const alignClass = settingsData.text_alignment || 'text-justify';
+        const photographyHeading = document.getElementById('cms-photography-heading');
+        const photographyDescription = document.getElementById('cms-photography-description');
+        if (photographyHeading && textData.photography_heading != null) {
+            photographyHeading.textContent = textData.photography_heading;
+        }
+        if (photographyDescription && textData.photography_description != null) {
+            photographyDescription.textContent = textData.photography_description;
+        }
         
         
 

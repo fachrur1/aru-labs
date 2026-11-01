@@ -409,10 +409,11 @@ export function buildContentShape(input) {
     skills: skillGroups,
     organizations: organizationsOut,
     photography,
-    works
-    // NOTE: no `settings` key — matching legacy data.json exactly. The renderer
-    // falls back to its own default for textData.settings, and the site-wide
-    // alignment comes through settingsData (as it always has).
+    works,
+    photography_heading: String(settings.photography_heading ?? 'Photography'),
+    photography_description: String(settings.photography_description ?? 'The Symbiosis of Engineering and Aesthetics: A visual storyteller bridging technical rigor with artistic vision, capturing the structural beauty of the human and industrial landscape.')
+    // NOTE: no generic `settings` object — the renderer's site-wide alignment
+    // continues through settingsData as it did before.
   };
 
   return {
