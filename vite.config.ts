@@ -19,7 +19,8 @@ export default defineConfig({
       input: {
         main: path.resolve(__dirname, 'index.html'),
         suitability: path.resolve(__dirname, 'suitability-land-for-RE/index.html'),
-        meet: path.resolve(__dirname, 'meet/index.html')
+        meet: path.resolve(__dirname, 'meet/index.html'),
+        admin: path.resolve(__dirname, 'admin/index.html')
       }
     }
   },

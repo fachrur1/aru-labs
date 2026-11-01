@@ -6,7 +6,12 @@
   "scripts": {
     "dev": "tsx scripts/build-cms.ts && vite",
     "build": "tsx scripts/build-cms.ts && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "test:cms": "node --test tests/shape.test.mjs",
+    "cms:migrate": "node scripts/migrate-to-supabase.mjs",
+    "cms:admin": "node scripts/bootstrap-admin.mjs",
+    "cms:verify": "node scripts/verify-cms.mjs"
   },
   "repository": {
     "type": "git",
@@ -36,6 +41,8 @@
   },
   "type": "module",
   "dependencies": {
+    "@supabase/supabase-js": "^2.118.0",
+    "marked": "^18.1.2",
     "website-scraper": "^6.0.0"
   }
 }

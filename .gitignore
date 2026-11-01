@@ -52,4 +52,6 @@ Thumbs.db
 # Env
 .env
 .env.*
+!.env.example
+.dev.vars
 editor.html
