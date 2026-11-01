@@ -273,7 +273,27 @@ async function shot({ name, hash, seedSession = true, width = 1440, height = 900
   await new Promise(r => setTimeout(r, waitMs));
   const file = path.join(OUT, `${name}.png`);
   await page.screenshot({ path: file });
-  const text = await page.evaluate(() => document.body.innerText.slice(0, 120).replace(/\n/g, ' | '));
+  const text = await page.evaluate(() => document.body.innerText.slice(0, 120).replace(/\n/g, ' '));
+  if (name === '07-work') {
+    const unified = await page.evaluate(() => ({
+      heading: document.querySelector('.work-page .page-title')?.textContent.trim(),
+      workNavCount: [...document.querySelectorAll('.nav-item')].filter((n) => n.textContent.includes('Projects & Experiences')).length,
+      tabs: [...document.querySelectorAll('.work-tabs [data-tab]')].map((n) => n.textContent.trim()),
+      sections: document.querySelectorAll('.work-list-section').length,
+    }));
+    if (unified.heading !== 'Projects & Experiences' || unified.workNavCount !== 1 || unified.sections !== 2 || unified.tabs.join(',') !== 'All,Projects,Experiences') {
+      throw new Error(`Unified work page failed: ${JSON.stringify(unified)}`);
+    }
+    await page.click('.work-tabs [data-tab="projects"]');
+    await page.waitForFunction(() => document.querySelectorAll('.work-list-section').length === 1 && document.querySelector('.work-list-section .card-title')?.textContent.includes('Projects'));
+    await page.click('.work-tabs [data-tab="experiences"]');
+    await page.waitForFunction(() => document.querySelectorAll('.work-list-section').length === 1 && document.querySelector('.work-list-section .card-title')?.textContent.includes('Experiences'));
+    await page.click('[data-act="new-experience"]');
+    await page.waitForFunction(() => document.querySelector('.page-title')?.textContent === 'New experience');
+    console.log('✓ unified Projects & Experiences page: one nav item, both tabs filter correctly, experience create form opens');
+    await page.goto(`${base}/admin/index.html#/work/projects`);
+    await page.waitForFunction(() => document.querySelectorAll('.work-list-section').length === 1 && document.querySelector('.work-list-section .card-title')?.textContent.includes('Projects'));
+  }
   console.log(`✓ ${name}.png  ← ${text}`);
   await page.close();
   return file;
@@ -286,6 +306,7 @@ files.push(await shot({ name: '03-projects', hash: '#/projects', waitMs: 1800 })
 files.push(await shot({ name: '04-project-form', hash: '#/projects/new', waitMs: 1800 }));
 files.push(await shot({ name: '05-documents', hash: '#/documents', waitMs: 1500 }));
 files.push(await shot({ name: '06-dashboard-mobile', hash: '#/dashboard', width: 390, height: 844, waitMs: 1800 }));
+files.push(await shot({ name: '07-work', hash: '#/work', waitMs: 2200 }));
 
 await browser.close();
 server.close();

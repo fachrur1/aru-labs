@@ -296,8 +296,8 @@ export async function fetchStats() {
 }
 
 const RECENT_LABELS = {
-  projects: { table: 'projects', titleField: 'title', route: '#/projects' },
-  experiences: { table: 'experiences', titleField: 'title', fallbackField: 'organization_name', route: '#/experiences' },
+  projects: { table: 'projects', titleField: 'title', route: '#/work/projects' },
+  experiences: { table: 'experiences', titleField: 'title', fallbackField: 'organization_name', route: '#/work/experiences' },
   education: { table: 'education', titleField: 'institution', route: '#/education' },
   skills: { table: 'skills', titleField: 'name', route: '#/skills' },
   organizations: { table: 'organizations', titleField: 'organization_name', route: '#/organizations' },

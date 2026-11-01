@@ -63,12 +63,12 @@ export function renderDashboard(container, navigate) {
       statsRegion.querySelector('[data-act="retry"]').addEventListener('click', load);
     } else {
       const cards = [
-        { label: 'Total projects', value: stats.projects, route: '#/projects', icon: 'projects' },
-        { label: 'Total experiences', value: stats.experiences, route: '#/experiences', icon: 'experiences' },
+        { label: 'Total projects', value: stats.projects, route: '#/work/projects', icon: 'projects' },
+        { label: 'Total experiences', value: stats.experiences, route: '#/work/experiences', icon: 'experiences' },
         { label: 'Total organizations', value: stats.organizations, route: '#/organizations', icon: 'organizations' },
         { label: 'Total education entries', value: stats.education, route: '#/education', icon: 'education' },
-        { label: 'Total published', value: stats.published, route: '#/projects', icon: 'check', accent: true },
-        { label: 'Total drafts', value: stats.drafts, route: '#/projects', icon: 'edit' },
+        { label: 'Total published', value: stats.published, route: '#/work', icon: 'check', accent: true },
+        { label: 'Total drafts', value: stats.drafts, route: '#/work', icon: 'edit' }
       ];
       statsRegion.innerHTML = `<div class="stat-grid">${cards.map((card) => `
         <button class="stat-card ${card.accent ? 'stat-accent' : ''}" data-route="${esc(card.route)}" type="button">

@@ -232,6 +232,16 @@ pre code { background: none; border: 0; padding: 0; }
   margin-bottom: 14px;
 }
 .card-title .icon { color: var(--accent); }
+.work-tabs { display: flex; flex-wrap: wrap; gap: 8px; border-bottom: 1px solid var(--border); padding-bottom: 12px; }
+.work-list-section { padding: 18px; }
+.work-list-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 14px; }
+.work-list-header .card-title { margin: 0 0 3px; }
+.work-list-header p { margin: 0; }
+.work-list-content > .page { gap: 14px; }
+@media (max-width: 640px) {
+  .work-list-section { padding: 13px; }
+  .work-list-header { flex-direction: column; align-items: stretch; }
+}
 .card-head-row {
   display: flex;
   align-items: center;

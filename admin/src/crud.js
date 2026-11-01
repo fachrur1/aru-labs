@@ -333,7 +333,7 @@ function categoryName(categories, id) {
 /* List page engine                                                    */
 /* ------------------------------------------------------------------ */
 
-export function renderListPage(container, config, navigate) {
+export function renderListPage(container, config, navigate, { hideHeader = false } = {}) {
   const state = {
     search: '',
     status: 'all',
@@ -351,13 +351,14 @@ export function renderListPage(container, config, navigate) {
 
   container.innerHTML = `
     <div class="page">
+      ${hideHeader ? '' : `
       <header class="page-header">
         <div>
           <h1 class="page-title">${esc(config.label)}</h1>
           <p class="page-sub">${state.count} entries</p>
         </div>
         <button class="btn btn-primary" data-act="new" type="button">${icons.plus}<span>New ${esc(config.singular)}</span></button>
-      </header>
+      </header>`}
       <div class="toolbar">
         <div class="search-box">
           <span class="search-icon">${icons.search}</span>
@@ -415,7 +416,7 @@ export function renderListPage(container, config, navigate) {
     state.rows = page.rows;
     state.count = page.count;
     state.ordering = ordering.rows || [];
-    pageSub.textContent = `${state.count} ${state.count === 1 ? 'entry' : 'entries'}`;
+    if (pageSub) pageSub.textContent = `${state.count} ${state.count === 1 ? 'entry' : 'entries'}`;
     renderRows();
     renderPagination();
   };
@@ -705,7 +706,8 @@ export function renderListPage(container, config, navigate) {
 
   /* --- toolbar wiring ---------------------------------------------- */
 
-  container.querySelector('[data-act="new"]').addEventListener('click', () => navigate(`#/${config.key}/new`));
+  const newButton = container.querySelector('[data-act="new"]');
+  if (newButton) newButton.addEventListener('click', () => navigate(`#/${config.key}/new`));
   const searchInput = container.querySelector('[data-act="search"]');
   searchInput.addEventListener('input', debounce(() => {
     state.search = searchInput.value.trim();

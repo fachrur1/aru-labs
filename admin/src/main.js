@@ -10,6 +10,7 @@ import { renderProfile } from './views/profile.js';
 import { renderContact } from './views/contact.js';
 import { renderDocuments } from './views/documents.js';
 import { renderSettings } from './views/settings.js';
+import { renderWorkPage } from './views/work.js';
 
 /* ------------------------------------------------------------------ */
 /* Navigation model                                                    */
@@ -17,8 +18,7 @@ import { renderSettings } from './views/settings.js';
 
 const NAV_ITEMS = [
   { section: 'dashboard', route: '#/dashboard', label: 'Dashboard', icon: 'dashboard' },
-  { section: 'projects', route: '#/projects', label: 'Projects', icon: 'projects' },
-  { section: 'experiences', route: '#/experiences', label: 'Experiences', icon: 'experiences' },
+  { section: 'work', route: '#/work', label: 'Projects & Experiences', icon: 'projects' },
   { section: 'education', route: '#/education', label: 'Education', icon: 'education' },
   { section: 'skills', route: '#/skills', label: 'Skills', icon: 'skills' },
   { section: 'organizations', route: '#/organizations', label: 'Organizations', icon: 'organizations' },
@@ -127,13 +127,14 @@ function renderShell() {
 }
 
 function setActiveNav(section) {
+  const activeSection = ['projects', 'experiences'].includes(section) ? 'work' : section;
   document.querySelectorAll('.nav-item').forEach((item) => {
-    item.classList.toggle('active', item.dataset.section === section);
-    if (item.dataset.section === section) item.setAttribute('aria-current', 'page');
+    item.classList.toggle('active', item.dataset.section === activeSection);
+    if (item.dataset.section === activeSection) item.setAttribute('aria-current', 'page');
     else item.removeAttribute('aria-current');
   });
   const titleEl = document.querySelector('[data-role="topbar-title"]');
-  const item = NAV_ITEMS.find((i) => i.section === section);
+  const item = NAV_ITEMS.find((i) => i.section === activeSection);
   if (titleEl) titleEl.textContent = item ? item.label : 'Portfolio CMS';
   document.body.classList.remove('sidebar-open');
 }
@@ -346,6 +347,19 @@ async function route() {
   }
   if (section === 'settings') {
     renderSettings(container);
+    return;
+  }
+  if (section === 'work') {
+    renderWorkPage(container, navigate, action || 'all');
+    return;
+  }
+  // Keep old list URLs working, but render them inside the unified section.
+  if (section === 'projects' && !action) {
+    renderWorkPage(container, navigate, 'projects');
+    return;
+  }
+  if (section === 'experiences' && !action) {
+    renderWorkPage(container, navigate, 'experiences');
     return;
   }
   if (modules[section]) {
